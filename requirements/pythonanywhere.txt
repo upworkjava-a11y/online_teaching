@@ -1,0 +1,4 @@
+# PythonAnywhere — SQLite by default (no Postgres/Redis required)
+-r base.txt
+# Optional later: MySQL on a paid/free MySQL console
+# mysqlclient==2.2.7

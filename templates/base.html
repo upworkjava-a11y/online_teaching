@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ platform_name }}{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="app-body">
+  <div class="layout lg:grid lg:grid-cols-[280px_1fr]">
+    <aside class="sidebar p-6">
+      <a href="{% url 'root' %}" class="block text-xl font-extrabold tracking-tight">{{ platform_name }}</a>
+      <p class="mt-1 text-sm opacity-80">code with me o‘quv platformasi</p>
+      {% if user.is_authenticated %}
+        <div class="mt-6 rounded-2xl bg-white/10 p-3 text-sm">
+          <div class="font-semibold">{{ user.get_full_name }}</div>
+          <div class="opacity-80">{{ user.get_role_display }}</div>
+        </div>
+        <nav class="mt-6 space-y-1 text-sm">
+          {% if user.is_student %}
+            <a class="nav-link {% if request.path == '/dashboard/' %}is-active{% endif %}" href="{% url 'dashboard:home' %}">Mening panelim</a>
+            <a class="nav-link {% if '/courses/' in request.path %}is-active{% endif %}" href="{% url 'courses:list' %}">Kurslarim</a>
+            <a class="nav-link {% if '/dashboard/progress/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:progress' %}">Progressim</a>
+            <a class="nav-link {% if '/homework/' in request.path %}is-active{% endif %}" href="{% url 'homework:list' %}">Uy vazifasi</a>
+            <a class="nav-link {% if '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'accounts:profile' %}">Profil</a>
+          {% elif user.is_teacher or user.is_admin %}
+            <a class="nav-link {% if request.path == '/teacher/' %}is-active{% endif %}" href="{% url 'analytics:dashboard' %}">Natijalar paneli</a>
+            <a class="nav-link {% if '/teacher/insights/' in request.path %}is-active{% endif %}" href="{% url 'analytics:insights' %}">Progress dashboard</a>
+            <a class="nav-link {% if '/teacher/students/' in request.path %}is-active{% endif %}" href="{% url 'analytics:students' %}">Talabalar</a>
+            <a class="nav-link {% if '/teacher/homework/' in request.path %}is-active{% endif %}" href="{% url 'analytics:homework' %}">Uy vazifasi</a>
+            {% if user.is_admin %}
+              <a class="nav-link" href="/admin/">Admin</a>
+            {% endif %}
+          {% endif %}
+          <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button class="nav-link mt-4 w-full text-left" type="submit">Chiqish</button>
+          </form>
+        </nav>
+      {% endif %}
+    </aside>
+    <main class="p-5 lg:p-10">
+      {% if messages %}
+        <div class="mb-4 space-y-2">
+          {% for message in messages %}
+            <div class="card">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

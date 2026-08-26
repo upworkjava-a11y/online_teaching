@@ -1,0 +1,100 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-analytics_edu}
+      POSTGRES_USER: ${POSTGRES_USER:-analytics_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-db-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-analytics_user} -d ${POSTGRES_DB:-analytics_edu}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  sandbox-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${SANDBOX_DB:-sql_sandbox}
+      POSTGRES_USER: ${SANDBOX_ADMIN_USER:-sandbox_admin}
+      POSTGRES_PASSWORD: ${SANDBOX_ADMIN_PASSWORD:-change-me-sandbox-admin-password}
+      SANDBOX_READER_USER: ${SANDBOX_USER:-sandbox_reader}
+      SANDBOX_READER_PASSWORD: ${SANDBOX_PASSWORD:-change-me-sandbox-password}
+    volumes:
+      - sandbox_data:/var/lib/postgresql/data
+      - ./docker/sandbox/init.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SANDBOX_ADMIN_USER:-sandbox_admin} -d ${SANDBOX_DB:-sql_sandbox}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    build: .
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.development}
+    volumes:
+      - .:/app
+      - media_data:/app/media
+      - static_data:/app/staticfiles
+    depends_on:
+      db:
+        condition: service_healthy
+      sandbox-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health/"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py collectstatic --noinput &&
+             python manage.py bootstrap_platform &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --reload --workers 2 --timeout 60"
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_data:/app/staticfiles:ro
+      - media_data:/app/media:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/health/"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  sandbox_data:
+  redis_data:
+  media_data:
+  static_data:

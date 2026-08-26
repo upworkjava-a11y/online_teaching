@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Google orqali kirish{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-xl">
+  <div class="card space-y-4">
+    <h1 class="text-2xl font-semibold">Google tugmasi saytda bor</h1>
+    <p>Boshqa saytlardagi “Register with Google” ham xuddi shu narsa. Farqi shuki, ular Google’dan o‘z sayti uchun ruxsatnoma (Client ID) olishgan.</p>
+    <p>Google hech kimga — hatto menga ham — sizning Google parolingizni so‘ramasdan foydalanuvchini kiritishga ruxsat bermaydi. Shuning uchun 1 marta Google Cloud’da ilova yaratiladi. Bu bepul.</p>
+    <ol class="list-decimal space-y-2 pl-5">
+      <li>Ochiladi: <a class="text-sky-400" href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">Google Cloud Console → Credentials</a></li>
+      <li><strong>Create project</strong> (nom: Data Analytics)</li>
+      <li><strong>Create credentials → OAuth client ID</strong></li>
+      <li>Application type: <strong>Web application</strong></li>
+      <li>Authorized JavaScript origins:
+        <code class="block mt-1">http://127.0.0.1:8000</code>
+        <code class="block">http://localhost:8000</code>
+      </li>
+      <li>Authorized redirect URIs:
+        <code class="block mt-1">http://127.0.0.1:8000/accounts/google/callback/</code>
+        <code class="block">http://localhost:8000/accounts/google/callback/</code>
+      </li>
+      <li>Google <strong>Client ID</strong> va <strong>Client secret</strong> beradi. Ularni `.env` faylida shu qatorlarga qo‘ying:</li>
+    </ol>
+    <pre class="sql-block text-sm">GOOGLE_CLIENT_ID=bu-yerga-client-id
+GOOGLE_CLIENT_SECRET=bu-yerga-client-secret
+GOOGLE_OAUTH_REDIRECT_URI=http://127.0.0.1:8000/accounts/google/callback/</pre>
+    <p>Serverni qayta ishga tushiring. Keyin <strong>Google orqali kirish</strong> / <strong>Google orqali ro‘yxatdan o‘tish</strong> Google hisoblar ro‘yxatini ochadi.</p>
+    <a class="btn btn-ghost" href="{% url 'accounts:register' %}">Ro‘yxatdan o‘tishga qaytish</a>
+  </div>
+</div>
+{% endblock %}

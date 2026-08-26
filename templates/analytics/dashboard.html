@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Natijalar paneli{% endblock %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="mb-6">
+  <p class="muted text-sm">O‘qituvchi paneli</p>
+  <h1 class="text-3xl font-extrabold">Talabalar natijalari</h1>
+  <p class="muted mt-1">Progress, mashq ballari va faollik bitta joyda.</p>
+</div>
+<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+  <div class="card stat-card"><h3>Jami talabalar</h3><p>{{ overview.total_students }}</p></div>
+  <div class="card stat-card"><h3>Faol (7 kun)</h3><p>{{ overview.active_students }}</p></div>
+  <div class="card stat-card"><h3>O‘rtacha progress ball</h3><p>{{ overview.average_score }}%</p></div>
+  <div class="card stat-card"><h3>Kutayotgan uy vazifasi</h3><p>{{ overview.pending_reviews }}</p></div>
+</div>
+<div class="mt-6 grid gap-4 xl:grid-cols-2">
+  <section class="card">
+    <h2 class="font-bold">14 kunlik faollik</h2>
+    <div class="chart-box mt-3"><canvas id="activityChart"></canvas></div>
+  </section>
+  <section class="card">
+    <h2 class="font-bold">Progress taqsimoti</h2>
+    <div class="chart-box mt-3"><canvas id="distChart"></canvas></div>
+  </section>
+  <section class="card">
+    <h2 class="font-bold">Modullar bo‘yicha o‘rtacha progress</h2>
+    <div class="chart-box mt-3"><canvas id="moduleChart"></canvas></div>
+  </section>
+  <section class="card">
+    <h2 class="font-bold">Talaba progressi va ballari</h2>
+    <div class="chart-box mt-3"><canvas id="scoreChart"></canvas></div>
+  </section>
+</div>
+<section class="card mt-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-lg font-bold">Talabalar</h2>
+    <a class="text-blue-700 font-semibold" href="{% url 'analytics:students' %}">Barchasi</a>
+  </div>
+  <table class="table mt-3">
+    <tr><th>Talaba</th><th>Progress</th><th>Ball</th><th>Uy vazifasi</th></tr>
+    {% for row in students %}
+      <tr>
+        <td><a class="text-blue-700 font-semibold" href="{% url 'analytics:student_detail' row.student.pk %}">{{ row.student }}</a></td>
+        <td>
+          <div class="progress-track w-32 inline-block align-middle"><div class="progress-fill" style="width: {{ row.stats.percent|default:0 }}%"></div></div>
+          {{ row.stats.percent }}%
+        </td>
+        <td>{{ row.stats.average_score }}%</td>
+        <td>{{ row.homework_status }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="muted">Talabalar yo‘q.</td></tr>
+    {% endfor %}
+  </table>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+  const activity = {{ activity_json|safe }};
+  const dist = {{ distribution_json|safe }};
+  const modules = {{ module_json|safe }};
+  const scores = {{ scores_json|safe }};
+  const blue = "#2563eb";
+  const teal = "#0ea5e9";
+  new Chart(document.getElementById("activityChart"), {
+    type: "line",
+    data: {
+      labels: activity.labels,
+      datasets: [
+        { label: "Tugallangan ma’ruzalar", data: activity.lectures, borderColor: blue, tension: 0.3 },
+        { label: "Mashq urinishlari", data: activity.exercises, borderColor: teal, tension: 0.3 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+  new Chart(document.getElementById("distChart"), {
+    type: "doughnut",
+    data: { labels: Object.keys(dist), datasets: [{ data: Object.values(dist), backgroundColor: ["#93c5fd", "#60a5fa", "#2563eb", "#1e40af"] }] },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+  new Chart(document.getElementById("moduleChart"), {
+    type: "bar",
+    data: { labels: modules.labels, datasets: [{ label: "O‘rtacha %", data: modules.values, backgroundColor: blue }] },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+  });
+  new Chart(document.getElementById("scoreChart"), {
+    type: "bar",
+    data: {
+      labels: scores.labels,
+      datasets: [
+        { label: "Progress %", data: scores.progress, backgroundColor: blue },
+        { label: "O‘rtacha ball", data: scores.scores, backgroundColor: teal }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+  });
+</script>
+{% endblock %}

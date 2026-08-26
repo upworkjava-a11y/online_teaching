@@ -1,0 +1,16 @@
+<div class="mt-5 space-y-3">
+  <a class="btn btn-ghost w-full" href="{% url 'accounts:google_login' %}?from={{ google_action|default:'login' }}{% if request.GET.next %}&next={{ request.GET.next|urlencode }}{% endif %}">
+    <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M23.49 12.27c0-.82-.07-1.64-.22-2.43H12v4.6h6.46c-.28 1.5-1.12 2.77-2.39 3.62v3h3.86c2.26-2.08 3.56-5.15 3.56-8.79z"/>
+      <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.86-3c-1.07.72-2.45 1.14-4.09 1.14-3.14 0-5.8-2.12-6.75-4.97H1.27v3.09C3.25 21.3 7.31 24 12 24z"/>
+      <path fill="#FBBC05" d="M5.25 14.26A7.24 7.24 0 0 1 4.87 12c0-.79.14-1.55.38-2.26V6.65H1.27A11.99 11.99 0 0 0 0 12c0 1.94.46 3.77 1.27 5.35l3.98-3.09z"/>
+      <path fill="#EA4335" d="M12 4.75c1.76 0 3.35.61 4.6 1.8l3.45-3.45C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.27 6.65l3.98 3.09C6.2 6.87 8.86 4.75 12 4.75z"/>
+    </svg>
+    {% if google_action == "register" %}
+      Google orqali ro‘yxatdan o‘tish
+    {% else %}
+      Google orqali kirish
+    {% endif %}
+  </a>
+</div>
+<p class="my-4 text-center text-sm muted">yoki email orqali</p>

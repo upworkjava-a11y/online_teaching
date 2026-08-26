@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ lecture.title }}{% endblock %}
+{% block content %}
+<div class="mb-2 text-sm muted">{{ lecture.course.title }} · {{ lecture.module.title }}</div>
+<h1 class="text-3xl font-extrabold">{{ lecture.title }}</h1>
+<article class="prose card mt-6">
+  {{ lecture.content|safe }}
+  {% for example in lecture.sql_examples %}
+    <pre class="sql-block mt-4"><code>{{ example }}</code></pre>
+  {% endfor %}
+</article>
+
+{% if practices %}
+  <section class="card mt-6" id="practice">
+    <p class="text-sm font-semibold text-blue-700">📚 Learn → 🧠 Practice → 💻 Solve</p>
+    <h2 class="text-lg font-bold mt-1">Tavsiya etilgan mashqlar</h2>
+    <p class="muted mt-2">Darsdan keyin Easy → Medium → Hard tartibida yeching.</p>
+    <div class="mt-4 space-y-3">
+      {% for item in practices %}
+        <a class="lesson-item is-exercise {% if item.pk in solved_ids %}is-done{% endif %}" href="{% url 'exercises:detail' item.pk %}">
+          <div class="lesson-main">
+            <span class="lesson-num">{{ forloop.counter }}</span>
+            <span class="lesson-title">{% if item.pk in solved_ids %}✓ {% endif %}{{ item.title }}</span>
+          </div>
+          <span class="flex items-center gap-3 shrink-0">
+            {% if item.difficulty == "hard" %}
+              <span class="inline-block rounded-full bg-rose-100 text-rose-800 text-xs font-bold px-2 py-0.5">Hard</span>
+            {% elif item.difficulty == "medium" %}
+              <span class="inline-block rounded-full bg-amber-100 text-amber-900 text-xs font-bold px-2 py-0.5">Medium</span>
+            {% else %}
+              <span class="inline-block rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5">Easy</span>
+            {% endif %}
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+{% elif practice %}
+  <section class="card mt-6">
+    {% if practice.kind == "quiz" %}
+      <p class="text-sm font-semibold text-amber-700">Amaliy test</p>
+      <h2 class="text-lg font-bold mt-1">{{ practice.title }}</h2>
+      <p class="muted mt-2">Dars mavzusi bo‘yicha test savoli. Javob vebda tekshiriladi.</p>
+      <a class="btn btn-primary mt-4" href="{% url 'exercises:detail' practice.pk %}">Testni yechish</a>
+    {% else %}
+      <p class="text-sm font-semibold text-blue-700">SQL amaliyot</p>
+      <h2 class="text-lg font-bold mt-1">{{ practice.title }}</h2>
+      <p class="muted mt-2">Dars mavzusi bo‘yicha SQL yozing. Natija to‘plami tekshiriladi.</p>
+      <a class="btn btn-primary mt-4" href="{% url 'exercises:detail' practice.pk %}">Kod yozish</a>
+    {% endif %}
+  </section>
+{% endif %}
+
+{% if homework %}
+  <section class="card mt-6">
+    <h2 class="text-lg font-bold">Uy vazifasi</h2>
+    <p class="muted mt-2">{{ homework.instructions }}</p>
+    <a class="btn btn-primary mt-4" href="{% url 'homework:submit' homework.pk %}">Uy vazifasi yuborish</a>
+    {% if latest_hw %}
+      <p class="mt-3 text-sm">Holat: {{ latest_hw.get_status_display }}</p>
+    {% endif %}
+  </section>
+{% endif %}
+
+<div class="mt-6 flex flex-wrap gap-3">
+  {% if previous %}
+    <a class="btn btn-ghost" href="{% url 'learning:lecture' previous.pk %}">Oldingi dars</a>
+  {% endif %}
+  {% if not progress.completed %}
+    <form method="post" action="{% url 'learning:complete' lecture.pk %}">
+      {% csrf_token %}
+      <button class="btn btn-ok" type="submit">Darsni tugalladim</button>
+    </form>
+  {% elif practice_left %}
+    <span class="self-center font-semibold" style="color:#b45309">Dars o‘qildi — amaliyot hali yechilmagan</span>
+  {% else %}
+    <span class="ok self-center font-semibold">Bu dars tugallangan</span>
+  {% endif %}
+  {% if next_item %}
+    <a class="btn btn-primary" href="{% url 'learning:lecture' next_item.pk %}">Keyingi dars</a>
+  {% elif next_locked %}
+    <span class="self-center font-semibold" style="color:#b45309">🔒 Keyingi modul — Premium</span>
+  {% endif %}
+</div>
+{% endblock %}

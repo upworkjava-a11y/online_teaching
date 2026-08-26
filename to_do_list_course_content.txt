@@ -1,0 +1,439 @@
+I currently have these courses in my Data Analytics platform:
+
+1. SQL
+2. Excel
+3. Python for Data Analytics
+4. Statistics
+5. Power BI
+6. Amaliy Loyihalar (Practical Projects)
+
+Now fully populate these courses with **professional, deep, real-world educational content**.
+
+Do NOT create short lessons with only 1–2 paragraphs and a “complete lesson” button.
+
+The platform should feel like a serious international Data Analytics education platform such as Coursera, DataCamp, Udemy, or Google Career Certificates.
+
+## Course architecture
+
+Build:
+
+**Course → Modules → Lessons → Practice → Quiz → Assignment → Project → Assessment**
+
+Students should progress from:
+
+**Beginner → Intermediate → Advanced → Real-world application**
+
+Every course should contain a meaningful progression and prerequisites between topics.
+
+## Lesson quality
+
+Each lesson should intelligently use relevant sections such as:
+
+* Learning objectives
+* Introduction
+* Concept explanation
+* Detailed theory
+* Real-world examples
+* Step-by-step demonstration
+* Code/formula/query examples where relevant
+* Visual examples
+* Business use cases
+* Common mistakes
+* Professional tips
+* Practice tasks
+* Quiz
+* Hands-on assignment
+* Summary
+* Assessment
+
+Do not force every section into every lesson. Choose what makes educational sense.
+
+All content should be in **natural Uzbek** and written as actual teaching material, not generated filler.
+
+Explain:
+
+**What is it? → Why is it needed? → How does it work? → When should an analyst use it? → Real example → Practice**
+
+---
+
+# 1. SQL
+
+Create a complete SQL learning path for Data Analysts.
+
+Include:
+
+* Database fundamentals
+* Tables and relationships
+* SELECT
+* WHERE
+* ORDER BY
+* LIMIT
+* DISTINCT
+* Aliases
+* Aggregate functions
+* GROUP BY
+* HAVING
+* CASE WHEN
+* String functions
+* Date/time functions
+* NULL handling
+* Subqueries
+* CTE
+* JOINs
+* UNION
+* Window functions
+* Ranking
+* Running totals
+* PostgreSQL-specific features
+* Data cleaning with SQL
+* Advanced analytical queries
+* Query optimization basics
+* Real business problems
+* Interview-style SQL questions
+
+Include practical datasets and progressively harder SQL exercises.
+
+---
+
+# 2. Excel
+
+Include:
+
+* Excel fundamentals
+* Tables
+* Data cleaning
+* Sorting/filtering
+* Formulas
+* IF / AND / OR
+* SUMIFS / COUNTIFS / AVERAGEIFS
+* XLOOKUP
+* INDEX/MATCH
+* Text functions
+* Date functions
+* Error handling
+* Conditional formatting
+* PivotTables
+* PivotCharts
+* Advanced Excel
+* Power Query
+* Data transformation
+* Data modeling basics
+* Dashboard creation
+* Business reporting
+
+Include downloadable datasets and practical Excel assignments.
+
+---
+
+# 3. Python for Data Analytics
+
+Include:
+
+* Python fundamentals
+* Variables and data types
+* Conditions
+* Loops
+* Functions
+* Lists/dictionaries/sets/tuples
+* File handling
+* Exceptions
+* Modules
+* NumPy
+* Pandas
+* DataFrames
+* Data cleaning
+* Missing values
+* Duplicates
+* Transformation
+* Filtering
+* Grouping
+* Aggregation
+* Merge/join
+* Date/time analysis
+* EDA
+* Visualization
+* Matplotlib
+* Seaborn
+* Statistical analysis with Python
+* Real datasets
+* Business analysis
+* Final analytics project
+
+Every important Python topic should contain executable examples and exercises.
+
+---
+
+# 4. Statistics for Data Analysts
+
+Focus on statistics that analysts actually use.
+
+Include:
+
+* Types of data
+* Population and sample
+* Mean
+* Median
+* Mode
+* Variance
+* Standard deviation
+* Percentiles
+* Quartiles
+* Distribution
+* Normal distribution
+* Skewness
+* Outliers
+* Probability
+* Sampling
+* Confidence intervals
+* Correlation
+* Covariance
+* Hypothesis testing
+* p-value
+* A/B testing
+* Regression basics
+* Statistical interpretation
+
+Use business examples and Python exercises where appropriate.
+
+Focus on **interpretation and decision-making**, not unnecessary mathematical theory.
+
+---
+
+# 5. Power BI
+
+Create a complete professional Power BI learning path.
+
+Include:
+
+* Power BI interface
+* Importing data
+* Excel/CSV/database connections
+* Power Query
+* Data cleaning
+* Transformation
+* Merge/Append
+* Data types
+* Data modeling
+* Relationships
+* Star schema
+* Fact and dimension tables
+* Cardinality
+* Filter direction
+* DAX fundamentals
+* Measures
+* Calculated columns
+* CALCULATE
+* FILTER
+* ALL / REMOVEFILTERS
+* Time intelligence
+* KPI calculations
+* Date tables
+* Advanced DAX
+* Visualizations
+* Slicers
+* Drill-through
+* Tooltips
+* Bookmarks
+* Conditional formatting
+* Dashboard design
+* Report optimization
+* Publishing
+* Power BI Service
+* Workspace basics
+* Real business dashboards
+
+Include realistic datasets and assignments where students build dashboards themselves.
+
+---
+
+# 6. Amaliy Loyihalar
+
+Make this course the final practical stage where students combine:
+
+**SQL + Excel + Python + Statistics + Power BI**
+
+Create realistic projects from industries such as:
+
+* Banking
+* Retail
+* E-commerce
+* Finance
+* HR
+* Marketing
+* Manufacturing
+
+Every project should include:
+
+* Business scenario
+* Business problem
+* Dataset
+* Data dictionary
+* Business questions
+* Cleaning requirements
+* KPI requirements
+* Analysis requirements
+* Visualization requirements
+* Expected business insights
+* Final report requirements
+* Presentation requirements
+
+Students should behave like real Data Analysts, not simply answer predefined questions.
+
+---
+
+# Exercises and assessments
+
+Create different exercise types:
+
+* Multiple choice
+* True/false
+* Short answer
+* Practical tasks
+* Dataset analysis
+* SQL tasks
+* Python tasks
+* Excel tasks
+* Power BI tasks
+* File upload assignments
+* Real-world case studies
+* Mini projects
+
+Every exercise should have:
+
+* Difficulty
+* Correct answer/solution
+* Explanation
+* Attempt tracking
+* Score
+* Completion status
+
+---
+
+# Real learning experience
+
+Do not make every lesson identical.
+
+Some lessons should be:
+
+**Theory → Example → Quiz**
+
+Others:
+
+**Explanation → Demonstration → Practice**
+
+Others:
+
+**Business Problem → Dataset → Analysis → Solution**
+
+Others:
+
+**Challenge → Student Submission → Evaluation**
+
+This should feel like a real modern learning platform.
+
+---
+
+# Cross-course progression
+
+Connect the courses logically.
+
+For example:
+
+**SQL → Excel → Statistics → Python → Power BI → Practical Projects**
+
+But allow students to access courses independently where appropriate.
+
+Use prerequisites and recommended progression.
+
+---
+
+# Final requirement
+
+Populate the Django database with the complete curriculum and substantial educational content.
+
+Do not create placeholder lessons.
+
+Do not generate meaningless repetitive text.
+
+Every lesson must provide **real knowledge, real examples, and real practice** that helps the student become employable as a Data Analyst.
+
+The final platform should feel like a complete professional **Data Analytics Academy**, with students continuously:
+
+**Learn → Practice → Test → Build → Analyze → Create Projects → Become Job Ready**
+## SQL LeetCode-Style Practice
+
+Inside the **SQL course**, add a dedicated **LeetCode-style SQL practice system**.
+
+Do not simply create a separate list of random problems. Each problem must be **matched to the appropriate lesson/module** based on the SQL concept it practices.
+
+For example:
+
+* `SELECT / WHERE` → beginner filtering problems
+* `GROUP BY / HAVING` → aggregation problems
+* `JOIN` → multi-table problems
+* `Subqueries` → nested-query problems
+* `CTE` → CTE-based problems
+* `Window Functions` → ranking/running-total problems
+* `CASE WHEN` → conditional analysis problems
+* `Date Functions` → date/time analysis problems
+
+For every relevant SQL lesson, add several progressively difficult problems:
+
+**Easy → Medium → Hard**
+
+Each problem should contain:
+
+* Problem title
+* Difficulty
+* Business-style problem description
+* Database schema
+* Table descriptions
+* Sample data
+* Expected output
+* SQL editor/input area
+* Test cases
+* Correct solution
+* Explanation
+* Related SQL concept
+* Lesson/module relationship
+* Student attempts
+* Score
+* Pass/fail status
+
+Students should be able to open a lesson and see:
+
+**📚 Learn → 🧠 Practice → 💻 Solve SQL Problems**
+
+After completing the lesson, recommend related SQL problems automatically.
+
+Example:
+
+**Lesson: JOIN**
+
+> You learned INNER JOIN, LEFT JOIN and multi-table relationships.
+
+**Recommended Practice:**
+
+1. Easy — Customers and Orders
+2. Easy — Employees and Departments
+3. Medium — Customers Without Orders
+4. Medium — Monthly Sales by Customer
+5. Hard — Top Customers by Department
+
+Store every attempt and connect the result to the student's overall course progress.
+
+Important:
+
+* Use a **separate isolated SQL execution environment/database** for student queries.
+* Never execute student queries on the production database.
+* Restrict dangerous SQL operations.
+* Validate both query correctness and expected result.
+* Allow students to retry problems.
+* Show explanations after submission.
+* Track solved/unsolved problems.
+* Track Easy/Medium/Hard completion.
+* Show recommended problems based on weak topics.
+
+Create the system so additional SQL problems can easily be added later through Django admin.
+
+

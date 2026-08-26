@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ student }}{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold">{{ student }}</h1>
+<p class="muted">{{ student.email }} · So‘nggi faoliyat: {{ student.last_activity_at|default:"-" }}</p>
+{% if course %}
+  <div class="card mt-4">
+    <h2 class="text-xl font-semibold">{{ course.title }}</h2>
+    <p class="mt-2 text-2xl font-bold">Progress: {{ stats.percent }}%</p>
+    <p class="muted">Ma’ruzalar {{ stats.completed_lectures }}/{{ stats.total_lectures }} · Mashqlar {{ stats.completed_exercises }}/{{ stats.total_exercises }} · O‘rtacha {{ stats.average_score }}%</p>
+  </div>
+{% endif %}
+<section class="card mt-4">
+  <h2 class="font-semibold">Modul progressi</h2>
+  <div class="mt-3 space-y-2">
+    {% for item in modules %}
+      <div class="flex justify-between"><span>{{ item.module.title }}</span><span>{{ item.percent }}% {% if item.percent == 100 %}✅{% endif %}</span></div>
+    {% endfor %}
+  </div>
+</section>
+<div class="grid gap-4 lg:grid-cols-2 mt-4">
+  <section class="card">
+    <h2 class="font-semibold">Mashqlar</h2>
+    <p class="muted">Noto‘g‘ri urinishlar: {{ failed_attempts }}</p>
+    <ul class="mt-3 space-y-2 text-sm">
+      {% for attempt in attempts %}
+        <li>{% if attempt.is_correct %}✅{% else %}❌{% endif %} {{ attempt.exercise.title }} · {{ attempt.score }} · {{ attempt.created_at }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="card">
+    <h2 class="font-semibold">Uy vazifalari</h2>
+    <ul class="mt-3 space-y-2 text-sm">
+      {% for item in submissions %}
+        <li><a class="text-sky-400" href="{% url 'analytics:homework_review' item.pk %}">{{ item.assignment.title }}</a> — {{ item.get_status_display }}</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

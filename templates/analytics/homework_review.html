@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Tekshiruv — {{ submission.assignment.title }}{% endblock %}
+{% block content %}
+<div class="mb-2 text-sm muted">
+  <a class="text-sky-600" href="{% url 'analytics:homework' %}">← Uy vazifalari</a>
+</div>
+<h1 class="text-3xl font-semibold">{{ submission.assignment.title }}</h1>
+<p class="muted mt-1">{{ submission.student.get_full_name|default:submission.student }} · {{ submission.assignment.lecture.title }}</p>
+<p class="mt-2 text-sm">
+  Holat: <strong>{{ submission.get_status_display }}</strong>
+  {% if latest_review %} · Oxirgi ball: <strong>{{ latest_review.score }}/{{ submission.assignment.max_score }}</strong>{% endif %}
+</p>
+
+<div class="mt-4 flex flex-wrap gap-2">
+  <a class="btn btn-ghost" href="{% url 'homework:download' submission.pk %}">
+    Yuklab olish · {{ submission.original_filename }}
+  </a>
+  <form method="post" action="{% url 'homework:delete' submission.pk %}" onsubmit="return confirm('Topshiriqni o‘chirasizmi?');">
+    {% csrf_token %}
+    <button class="btn btn-bad" type="submit">O‘chirish</button>
+  </form>
+</div>
+
+<section class="card mt-6">
+  <h2 class="text-lg font-semibold">Talaba javobi</h2>
+  <pre class="sql-block mt-3">{{ content }}</pre>
+</section>
+
+<form method="post" class="card mt-6 space-y-4">
+  {% csrf_token %}
+  <h2 class="text-lg font-semibold">Baholash va fikr-mulohaza</h2>
+  <p class="muted text-sm">Ball qo‘ying, fikr yozing va holatni tanlang. Talaba natijani o‘z sahifasida ko‘radi.</p>
+
+  <label class="block">
+    <span class="font-medium">Ball (0–{{ submission.assignment.max_score }})</span>
+    <input
+      class="input mt-1"
+      type="number"
+      name="score"
+      min="0"
+      max="{{ submission.assignment.max_score }}"
+      value="{{ latest_review.score|default:'' }}"
+      required
+    >
+  </label>
+
+  <label class="block">
+    <span class="font-medium">Fikr-mulohaza</span>
+    <textarea class="input mt-1" name="feedback" rows="5" required placeholder="Nima yaxshi, nimani tuzatish kerak...">{{ latest_review.feedback|default:'' }}</textarea>
+  </label>
+
+  <label class="block">
+    <span class="font-medium">Qo‘shimcha ko‘rsatma (ixtiyoriy)</span>
+    <textarea class="input mt-1" name="additional_instructions" rows="3" placeholder="Qayta topshirish uchun aniq vazifa...">{{ latest_review.additional_instructions|default:'' }}</textarea>
+  </label>
+
+  <label class="block">
+    <span class="font-medium">Holat</span>
+    <select class="input mt-1" name="status">
+      <option value="reviewed" {% if latest_review.status == 'reviewed' or not latest_review %}selected{% endif %}>
+        Tekshirilgan (qabul qilindi)
+      </option>
+      <option value="needs_revision" {% if latest_review.status == 'needs_revision' %}selected{% endif %}>
+        Qayta topshirish so‘rash
+      </option>
+    </select>
+  </label>
+
+  <button class="btn btn-primary" type="submit">
+    {% if latest_review %}Bahoni yangilash{% else %}Baholash va saqlash{% endif %}
+  </button>
+</form>
+
+{% if latest_review %}
+<section class="card mt-6">
+  <h2 class="font-semibold">Saqlangan tekshiruvlar</h2>
+  {% for item in history %}
+    {% for review in item.reviews.all %}
+      <div class="mt-3 rounded-xl border border-slate-200 p-3 text-sm">
+        <p><strong>{{ review.score }}/{{ submission.assignment.max_score }}</strong> · {{ review.get_status_display }} · {{ review.created_at|date:"d.m.Y H:i" }}</p>
+        <p class="mt-1">{{ review.feedback }}</p>
+        {% if review.additional_instructions %}<p class="warn mt-1">{{ review.additional_instructions }}</p>{% endif %}
+      </div>
+    {% empty %}
+      <p class="muted mt-2">Hali tekshiruv yo‘q.</p>
+    {% endfor %}
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

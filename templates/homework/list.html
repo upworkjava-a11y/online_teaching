@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Uy vazifasi{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold">Uy vazifasi</h1>
+<p class="muted mt-2">Hozircha faqat SQL uy vazifasi ochiq. Boshqalar — Hozir jarayonda.</p>
+<div class="mt-6 space-y-3">
+  {% for row in rows %}
+    {% if row.coming_soon %}
+      <div class="card course-card-locked" aria-disabled="true" style="min-height: 96px;">
+        <div class="course-card-body">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h2 class="font-semibold">{{ row.assignment.lecture.title }}</h2>
+              <p class="muted text-sm">{{ row.assignment.lecture.module.title }} · {{ row.assignment.lecture.module.course.title }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="course-card-overlay">
+          <span>🔒 Hozir jarayonda</span>
+        </div>
+      </div>
+    {% else %}
+      <a class="card block" href="{% url 'homework:submit' row.assignment.pk %}">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <h2 class="font-semibold">{{ row.assignment.lecture.title }}</h2>
+            <p class="muted text-sm">{{ row.assignment.lecture.module.title }}</p>
+          </div>
+          <div class="text-right text-sm">
+            {% if row.status == "reviewed" %}<span class="ok">✅ Tekshirilgan</span>
+            {% elif row.status == "needs_revision" %}<span class="bad">🔴 Qayta topshirish kerak</span>
+            {% elif row.status == "not_submitted" %}<span class="muted">Yuborilmagan</span>
+            {% else %}<span class="warn">🟡 Ko‘rib chiqilmoqda</span>{% endif %}
+            {% if row.latest and row.latest.latest_review %}
+              <div>{{ row.latest.latest_review.score }}/{{ row.assignment.max_score }}</div>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    {% endif %}
+  {% empty %}
+    <div class="card">Hozircha uy vazifasi yo‘q.</div>
+  {% endfor %}
+</div>
+{% endblock %}

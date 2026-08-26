@@ -1,0 +1,49 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+local_platform.sqlite3
+local_sandbox.sqlite3
+pa_platform.sqlite3
+pa_sandbox.sqlite3
+test_sandbox.sqlite3
+/media/
+/test_media/
+/staticfiles/
+/static_collected/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-data/

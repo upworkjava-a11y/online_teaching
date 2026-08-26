@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Uy vazifalari{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold">Uy vazifasi</h1>
+<p class="muted mt-1">Talaba topshirig‘ini ochib ball qo‘ying va fikr-mulohaza yozing.</p>
+<div class="mt-4 grid gap-4 md:grid-cols-4">
+  <div class="card">Jami: {{ total }}</div>
+  <div class="card">Kutilmoqda: {{ pending }}</div>
+  <div class="card">Tekshirilgan: {{ reviewed }}</div>
+  <div class="card">Qayta topshirish: {{ revision }}</div>
+</div>
+<form class="card mt-4 grid gap-3 md:grid-cols-5" method="get">
+  <select class="input" name="student"><option value="">Talaba</option>{% for s in students %}<option value="{{ s.pk }}" {% if request.GET.student == s.pk|stringformat:"s" %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+  <select class="input" name="course"><option value="">Kurs</option>{% for c in courses %}<option value="{{ c.pk }}" {% if request.GET.course == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.title }}</option>{% endfor %}</select>
+  <select class="input" name="module"><option value="">Modul</option>{% for m in modules %}<option value="{{ m.pk }}" {% if request.GET.module == m.pk|stringformat:"s" %}selected{% endif %}>{{ m.title }}</option>{% endfor %}</select>
+  <select class="input" name="status">
+    <option value="">Holat</option>
+    <option value="submitted" {% if request.GET.status == 'submitted' %}selected{% endif %}>Yuborilgan</option>
+    <option value="reviewed" {% if request.GET.status == 'reviewed' %}selected{% endif %}>Tekshirilgan</option>
+    <option value="needs_revision" {% if request.GET.status == 'needs_revision' %}selected{% endif %}>Qayta topshirish</option>
+  </select>
+  <button class="btn btn-primary">Filtrlash</button>
+</form>
+<table class="table card mt-4">
+  <tr>
+    <th>Talaba</th>
+    <th>Dars</th>
+    <th>Fayl</th>
+    <th>Holat</th>
+    <th>Sana</th>
+    <th></th>
+  </tr>
+  {% for item in page %}
+    <tr>
+      <td>{{ item.student }}</td>
+      <td>{{ item.assignment.lecture.title }}</td>
+      <td><a class="text-sky-600 underline" href="{% url 'homework:download' item.pk %}">{{ item.original_filename }}</a></td>
+      <td>{{ item.get_status_display }}</td>
+      <td>{{ item.created_at|date:"d.m.Y H:i" }}</td>
+      <td>
+        <a class="btn btn-primary" href="{% url 'analytics:homework_review' item.pk %}">
+          {% if item.status == 'reviewed' %}Qayta baholash{% else %}Tekshirish{% endif %}
+        </a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="6" class="muted">Hali topshiriq yo‘q.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

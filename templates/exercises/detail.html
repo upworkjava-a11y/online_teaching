@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}{{ exercise.title }}{% endblock %}
+{% block extra_head %}
+{% if exercise.kind == "sql" %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="mb-4 text-sm muted">
+  {{ exercise.module.course.title }} · {{ exercise.module.title }}
+  {% if exercise.lecture %} · {{ exercise.lecture.title }}{% endif %}
+</div>
+<p class="mb-3 flex flex-wrap gap-2">
+  {% if exercise.kind == "quiz" %}
+    <span class="inline-block rounded-full bg-amber-100 text-amber-900 text-xs font-bold px-3 py-1">Test</span>
+  {% else %}
+    <span class="inline-block rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1">SQL</span>
+  {% endif %}
+  {% if exercise.difficulty == "hard" %}
+    <span class="inline-block rounded-full bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1">Hard</span>
+  {% elif exercise.difficulty == "medium" %}
+    <span class="inline-block rounded-full bg-amber-100 text-amber-900 text-xs font-bold px-3 py-1">Medium</span>
+  {% else %}
+    <span class="inline-block rounded-full bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1">Easy</span>
+  {% endif %}
+</p>
+<div class="grid gap-4 xl:grid-cols-2">
+  <section class="card">
+    <h1 class="text-2xl font-semibold">{{ exercise.title }}</h1>
+    <div class="prose mt-4">{{ exercise.description|linebreaks }}</div>
+    <h2 class="mt-5 font-semibold">Topshiriq</h2>
+    <p>{{ exercise.task }}</p>
+    {% if exercise.kind == "sql" %}
+      <h2 class="mt-5 font-semibold">Mavjud jadvallar</h2>
+      {% for dataset in datasets %}
+        <div class="mt-3 rounded-xl border border-slate-200 p-3">
+          <h3 class="font-medium">{{ dataset.name }}</h3>
+          {% if dataset.preview.columns %}
+            <table class="table mt-2">
+              <tr>{% for col in dataset.preview.columns %}<th>{{ col }}</th>{% endfor %}</tr>
+              {% for row in dataset.preview.rows %}
+                <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+              {% endfor %}
+            </table>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% if exercise.hints %}
+      <p class="mt-5 text-sm muted">Maslahat — yo‘nalish, yechim emas. Avval o‘zingiz urinib ko‘ring.</p>
+      {% for hint in exercise.hints %}
+      <details class="mt-2">
+        <summary class="cursor-pointer font-medium">Maslahat {{ forloop.counter }}</summary>
+        <p class="mt-2">{{ hint }}</p>
+      </details>
+      {% endfor %}
+    {% endif %}
+    {% if exercise.lecture %}
+      <a class="btn btn-ghost mt-4" href="{% url 'learning:lecture' exercise.lecture.pk %}">Darsga qaytish</a>
+    {% endif %}
+  </section>
+  <section class="card">
+    {% if exercise.kind == "quiz" %}
+      <form method="post" class="space-y-3">
+        {% csrf_token %}
+        <p class="font-semibold">Javobni tanlang:</p>
+        {% for option in exercise.quiz_options %}
+          <label class="lesson-item is-exercise cursor-pointer">
+            <span class="flex items-center gap-3">
+              <input type="radio" name="answer" value="{{ option.0 }}" {% if last_sql == option.0 %}checked{% endif %} required>
+              <span>{{ option }}</span>
+            </span>
+          </label>
+        {% empty %}
+          <input class="input" name="answer" value="{{ last_sql }}" placeholder="Javob (A/B/C/D)" required>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Tekshirish</button>
+      </form>
+    {% else %}
+      <form method="post" id="sql-form">
+        {% csrf_token %}
+        <textarea class="hidden" name="sql" id="sql-input">{{ last_sql }}</textarea>
+        <div id="monaco" style="height: 360px; border-radius: 12px; overflow: hidden;"></div>
+        <div class="mt-4 flex gap-3">
+          <button class="btn btn-primary" type="submit">RUN SQL</button>
+          <button class="btn btn-ghost" type="button" id="reset-sql">Reset</button>
+        </div>
+      </form>
+    {% endif %}
+    <div id="result-area" class="mt-4">
+      {% include "exercises/partials/result.html" %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block extra_js %}
+{% if exercise.kind == "sql" %}
+<script>
+  require.config({ paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs" }});
+  require(["vs/editor/editor.main"], function () {
+    const initial = document.getElementById("sql-input").value || "SELECT ";
+    const editor = monaco.editor.create(document.getElementById("monaco"), {
+      value: initial,
+      language: "sql",
+      theme: "vs-dark",
+      automaticLayout: true,
+      minimap: { enabled: false }
+    });
+    document.getElementById("sql-form").addEventListener("submit", function () {
+      document.getElementById("sql-input").value = editor.getValue();
+    });
+    document.getElementById("reset-sql").addEventListener("click", function () {
+      editor.setValue("SELECT ");
+    });
+  });
+</script>
+{% endif %}
+{% endblock %}

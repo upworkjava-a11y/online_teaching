@@ -1,0 +1,1809 @@
+# BUILD A PRODUCTION-READY ONLINE EDUCATION PLATFORM FOR DATA ANALYTICS
+
+Build a real, production-ready online education platform for Data Analytics using Django.
+
+This must NOT be a prototype with fake functionality.
+
+Actually create the project, implement the features, run the application, run tests, identify errors, fix them, and verify the important user flows.
+
+---
+
+# 1. PROJECT GOAL
+
+Create an online learning platform where students can learn Data Analytics through Uzbek-language lectures, complete interactive exercises, submit homework, track their progress, and where teachers/admins can monitor student performance.
+
+The first active section must be:
+
+**SQL**
+
+Other Data Analytics sections must already exist in the architecture/database but remain hidden from students until published.
+
+The architecture must be prepared for future:
+
+* Excel
+* Power BI
+* Statistics
+* Python
+* Real Projects
+* Certificates
+* Payments
+* Subscriptions
+* Notifications
+* Gamification
+
+Do NOT implement these future features now.
+
+---
+
+# 2. TECHNOLOGY STACK
+
+## Backend
+
+* Python 3.12+
+* Django
+* PostgreSQL
+
+## Frontend
+
+* Django Templates
+* HTMX
+* Tailwind CSS
+* Monaco Editor for SQL editor
+
+## Infrastructure
+
+* Docker
+* Docker Compose
+* Nginx
+* Gunicorn
+* Redis
+* Celery only where background processing is actually required
+
+Use:
+
+* `.env` for secrets/configuration
+* Production-ready settings
+* `DEBUG=False` in production
+
+Do NOT create unnecessary microservices.
+
+Django should remain the main application.
+
+---
+
+# 3. ARCHITECTURE
+
+Use a clean modular Django architecture.
+
+Suggested apps:
+
+```text
+apps/
+    accounts/
+    courses/
+    learning/
+    exercises/
+    homework/
+    progress/
+    dashboard/
+    analytics/
+    sandbox/
+```
+
+You may modify this structure if you have a better maintainable architecture.
+
+Separate responsibilities properly.
+
+Avoid putting the entire application into one Django app.
+
+---
+
+# 4. COURSE STRUCTURE
+
+```text
+Data Analytics
+
+├── SQL                 ACTIVE / VISIBLE
+├── Excel               HIDDEN
+├── Power BI            HIDDEN
+├── Statistics          HIDDEN
+├── Python              HIDDEN
+└── Real Projects       HIDDEN
+```
+
+All courses must exist in the database.
+
+The hidden courses must NOT be visible to students.
+
+Admin/Teacher must be able to:
+
+* Publish
+* Unpublish
+* Change visibility
+* Reorder courses
+* Reorder modules
+* Reorder lectures
+
+Students can only see published content.
+
+---
+
+# 5. LANGUAGE
+
+The entire student-facing educational platform must be in Uzbek.
+
+This includes:
+
+* Course names
+* Module names
+* Lecture titles
+* Lecture explanations
+* Exercise descriptions
+* Hints
+* Instructions
+* Buttons
+* Navigation
+* Success messages
+* Error messages
+* Homework instructions
+* Homework statuses
+* Progress messages
+
+SQL code and technical programming terminology can remain in English.
+
+Teachers/Admins must be able to create and edit Uzbek educational content through Django Admin.
+
+Do NOT hardcode educational content into templates.
+
+Educational content must be stored in the database.
+
+---
+
+# 6. USER ROLES
+
+Create three main roles:
+
+## STUDENT
+
+Students can:
+
+* Register
+* Login/logout
+* View published courses
+* View published modules
+* View lectures
+* Complete lectures
+* Solve exercises
+* Run SQL
+* See query results
+* See exercise score
+* See progress
+* See previous attempts
+* Continue learning from the last position
+* Submit homework
+* View homework status
+* View teacher/admin feedback
+* View homework scores
+* Resubmit homework when revision is requested
+
+---
+
+## TEACHER
+
+Teachers can:
+
+* Login
+* Access Teacher Dashboard
+* See students assigned to their courses
+* Monitor student progress
+* See exercise attempts
+* See scores
+* See activity
+* Review homework
+* Give homework feedback
+* Give homework scores
+* Request homework revision
+* Create/edit educational content where permitted
+* Publish/unpublish content where permitted
+
+Teachers must only see students belonging to their assigned courses.
+
+---
+
+## ADMIN
+
+Admins can:
+
+* Manage users
+* Manage teachers
+* Manage students
+* Manage courses
+* Manage modules
+* Manage lectures
+* Manage exercises
+* Manage datasets
+* Manage expected results
+* Manage permissions
+* View all progress
+* View all attempts
+* Manage homework
+* Review homework
+* Block/unblock content for individual students
+
+Use proper Django permissions.
+
+---
+
+# 7. SQL COURSE
+
+Create the SQL course with these modules:
+
+```text
+Module 1 — SQL Basics
+Module 2 — Filtering and Sorting
+Module 3 — Aggregations
+Module 4 — GROUP BY and HAVING
+Module 5 — JOINs
+Module 6 — Subqueries
+Module 7 — CTEs
+Module 8 — CASE
+Module 9 — Date and Time Functions
+Module 10 — Window Functions
+Module 11 — Advanced SQL
+```
+
+Each module contains:
+
+* Lectures
+* Exercises
+* Optional homework
+
+---
+
+# 8. LECTURE SYSTEM
+
+Each lecture must support:
+
+* Uzbek title
+* Uzbek rich-text content
+* SQL code examples
+* Images/files if needed
+* Previous lecture
+* Next lecture
+* Mark as completed
+* Progress indicator
+* Optional homework
+
+Example:
+
+```text
+SQL
+
+Module 1 — SQL Basics
+
+✅ Lecture 1
+✅ Lecture 2
+▶ Lecture 3
+🔒 Exercise
+```
+
+Students should be able to continue from their last position.
+
+---
+
+# 9. INTERACTIVE SQL EXERCISES
+
+This is one of the most important features.
+
+Students must solve SQL exercises directly on the website.
+
+Exercise page:
+
+## LEFT SIDE
+
+* Exercise title
+* Uzbek description
+* Task
+* Available tables
+* Table columns
+* Example data
+* Hints
+
+## RIGHT SIDE
+
+* Monaco SQL Editor
+* Run SQL
+* Reset
+
+## BOTTOM
+
+* Query result
+* Error message
+* Correct/Incorrect status
+* Execution information where appropriate
+
+Example task:
+
+```text
+5 tadan ko‘p transaction qilgan mijozlarni toping.
+```
+
+Student writes SQL.
+
+Student clicks:
+
+```text
+RUN SQL
+```
+
+System:
+
+1. Receives query
+2. Executes query in SQL sandbox
+3. Returns result
+4. Compares result with expected result
+5. Shows:
+
+```text
+✅ To‘g‘ri!
+```
+
+or:
+
+```text
+❌ Noto‘g‘ri. Qayta urinib ko‘ring.
+```
+
+6. Saves the attempt.
+
+---
+
+# 10. SQL ANSWER VALIDATION
+
+DO NOT compare SQL strings.
+
+Different valid SQL queries can produce the same correct result.
+
+Example:
+
+```sql
+SELECT customer_id, COUNT(*)
+FROM transactions
+GROUP BY customer_id;
+```
+
+and:
+
+```sql
+SELECT customer_id, COUNT(transaction_id)
+FROM transactions
+GROUP BY customer_id;
+```
+
+Both can be correct.
+
+Therefore compare the resulting datasets.
+
+Validation should consider:
+
+* Row order
+* Column order where appropriate
+* NULL values
+* Empty results
+* Numeric precision
+* Data types where appropriate
+
+Implement a reliable result comparison service.
+
+---
+
+# 11. SQL SANDBOX SECURITY
+
+CRITICAL:
+
+NEVER execute student SQL against the production database.
+
+Architecture:
+
+```text
+Student
+   ↓
+Django
+   ↓
+SQL Sandbox
+   ↓
+Sandbox PostgreSQL
+   ↓
+Result
+   ↓
+Django
+   ↓
+Student
+```
+
+The sandbox must use:
+
+* Separate PostgreSQL database
+* Separate restricted database user
+* Educational datasets only
+* No production database access
+* Query timeout
+* No server filesystem access
+* No destructive SQL
+* Restricted PostgreSQL functionality
+* Read-only permissions where possible
+
+Prevent:
+
+* DROP
+* DELETE
+* UPDATE
+* INSERT
+* ALTER
+* CREATE
+* TRUNCATE
+* COPY
+* Dangerous extensions/functions
+* Access to filesystem
+* Access to production database
+
+Do not rely only on frontend validation.
+
+All SQL security checks must happen server-side.
+
+Design the system so the SQL execution layer can later be moved to isolated Docker containers.
+
+---
+
+# 12. STUDENT DASHBOARD
+
+Create a modern student dashboard.
+
+Show:
+
+* Continue Learning
+* Current course
+* SQL progress %
+* Completed lectures
+* Completed exercises
+* Average score
+* Recent activity
+* Homework requiring attention
+
+Example:
+
+```text
+SQL Course
+
+Progress: 68%
+
+Completed lectures: 24/35
+
+Exercises: 18/25
+
+Average score: 86%
+
+Continue:
+JOINs — LEFT JOIN
+```
+
+Homework example:
+
+```text
+Homework
+
+JOINs — LEFT JOIN
+Status: ✅ Reviewed
+Score: 85/100
+
+Aggregations
+Status: 🟡 Under review
+
+GROUP BY
+Status: 🔴 Needs revision
+```
+
+---
+
+# 13. TEACHER DASHBOARD
+
+Create a separate professional Teacher Dashboard.
+
+Teacher should NOT need Django Admin for normal student monitoring.
+
+Dashboard overview:
+
+* Total students
+* Active students
+* Inactive students
+* Students currently learning
+* Completed lectures
+* Completed exercises
+* Average score
+* Pending homework reviews
+* Average homework score
+
+Student table:
+
+* Student name
+* Registration date
+* Last activity
+* Course
+* Progress %
+* Current module
+* Completed lectures
+* Completed exercises
+* Average score
+* Homework status
+
+Teacher can open a student.
+
+---
+
+# 14. STUDENT DETAIL FOR TEACHER
+
+Teacher should see:
+
+```text
+Student:
+Ali Valiyev
+
+SQL Course
+Progress: 68%
+```
+
+Module progress:
+
+```text
+SQL Basics          100% ✅
+Filtering            90%
+Aggregations         80%
+JOINs                 60%
+Subqueries            20%
+CTEs                   0%
+```
+
+Exercises:
+
+```text
+Completed: 18
+Failed attempts: 7
+Average score: 82%
+```
+
+Recent activity:
+
+```text
+Completed JOIN lecture
+Solved Exercise #18
+Failed Exercise #19
+Last activity: Today
+```
+
+Also show:
+
+* Completed lectures
+* Uncompleted lectures
+* Exercise attempts
+* Correct/incorrect attempts
+* Number of attempts
+* Scores
+* Last activity
+* Homework submissions
+* Homework scores
+* Homework feedback
+
+---
+
+# 15. TEACHER ANALYTICS
+
+Teacher should be able to filter students by:
+
+* Course
+* Module
+* Progress range
+* Score range
+* Active/inactive
+* Last activity
+
+Analytics:
+
+* Student progress
+* Exercise success rate
+* Most difficult exercises
+* Active students over time
+* Average score
+* Homework completion rate
+* Homework review backlog
+
+Teachers must only see students belonging to their courses.
+
+Teachers must NOT see:
+
+* Passwords
+* Authentication secrets
+* Sensitive system data
+* Other teachers' students
+
+---
+
+# 16. PER-USER COURSE / SECTION ACCESS CONTROL
+
+ADMIN must be able to control access to individual courses/modules/lessons for specific students.
+
+Admin can:
+
+* Block a course for a student
+* Unblock a course
+* Block an individual module
+* Unblock a module
+* Block an individual lesson where appropriate
+* Unblock a lesson
+* Override normal published/visibility rules for a specific student
+
+Example:
+
+```text
+Student: Ali Valiyev
+
+SQL              ✅
+Excel             🔒
+Power BI          🔒
+
+SQL Modules:
+
+SQL Basics        ✅
+Filtering         ✅
+Aggregations      🔒
+GROUP BY          🔒
+JOINs             🔒
+```
+
+A blocked section must not be accessible even if it is globally published.
+
+Student should see:
+
+```text
+Bu bo‘lim siz uchun hozircha yopilgan.
+```
+
+Distinguish between:
+
+1. Globally unpublished content
+2. Globally published but blocked for this student
+3. Available content
+
+Create a proper database-backed access-control model.
+
+Do NOT hardcode access rules.
+
+---
+
+# 17. ACCESS CONTROL MODEL
+
+Create a model such as:
+
+```text
+UserContentAccess
+```
+
+Store:
+
+* User
+* Content object
+* Access status
+* Reason/note
+* Created by
+* Created at
+* Updated at
+
+Use proper relationships and indexes.
+
+Admin must manage these permissions from Django Admin.
+
+Teacher access to blocking/unblocking should be configurable using Django permissions.
+
+By default, this functionality belongs to ADMIN.
+
+---
+
+# 18. IMPORTANT ACCESS CONTROL SECURITY RULE
+
+Access restrictions must be enforced on the backend.
+
+Do NOT only hide buttons or links.
+
+Every protected URL/view/action must verify:
+
+* Authentication
+* User role
+* Course publication status
+* Module publication status
+* Individual user access restrictions
+
+A student must NOT be able to bypass a blocked section by manually entering the URL.
+
+Add automated tests for this.
+
+---
+
+# 19. HOMEWORK SYSTEM
+
+Every lecture can optionally have a homework assignment.
+
+Lesson page should contain:
+
+```text
+Uy vazifasi yuborish
+```
+
+Student flow:
+
+```text
+Lecture
+↓
+Learn lesson
+↓
+Complete lesson
+↓
+Homework
+↓
+Prepare homework
+↓
+Upload text file
+↓
+Submit
+↓
+Teacher/Admin reviews
+↓
+Feedback
+↓
+Student sees feedback
+```
+
+---
+
+# 20. HOMEWORK FILE UPLOAD
+
+Students can submit homework as text files.
+
+At minimum support:
+
+```text
+.txt
+```
+
+Architecture should be extensible for future formats.
+
+Validate:
+
+* File extension
+* MIME type
+* File size
+* Filename
+* Uploaded content
+
+Never trust the filename or MIME type alone.
+
+---
+
+# 21. HOMEWORK MODELS
+
+Create clean models such as:
+
+```text
+HomeworkAssignment
+HomeworkSubmission
+HomeworkReview
+```
+
+A lecture can have zero or one homework assignment.
+
+A homework assignment can have many student submissions.
+
+A submission can have multiple review records if necessary.
+
+Store:
+
+```text
+Student
+Lecture
+HomeworkAssignment
+File
+Original filename
+Submission status
+Submitted at
+Updated at
+Reviewer
+Review date
+Score
+Reviewer feedback
+Review status
+```
+
+Possible statuses:
+
+```text
+Not submitted
+Submitted
+Under review
+Reviewed
+Needs revision
+```
+
+Use:
+
+* created_at
+* updated_at
+* proper foreign keys
+* indexes
+* constraints
+
+---
+
+# 22. HOMEWORK HISTORY
+
+Never overwrite previous submissions.
+
+Keep full history.
+
+Example:
+
+```text
+Submission #1
+Score: 60
+Feedback: ...
+
+Submission #2
+Score: 85
+Feedback: ...
+
+Submission #3
+Score: 95
+Feedback: ...
+```
+
+Latest reviewed submission should be clearly displayed.
+
+---
+
+# 23. HOMEWORK REVIEW
+
+Admin must be able to review submitted homework.
+
+Create dedicated Homework Management in Django Admin.
+
+Admin can:
+
+* View submissions
+* Open/read submitted text file
+* Download submission
+* Add feedback
+* Add score
+* Mark as reviewed
+* Request revision
+* Add additional instructions
+* View previous submissions
+* Compare submission history
+
+Example:
+
+```text
+Student: Ali Valiyev
+
+Lesson:
+JOINs — LEFT JOIN
+
+Status:
+Needs revision
+
+Score:
+75/100
+
+Feedback:
+LEFT JOIN to‘g‘ri ishlatilgan, lekin NULL qiymatlar bilan ishlash qismiga e’tibor bering.
+```
+
+Student must see:
+
+* Review status
+* Score
+* Reviewer feedback
+* Submission date
+* Revision request if applicable
+
+---
+
+# 24. HOMEWORK REVIEW FROM TEACHER DASHBOARD
+
+Teachers should NOT need Django Admin to review normal homework.
+
+Teacher Dashboard must include:
+
+```text
+Homework
+```
+
+Show:
+
+* Total submissions
+* Pending reviews
+* Reviewed submissions
+* Needs revision
+* Average homework score
+
+Filters:
+
+* Student
+* Course
+* Module
+* Lesson
+* Status
+* Date range
+
+Teacher can open a submission and:
+
+* Read it
+* Review it
+* Give feedback
+* Give score
+* Request revision
+
+Teacher can only review homework from students assigned to their courses.
+
+---
+
+# 25. HOMEWORK STUDENT DASHBOARD
+
+Show:
+
+```text
+Homework
+
+JOINs — LEFT JOIN
+✅ Reviewed
+85/100
+
+Aggregations
+🟡 Under review
+
+GROUP BY
+🔴 Needs revision
+```
+
+Student can open the corresponding lesson.
+
+---
+
+# 26. HOMEWORK NOTIFICATIONS
+
+Prepare architecture for notifications.
+
+Future events:
+
+* Homework submitted
+* Homework reviewed
+* Homework returned for revision
+
+Do not implement a complicated notification system now unless necessary.
+
+Create services/models so notifications can easily be added later.
+
+Redis/Celery can be used if background notification processing becomes necessary.
+
+---
+
+# 27. DJANGO ADMIN
+
+Make Django Admin powerful.
+
+Admin should manage:
+
+* Users
+* Students
+* Teachers
+* Courses
+* Modules
+* Lectures
+* Exercises
+* Datasets
+* Expected results
+* Student progress
+* Exercise attempts
+* Homework assignments
+* Homework submissions
+* Homework reviews
+* User content access
+
+Admin should easily:
+
+* Publish/unpublish
+* Change ordering
+* Edit Uzbek content
+* Add SQL examples
+* Add hints
+* Add expected results
+* Manage datasets
+* Block/unblock students
+* Review homework
+
+Use:
+
+* list_display
+* list_filter
+* search
+* autocomplete
+* inline editing where useful
+* fieldsets
+* readonly fields where appropriate
+
+---
+
+# 28. DATABASE MODELS
+
+Create clean Django models.
+
+At minimum:
+
+```text
+User
+StudentProfile
+TeacherProfile
+
+Course
+Module
+Lecture
+
+Exercise
+ExerciseDataset
+ExerciseExpectedResult
+ExerciseAttempt
+
+StudentProgress
+
+HomeworkAssignment
+HomeworkSubmission
+HomeworkReview
+
+UserContentAccess
+```
+
+Use:
+
+* created_at
+* updated_at
+* slug
+* ordering
+* published/visible status
+* proper relationships
+* indexes
+* constraints
+
+Use a custom Django User model from the beginning.
+
+Do not use username/email architecture that makes future authentication changes difficult.
+
+---
+
+# 29. PROGRESS TRACKING
+
+Track:
+
+* Course progress
+* Module progress
+* Lecture completion
+* Exercise completion
+* Exercise attempts
+* Scores
+* Last activity
+* Current lesson
+* Homework completion
+
+Students should resume from their last position.
+
+Progress must be calculated reliably from actual learning activity.
+
+Do not fake percentages.
+
+---
+
+# 30. SAMPLE CONTENT
+
+Create sample SQL content.
+
+At minimum:
+
+```text
+3 modules
+```
+
+Each module:
+
+```text
+3 lectures
+3 exercises
+```
+
+All educational content must be in Uzbek.
+
+Use realistic datasets such as:
+
+```text
+customers
+transactions
+products
+orders
+```
+
+Use realistic banking/business examples where appropriate.
+
+Example:
+
+```text
+customers
+
+id
+name
+city
+registration_date
+```
+
+```text
+transactions
+
+id
+customer_id
+amount
+transaction_date
+transaction_type
+```
+
+---
+
+# 31. UI / UX
+
+Create a modern professional education platform.
+
+Style:
+
+* Clean
+* Minimal
+* Professional
+* Modern
+* Data/technology oriented
+* Responsive
+* Desktop-first
+* Mobile compatible
+
+Student interface must NOT look like Django Admin.
+
+Teacher dashboard must look like a professional analytics dashboard.
+
+Use Tailwind CSS.
+
+Use HTMX for dynamic interactions where appropriate.
+
+---
+
+# 32. STUDENT NAVIGATION
+
+Create clear navigation such as:
+
+```text
+Dashboard
+My Courses
+SQL
+Progress
+Homework
+Profile
+```
+
+Course page:
+
+```text
+SQL
+
+Module 1 — SQL Basics
+    Lecture 1
+    Lecture 2
+    Lecture 3
+    Exercise 1
+    Exercise 2
+
+Module 2 — Filtering and Sorting
+    ...
+```
+
+Locked content must be visually clear.
+
+---
+
+# 33. PRODUCTION ARCHITECTURE
+
+Use:
+
+```text
+Internet
+   ↓
+Cloudflare
+   ↓
+Nginx
+   ↓
+Gunicorn
+   ↓
+Django
+   ↓
+PostgreSQL
+```
+
+Separate SQL sandbox from production database.
+
+Redis/Celery only where necessary.
+
+Production Django database must NEVER be accessible from student SQL execution.
+
+---
+
+# 34. DOCKER
+
+Create production-ready Docker configuration.
+
+Include:
+
+```text
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
+.dockerignore
+```
+
+Services may include:
+
+```text
+web
+db
+redis
+celery
+nginx
+sandbox-db
+```
+
+Only include services that are actually required.
+
+Use health checks.
+
+Use persistent volumes for databases and media.
+
+---
+
+# 35. ENVIRONMENT VARIABLES
+
+Never hardcode:
+
+* Passwords
+* API keys
+* Secret keys
+* Database credentials
+
+Use `.env`.
+
+Create:
+
+```text
+.env.example
+```
+
+Example variables:
+
+```text
+SECRET_KEY=
+DEBUG=False
+ALLOWED_HOSTS=
+
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_HOST=
+POSTGRES_PORT=
+
+SANDBOX_DB=
+SANDBOX_USER=
+SANDBOX_PASSWORD=
+SANDBOX_HOST=
+SANDBOX_PORT=
+
+REDIS_URL=
+```
+
+Never commit `.env`.
+
+---
+
+# 36. PRODUCTION SECURITY
+
+Implement:
+
+* Django authentication
+* CSRF protection
+* Secure cookies
+* HTTP security headers
+* Permission system
+* Role-based access
+* SQL sandbox
+* SQL timeout
+* Rate limiting where appropriate
+* Input validation
+* File upload validation
+* Secure media handling
+* Production security settings
+* `DEBUG=False`
+* Proper `ALLOWED_HOSTS`
+* Secure password handling
+* Logging
+* Error handling
+
+Run Django deployment checks.
+
+---
+
+# 37. SQL EXECUTION LIMITS
+
+Implement protections against abusive queries.
+
+At minimum:
+
+* Query timeout
+* Maximum result rows
+* Maximum query size
+* Rate limiting
+* Restricted SQL statements
+* Restricted database user
+* Separate sandbox database
+
+Return user-friendly Uzbek errors.
+
+Example:
+
+```text
+So‘rov juda uzoq vaqt bajarilyapti.
+So‘rovni soddalashtirib qayta urinib ko‘ring.
+```
+
+---
+
+# 38. LOGGING
+
+Implement structured application logging.
+
+Log important events such as:
+
+* Authentication failures
+* SQL execution errors
+* Exercise attempts
+* Homework submissions
+* Homework reviews
+* Permission violations
+* Unexpected application errors
+
+Do NOT log:
+
+* Passwords
+* Secrets
+* Authentication tokens
+* Sensitive personal information unnecessarily
+
+---
+
+# 39. HEALTH CHECK
+
+Create a health-check endpoint.
+
+Example:
+
+```text
+/health/
+```
+
+It should verify application health and preferably database connectivity.
+
+Return an appropriate HTTP status.
+
+---
+
+# 40. TESTING
+
+Create automated tests for:
+
+## Authentication
+
+* Registration
+* Login
+* Logout
+* Invalid login
+
+## Permissions
+
+* Student permissions
+* Teacher permissions
+* Admin permissions
+
+## Course
+
+* Published course access
+* Unpublished course access
+* Hidden course
+* Course ordering
+
+## Modules
+
+* Published modules
+* Hidden modules
+* Blocked modules
+
+## Lectures
+
+* Lecture access
+* Lecture completion
+* Progress tracking
+* Previous/next navigation
+
+## Exercises
+
+* Exercise access
+* SQL execution
+* Correct result
+* Incorrect result
+* Attempt history
+* Score calculation
+
+## SQL Validation
+
+Test:
+
+* Row ordering
+* Column ordering
+* NULL
+* Empty results
+* Numeric precision
+* Alternative valid SQL queries
+
+## SQL Sandbox Security
+
+Test:
+
+* DROP blocked
+* DELETE blocked
+* UPDATE blocked
+* INSERT blocked
+* ALTER blocked
+* TRUNCATE blocked
+* Production DB inaccessible
+* Timeout
+* Result limits
+
+## Teacher Access
+
+* Teacher can see assigned students
+* Teacher cannot see other teachers' students
+* Teacher can see student progress
+* Teacher can review assigned homework
+
+## Admin
+
+* Admin can manage all content
+* Admin can publish/unpublish
+* Admin can block/unblock students
+* Admin can review homework
+
+## Homework
+
+* Student can submit `.txt`
+* Invalid files rejected
+* File size restrictions
+* Multiple submissions
+* Submission history preserved
+* Review saved
+* Score saved
+* Feedback saved
+* Revision requested
+* Student sees own feedback
+* Student cannot see another student's homework
+
+## User Access Control
+
+Test:
+
+* Admin blocks module
+* Student cannot access blocked module
+* Admin unblocks module
+* Student can access again
+* Direct URL bypass fails
+* Published + blocked behavior
+* Unpublished + explicitly allowed behavior should follow clearly defined policy
+
+Actually run all tests.
+
+Fix all failures.
+
+---
+
+# 41. PERFORMANCE
+
+Use proper database indexes.
+
+Avoid N+1 queries.
+
+Use:
+
+* `select_related`
+* `prefetch_related`
+* Pagination
+* Efficient aggregation queries
+* Caching where useful
+
+Teacher dashboards should remain performant with many students.
+
+Do not calculate expensive analytics repeatedly if they can be cached or aggregated efficiently.
+
+---
+
+# 42. FUTURE ARCHITECTURE
+
+Prepare architecture for:
+
+```text
+Excel
+Power BI
+Statistics
+Python
+Real Projects
+Certificates
+Payments
+Subscriptions
+Notifications
+Gamification
+Leaderboards
+Advanced teacher analytics
+Python code execution sandbox
+Power BI assignments
+```
+
+Do NOT implement these features now.
+
+The database and architecture should support adding them later.
+
+All future course sections should exist but remain hidden.
+
+---
+
+# 43. UPDATED MVP STUDENT FLOW
+
+```text
+Register
+↓
+Login
+↓
+Dashboard
+↓
+SQL Course
+↓
+Module
+↓
+Lecture
+↓
+Complete Lecture
+↓
+Homework if available
+↓
+Submit .txt
+↓
+Exercise
+↓
+Write SQL
+↓
+Run
+↓
+See Result
+↓
+Correct / Incorrect
+↓
+Progress Saved
+↓
+Homework Review
+↓
+Feedback / Score
+↓
+Continue Learning
+```
+
+---
+
+# 44. UPDATED MVP TEACHER FLOW
+
+```text
+Login
+↓
+Teacher Dashboard
+↓
+Student List
+↓
+Select Student
+↓
+See Progress
+↓
+See Modules
+↓
+See Exercises
+↓
+See Attempts
+↓
+See Scores
+↓
+See Homework
+↓
+Review Homework
+↓
+Give Feedback
+↓
+Give Score
+↓
+Request Revision
+```
+
+---
+
+# 45. UPDATED MVP ADMIN FLOW
+
+```text
+Login
+↓
+Django Admin / Admin Dashboard
+↓
+Manage Courses
+↓
+Manage Modules
+↓
+Manage Lectures
+↓
+Manage Exercises
+↓
+Manage Datasets
+↓
+Publish / Unpublish
+↓
+Manage Users
+↓
+Block / Unblock Content For Individual Users
+↓
+Review Homework
+↓
+Give Feedback
+↓
+Give Score
+↓
+Request Revision
+```
+
+---
+
+# 46. CURSOR DEVELOPMENT RULES
+
+Before writing large amounts of code:
+
+1. Inspect the existing repository.
+2. Do NOT blindly overwrite existing code.
+3. Explain the proposed architecture briefly.
+4. Create Django project/apps.
+5. Configure PostgreSQL.
+6. Create custom User model.
+7. Create models.
+8. Create migrations.
+9. Implement authentication.
+10. Implement roles and permissions.
+11. Implement courses/modules/lectures.
+12. Implement publication/visibility.
+13. Implement per-user access control.
+14. Implement lecture progress.
+15. Implement SQL exercises.
+16. Implement SQL result validation.
+17. Implement SQL sandbox.
+18. Implement homework system.
+19. Implement homework review.
+20. Implement student dashboard.
+21. Implement teacher dashboard.
+22. Implement teacher analytics.
+23. Configure Django Admin.
+24. Add sample Uzbek content.
+25. Add tests.
+26. Dockerize.
+27. Run migrations.
+28. Start all services.
+29. Run tests.
+30. Run Django checks.
+31. Test important user flows.
+32. Fix errors.
+33. Re-run tests.
+34. Verify production configuration.
+
+---
+
+# 47. DO NOT CHEAT
+
+Do NOT:
+
+* Create fake dashboards with hardcoded statistics
+* Create fake SQL execution
+* Pretend SQL was executed
+* Compare SQL strings
+* Store progress only in frontend
+* Store homework only in frontend
+* Fake teacher analytics
+* Hardcode educational content into templates
+* Hardcode passwords
+* Connect SQL sandbox to production database
+* Implement access control only through UI
+* Skip tests
+* Stop after generating code
+
+All important functionality must work with real database models and backend logic.
+
+---
+
+# 48. PRODUCTION QUALITY REQUIREMENT
+
+This should be built as a real production system.
+
+Prioritize:
+
+1. Security
+2. Clean architecture
+3. Maintainability
+4. Student experience
+5. Teacher monitoring
+6. SQL exercise reliability
+7. Homework workflow
+8. Access-control reliability
+9. Performance
+10. Scalability
+
+Keep the first release focused on SQL.
+
+But make the architecture ready for the complete Data Analytics education platform.
+
+---
+
+# 49. FINAL EXECUTION REQUIREMENT
+
+After implementation:
+
+1. Start Docker services.
+2. Run migrations.
+3. Create required initial data.
+4. Create admin account instructions.
+5. Run Django system checks.
+6. Run the complete test suite.
+7. Test student registration/login.
+8. Test SQL course flow.
+9. Test SQL exercise execution.
+10. Test SQL result validation.
+11. Test sandbox security.
+12. Test homework submission.
+13. Test homework review.
+14. Test teacher dashboard.
+15. Test admin access control.
+16. Test block/unblock functionality.
+17. Test direct URL protection.
+18. Fix all discovered problems.
+19. Run tests again.
+20. Provide a concise final report containing:
+
+* What was implemented
+* Project structure
+* How to run locally
+* Docker commands
+* Environment variables
+* Test results
+* Default/admin setup instructions
+* Any remaining limitations
+
+Do not say the project is complete until the application actually runs and the tests pass.

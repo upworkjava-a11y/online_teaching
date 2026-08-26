@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Talabalar{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold">Talabalar</h1>
+<form class="card mt-4 grid gap-3 md:grid-cols-5" method="get">
+  <select class="input" name="course">
+    <option value="">Kurs</option>
+    {% for course in courses %}<option value="{{ course.pk }}" {% if filters.course.pk == course.pk %}selected{% endif %}>{{ course.title }}</option>{% endfor %}
+  </select>
+  <select class="input" name="active">
+    <option value="">Faollik</option>
+    <option value="active" {% if filters.active == "active" %}selected{% endif %}>Faol</option>
+    <option value="inactive" {% if filters.active == "inactive" %}selected{% endif %}>Nofaol</option>
+  </select>
+  <input class="input" name="progress_min" placeholder="Progress min" value="{{ filters.progress_min }}">
+  <input class="input" name="score_min" placeholder="Ball min" value="{{ filters.score_min }}">
+  <button class="btn btn-primary" type="submit">Filtrlash</button>
+</form>
+<table class="table card mt-4">
+  <tr>
+    <th>Talaba</th><th>Ro‘yxatdan o‘tgan</th><th>So‘nggi faoliyat</th><th>Kurs</th><th>Progress</th><th>Modul</th><th>Ma’ruza</th><th>Mashq</th><th>Ball</th><th>Uy vazifasi</th>
+  </tr>
+  {% for row in page %}
+    <tr>
+      <td><a class="text-sky-400" href="{% url 'analytics:student_detail' row.student.pk %}">{{ row.student }}</a></td>
+      <td>{{ row.student.date_joined|date:"Y-m-d" }}</td>
+      <td>{{ row.student.last_activity_at|date:"Y-m-d H:i"|default:"-" }}</td>
+      <td>{{ row.course }}</td>
+      <td>{{ row.stats.percent }}%</td>
+      <td>{{ row.current_module }}</td>
+      <td>{{ row.stats.completed_lectures }}</td>
+      <td>{{ row.stats.completed_exercises }}</td>
+      <td>{{ row.stats.average_score }}%</td>
+      <td>{{ row.homework_status }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}
