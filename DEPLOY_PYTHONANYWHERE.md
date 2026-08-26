@@ -96,42 +96,42 @@ Open **Web** → **Add a new web app** → Manual configuration → your Python 
 
 ### Source code / Working directory
 
-`/home/YOUR_USERNAME/My-online-platform`
+`/home/codewith/My-online-platform`
 
 ### Virtualenv
 
-`/home/YOUR_USERNAME/My-online-platform/.venv`
+`/home/codewith/My-online-platform/.venv`
 
 ### WSGI file
 
 Replace the file contents with (edit the path + username):
 
 ```python
-import os
-import sys
+    import os
+    import sys
 
-project_home = "/home/YOUR_USERNAME/My-online-platform"
-if project_home not in sys.path:
-    sys.path.insert(0, project_home)
+    project_home = "/home/codewith/My-online-platform"
+    if project_home not in sys.path:
+        sys.path.insert(0, project_home)
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.pythonanywhere")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.pythonanywhere")
 
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+    from django.core.wsgi import get_wsgi_application
+    application = get_wsgi_application()
 ```
 
 ### Static files (Web tab → Static files)
 
 | URL | Directory |
 | --- | --- |
-| `/static/` | `/home/YOUR_USERNAME/My-online-platform/staticfiles` |
-| `/media/` | `/home/YOUR_USERNAME/My-online-platform/media` |
+| `/static/` | `/home/codewith/My-online-platform/staticfiles` |
+| `/media/` | `/home/codewith/My-online-platform/media` |
 
 WhiteNoise also serves `/static/` if the mapping is missing, but PA’s Static files mapping is preferred.
 
 Click **Reload**.
 
-Site: `https://YOUR_USERNAME.pythonanywhere.com`
+Site: `https://codewith.pythonanywhere.com`
 
 ---
 

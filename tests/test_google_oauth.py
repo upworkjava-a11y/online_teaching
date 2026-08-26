@@ -28,15 +28,15 @@ def google_profile(**kwargs):
 
 @override_settings(**GOOGLE_SETTINGS)
 class GoogleOAuthTests(TestCase):
-    def test_login_page_shows_google_button(self):
+    def test_login_page_hides_google_button(self):
         response = self.client.get(reverse("accounts:login"))
-        self.assertContains(response, "Google orqali kirish")
-        self.assertContains(response, reverse("accounts:google_login"))
-        self.assertNotContains(response, "accounts.google.com/gsi/client")
+        self.assertNotContains(response, "Google orqali kirish")
+        self.assertNotContains(response, reverse("accounts:google_login"))
 
-    def test_register_page_shows_google_button(self):
+    def test_register_page_hides_google_button(self):
         response = self.client.get(reverse("accounts:register"))
-        self.assertContains(response, "Google orqali ro‘yxatdan o‘tish")
+        self.assertNotContains(response, "Google orqali ro‘yxatdan o‘tish")
+        self.assertNotContains(response, reverse("accounts:google_login"))
 
     @patch("apps.accounts.views.verify_google_id_token")
     def test_token_registers_student_from_account_picker(self, mocked):
@@ -133,12 +133,11 @@ class GoogleOAuthTests(TestCase):
 
 @override_settings(GOOGLE_CLIENT_ID="", GOOGLE_CLIENT_SECRET="", GOOGLE_OAUTH_REDIRECT_URI="")
 class GoogleOAuthDisabledTests(TestCase):
-    def test_buttons_visible_without_credentials(self):
+    def test_buttons_hidden_without_credentials(self):
         login_page = self.client.get(reverse("accounts:login"))
         register_page = self.client.get(reverse("accounts:register"))
-        self.assertContains(login_page, "Google orqali kirish")
-        self.assertContains(register_page, "Google orqali ro‘yxatdan o‘tish")
-        self.assertNotContains(login_page, "accounts.google.com/gsi/client")
+        self.assertNotContains(login_page, "Google orqali kirish")
+        self.assertNotContains(register_page, "Google orqali ro‘yxatdan o‘tish")
 
     def test_start_without_credentials(self):
         response = self.client.get(reverse("accounts:google_login") + "?from=register", follow=True)
