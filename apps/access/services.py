@@ -6,7 +6,7 @@ from apps.courses.models import Course, Lecture, Module
 
 from .models import UserContentAccess
 
-FREE_PREVIEW_MODULES = 3
+FREE_PREVIEW_MODULES = 5
 PREMIUM_GROUP_NAME = "Premium"
 # Talabalar uchun hozircha ochiq kurs(lar). Qolganlari “Hozir jarayonda”.
 OPEN_COURSE_SLUGS = frozenset({"sql"})
@@ -43,7 +43,7 @@ class AccessService:
     2. ALLOWED rule can grant access to unpublished content for that user.
     3. Admins/teachers bypass student publication rules.
     4. Premium users (or ALLOWED on the course) get every published lesson.
-    5. Other registered students get the first 3 published modules per course.
+    5. Other registered students get the first 5 published modules per course.
     """
 
     PREMIUM_REASON = "Bu modul premium. To‘liq kurs uchun admin Premium belgilashi kerak."

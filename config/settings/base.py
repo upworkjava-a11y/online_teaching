@@ -200,7 +200,11 @@ LOGGING = {
     },
 }
 
-PLATFORM_NAME = "Data Analytics Akademiyasi"
+PLATFORM_NAME = "Code with me"
+PLATFORM_MOTTO = "Data analitikani biz bilan o‘rganing"
+PLATFORM_TAGLINE = "Code with me o‘quv platformasi"
+TELEGRAM_CHANNEL_URL = "https://t.me/code_with_javohir"
+TELEGRAM_CHANNEL_LABEL = "Kanalga o‘tish"
 
 GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID", default="")
 GOOGLE_CLIENT_SECRET = env("GOOGLE_CLIENT_SECRET", default="")

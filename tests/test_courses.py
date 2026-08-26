@@ -65,4 +65,4 @@ class CourseAccessTests(TestCase):
         self.assertContains(courses_list, "Hozir jarayonda")
         self.assertContains(courses_list, "course-card-locked")
         # Non-SQL cards must not show the free-module preview line
-        self.assertEqual(courses_list.content.decode().count("Dastlabki 3 modul ochiq"), 1)
+        self.assertEqual(courses_list.content.decode().count("Dastlabki 5 modul ochiq"), 1)

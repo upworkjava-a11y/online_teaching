@@ -31,6 +31,55 @@ body.app-body {
 .sidebar a, .sidebar button, .sidebar p {
   color: var(--sidebar-text);
 }
+.brand-block {
+  display: block;
+  text-decoration: none;
+  color: var(--sidebar-text);
+}
+.brand-motto {
+  display: block;
+  font-size: 1.15rem;
+  line-height: 1.35;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #ffffff 0%, #9bd0ff 55%, #e8f1ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.brand-tagline {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  opacity: 0.88;
+  letter-spacing: 0.01em;
+}
+.telegram-chip {
+  margin-top: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #fff !important;
+  background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+  box-shadow: 0 8px 18px rgba(34, 158, 217, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.telegram-chip:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 0 10px 22px rgba(34, 158, 217, 0.36);
+}
+.telegram-chip__icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+}
 .nav-link {
   display: block;
   border-radius: 12px;

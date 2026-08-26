@@ -49,7 +49,7 @@ class User(AbstractUser):
     is_premium = models.BooleanField(
         default=False,
         verbose_name="Premium",
-        help_text="Belgilansa, foydalanuvchi har bir kursning barcha modullarini ochadi. Belgilanmasa — faqat dastlabki 3 modul.",
+        help_text="Belgilansa, foydalanuvchi har bir kursning barcha modullarini ochadi. Belgilanmasa — faqat dastlabki 5 modul.",
     )
     last_activity_at = models.DateTimeField(null=True, blank=True)
 
