@@ -4,11 +4,13 @@ from django.views import View
 from apps.access.services import access_service
 from apps.core.views import RoleRequiredMixin
 from apps.courses.models import Course
-from apps.exercises.models import ExerciseAttempt
+from apps.exercises.models import Exercise, ExerciseAttempt
 from apps.homework.models import HomeworkAssignment
 from apps.homework.services import homework_service
 from apps.progress.models import LectureProgress
 from apps.progress.services import progress_service
+
+from .leaderboard import DIFFICULTY_LABELS, DIFFICULTY_POINTS, build_leaderboard, my_rank, recent_correct_solves
 
 
 class StudentDashboardView(RoleRequiredMixin, View):
@@ -50,6 +52,7 @@ class StudentDashboardView(RoleRequiredMixin, View):
             latest = homework_service.latest_for_student(request.user, assignment)
             if latest and latest.status in ("submitted", "under_review", "needs_revision", "reviewed"):
                 homework_rows.append({"assignment": assignment, "latest": latest})
+        board = build_leaderboard(limit=50)
         return render(
             request,
             "dashboard/student.html",
@@ -59,6 +62,7 @@ class StudentDashboardView(RoleRequiredMixin, View):
                 "recent_attempts": recent_attempts,
                 "recent_lectures": recent_lectures,
                 "homework_rows": homework_rows,
+                "leaderboard_me": my_rank(board, request.user.pk),
             },
         )
 
@@ -93,3 +97,29 @@ class StudentProgressView(RoleRequiredMixin, View):
                 }
             )
         return render(request, "dashboard/progress.html", {"rows": rows})
+
+
+class StudentLeaderboardView(RoleRequiredMixin, View):
+    allowed_roles = ("student", "teacher", "admin")
+
+    def get(self, request):
+        board = build_leaderboard(limit=50)
+        podium = board[:3]
+        me = my_rank(board, request.user.pk) if request.user.is_student else None
+        recent = recent_correct_solves(limit=12)
+        return render(
+            request,
+            "dashboard/leaderboard.html",
+            {
+                "board": board,
+                "podium": podium,
+                "me": me,
+                "recent": recent,
+                "difficulty_points": {
+                    "easy": DIFFICULTY_POINTS[Exercise.Difficulty.EASY],
+                    "medium": DIFFICULTY_POINTS[Exercise.Difficulty.MEDIUM],
+                    "hard": DIFFICULTY_POINTS[Exercise.Difficulty.HARD],
+                },
+                "difficulty_labels": DIFFICULTY_LABELS,
+            },
+        )

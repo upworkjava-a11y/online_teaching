@@ -18,6 +18,21 @@
     </div>
   {% endif %}
 
+  <div class="card leaderboard-teaser">
+    <div>
+      <p class="muted text-sm">Reyting</p>
+      <h2 class="text-xl font-bold">
+        {% if leaderboard_me %}
+          Siz #{{ leaderboard_me.rank }} · {{ leaderboard_me.points }} ball
+        {% else %}
+          Masala yechib reytingga chiqing
+        {% endif %}
+      </h2>
+      <p class="muted mt-1 text-sm">Oson +1 · O‘rta +2 · Qiyin +3</p>
+    </div>
+    <a class="btn" href="{% url 'dashboard:leaderboard' %}">Reytingni ko‘rish</a>
+  </div>
+
   <div class="grid gap-4 md:grid-cols-2">
     {% for card in course_cards %}
       {% if card.coming_soon %}

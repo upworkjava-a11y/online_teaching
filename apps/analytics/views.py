@@ -9,6 +9,7 @@ import json
 from apps.accounts.models import User
 from apps.core.views import RoleRequiredMixin
 from apps.courses.models import Course, Module
+from apps.dashboard.leaderboard import build_leaderboard, recent_correct_solves
 from apps.exercises.models import ExerciseAttempt
 from apps.homework.models import HomeworkReview, HomeworkSubmission
 from apps.homework.services import homework_service
@@ -36,6 +37,7 @@ class TeacherRequiredMixin(RoleRequiredMixin):
 
 class TeacherDashboardView(TeacherRequiredMixin, View):
     def get(self, request):
+        board = build_leaderboard(limit=10)
         return render(
             request,
             "analytics/dashboard.html",
@@ -47,6 +49,9 @@ class TeacherDashboardView(TeacherRequiredMixin, View):
                 "distribution_json": json.dumps(progress_distribution(request.user)),
                 "module_json": json.dumps(module_progress_series(request.user)),
                 "scores_json": json.dumps(score_series(request.user)),
+                "leaderboard_top": board[:3],
+                "leaderboard_preview": board,
+                "recent_solves": recent_correct_solves(limit=6),
             },
         )
 

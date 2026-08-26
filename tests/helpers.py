@@ -52,17 +52,18 @@ def make_lecture(module, slug="select", published=True, title="SELECT nima?"):
     )
 
 
-def make_exercise(module, slug="ex1", published=True, lecture=None):
+def make_exercise(module, slug="ex1", published=True, lecture=None, difficulty=None, title="Test mashq", order=1):
     exercise = Exercise.objects.create(
         module=module,
         lecture=lecture,
-        title="Test mashq",
+        title=title,
         slug=slug,
         description="Tavsif",
         task="SELECT name FROM customers",
         hints=["hint"],
-        order=1,
+        order=order,
         is_published=published,
+        difficulty=difficulty or Exercise.Difficulty.EASY,
         require_row_order=False,
         require_column_order=False,
     )

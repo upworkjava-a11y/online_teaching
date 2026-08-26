@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Reyting{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <p class="muted text-sm">Reyting</p>
+    <h1 class="text-3xl font-extrabold">Reyting jadvali</h1>
+    <p class="muted mt-1">
+      Ko‘proq masala yechganlar yuqorida. Ball:
+      Oson +{{ difficulty_points.easy }} ·
+      O‘rta +{{ difficulty_points.medium }} ·
+      Qiyin +{{ difficulty_points.hard }}.
+      Har bir mashq bir marta hisoblanadi.
+    </p>
+  </div>
+
+  {% if me %}
+    <div class="card leaderboard-me">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p class="muted text-sm">Sizning o‘rningiz</p>
+          <p class="text-2xl font-extrabold">#{{ me.rank }} · {{ me.points }} ball</p>
+        </div>
+        <div class="text-sm muted">
+          Yechilgan: {{ me.solved_count }} ·
+          Oson {{ me.easy_count }} · O‘rta {{ me.medium_count }} · Qiyin {{ me.hard_count }}
+          {% if me.last_solved_at %}
+            <div>So‘nggi yechim: {{ me.last_solved_at|date:"d.m.Y H:i" }}</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <section class="podium">
+    {% for item in podium %}
+      <article class="podium-card podium-{{ item.rank }}">
+        <div class="cup cup-{{ item.rank }}" aria-hidden="true">
+          {% if item.rank == 1 %}🥇{% elif item.rank == 2 %}🥈{% else %}🥉{% endif %}
+        </div>
+        <p class="podium-rank">{{ item.rank }}-o‘rin</p>
+        <h2 class="podium-name">{{ item.name }}</h2>
+        <p class="podium-points">{{ item.points }} ball</p>
+        <p class="podium-meta">
+          {{ item.solved_count }} masala ·
+          O {{ item.easy_count }} / O‘ {{ item.medium_count }} / Q {{ item.hard_count }}
+        </p>
+        {% if item.last_solved_at %}
+          <p class="podium-last">So‘nggi: {{ item.last_solved_at|date:"d.m.Y H:i" }}</p>
+        {% endif %}
+      </article>
+    {% empty %}
+      <div class="card muted">Hali hech kim masala yechmagan. Birinchilardan bo‘ling!</div>
+    {% endfor %}
+  </section>
+
+  <section class="card">
+    <h2 class="text-lg font-bold">To‘liq jadval</h2>
+    <div class="mt-4 overflow-x-auto">
+      <table class="table leaderboard-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Talaba</th>
+            <th>Ball</th>
+            <th>Masalalar</th>
+            <th>Oson</th>
+            <th>O‘rta</th>
+            <th>Qiyin</th>
+            <th>So‘nggi yechim</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in board %}
+            <tr class="{% if me and item.student_id == me.student_id %}is-me{% endif %} {% if item.rank <= 3 %}is-top-{{ item.rank }}{% endif %}">
+              <td>
+                {% if item.rank == 1 %}<span class="rank-badge gold">🥇 1</span>
+                {% elif item.rank == 2 %}<span class="rank-badge silver">🥈 2</span>
+                {% elif item.rank == 3 %}<span class="rank-badge bronze">🥉 3</span>
+                {% else %}{{ item.rank }}{% endif %}
+              </td>
+              <td>{{ item.name }}</td>
+              <td><strong>{{ item.points }}</strong></td>
+              <td>{{ item.solved_count }}</td>
+              <td>{{ item.easy_count }}</td>
+              <td>{{ item.medium_count }}</td>
+              <td>{{ item.hard_count }}</td>
+              <td>{% if item.last_solved_at %}{{ item.last_solved_at|date:"d.m.Y H:i" }}{% else %}—{% endif %}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="8" class="muted">Reyting hali bo‘sh.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="text-lg font-bold">So‘nggi yechilgan masalalar</h2>
+    <ul class="mt-3 space-y-2 text-sm">
+      {% for attempt in recent %}
+        <li class="recent-solve">
+          <span class="font-semibold">{{ attempt.student.get_full_name|default:attempt.student.email }}</span>
+          · {{ attempt.exercise.title }}
+          <span class="diff-pill diff-{{ attempt.exercise.difficulty }}">
+            {% if attempt.exercise.difficulty == "easy" %}Oson · +{{ difficulty_points.easy }}
+            {% elif attempt.exercise.difficulty == "medium" %}O‘rta · +{{ difficulty_points.medium }}
+            {% else %}Qiyin · +{{ difficulty_points.hard }}{% endif %}
+          </span>
+          <span class="muted">{{ attempt.created_at|date:"d.m.Y H:i" }}</span>
+        </li>
+      {% empty %}
+        <li class="muted">Hali yechimlar yo‘q.</li>
+      {% endfor %}
+    </ul>
+  </section>
+</div>
+{% endblock %}

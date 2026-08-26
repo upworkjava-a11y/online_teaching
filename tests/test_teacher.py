@@ -70,3 +70,16 @@ class TeacherAccessTests(TestCase):
         self.assertEqual(submission.status, "reviewed")
         self.assertEqual(submission.latest_review.score, 90)
         self.assertIn("Yaxshi", submission.latest_review.feedback)
+
+    def test_teacher_can_open_reyting_page(self):
+        self.client.force_login(self.teacher)
+        response = self.client.get(reverse("dashboard:leaderboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Reyting jadvali")
+
+    def test_teacher_dashboard_shows_reyting(self):
+        self.client.force_login(self.teacher)
+        response = self.client.get(reverse("analytics:dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Reyting")
+        self.assertContains(response, "Reytingni ochish")

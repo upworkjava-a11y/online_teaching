@@ -40,10 +40,12 @@
             <a class="nav-link {% if request.path == '/dashboard/' %}is-active{% endif %}" href="{% url 'dashboard:home' %}">Mening panelim</a>
             <a class="nav-link {% if '/courses/' in request.path %}is-active{% endif %}" href="{% url 'courses:list' %}">Kurslarim</a>
             <a class="nav-link {% if '/dashboard/progress/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:progress' %}">Progressim</a>
+            <a class="nav-link {% if '/dashboard/leaderboard/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:leaderboard' %}">Reyting</a>
             <a class="nav-link {% if '/homework/' in request.path %}is-active{% endif %}" href="{% url 'homework:list' %}">Uy vazifasi</a>
             <a class="nav-link {% if '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'accounts:profile' %}">Profil</a>
           {% elif user.is_teacher or user.is_admin %}
             <a class="nav-link {% if request.path == '/teacher/' %}is-active{% endif %}" href="{% url 'analytics:dashboard' %}">Natijalar paneli</a>
+            <a class="nav-link {% if '/dashboard/leaderboard/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:leaderboard' %}">Reyting</a>
             <a class="nav-link {% if '/teacher/insights/' in request.path %}is-active{% endif %}" href="{% url 'analytics:insights' %}">Progress dashboard</a>
             <a class="nav-link {% if '/teacher/students/' in request.path %}is-active{% endif %}" href="{% url 'analytics:students' %}">Talabalar</a>
             <a class="nav-link {% if '/teacher/homework/' in request.path %}is-active{% endif %}" href="{% url 'analytics:homework' %}">Uy vazifasi</a>
