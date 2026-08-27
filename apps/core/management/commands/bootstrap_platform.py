@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -75,10 +74,45 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(f"Sandbox seed o‘tkazib yuborildi: {exc}"))
         self.stdout.write(self.style.SUCCESS("Platforma boshlang‘ich ma’lumotlari tayyor."))
 
+    def _preferred_username(self, preferred: str, email: str) -> str:
+        """Avoid UNIQUE(username) clashes when email is new but username is taken."""
+        from apps.accounts.utils import unique_username_from_email
+
+        if preferred and not User.objects.filter(username=preferred).exists():
+            return preferred
+        return unique_username_from_email(email)
+
+    def _ensure_user(
+        self,
+        *,
+        email: str,
+        preferred_username: str,
+        password: str,
+        role: str,
+        first_name: str,
+        last_name: str,
+        is_staff: bool = False,
+        is_superuser: bool = False,
+    ) -> User:
+        user = User.objects.filter(email=email).first()
+        if user:
+            return user
+        user = User(
+            email=email,
+            username=self._preferred_username(preferred_username, email),
+            first_name=first_name,
+            last_name=last_name,
+            role=role,
+            is_staff=is_staff,
+            is_superuser=is_superuser,
+            is_active=True,
+        )
+        user.set_password(password)
+        user.save()
+        return user
+
     def _create_users(self):
         Group.objects.get_or_create(name=PREMIUM_GROUP_NAME)
-        email = getattr(settings, "env", None)
-        admin_email = settings.env("DJANGO_SUPERUSER_EMAIL", default="admin@example.com") if hasattr(settings, "env") else "admin@example.com"
         try:
             from config.settings.base import env
 
@@ -92,38 +126,32 @@ class Command(BaseCommand):
             admin_first = "Admin"
             admin_last = "User"
 
-        if not User.objects.filter(email=admin_email).exists():
-            User.objects.create_superuser(
-                email=admin_email,
-                password=admin_password,
-                first_name=admin_first,
-                last_name=admin_last,
-                username="admin",
-            )
-        teacher, created = User.objects.get_or_create(
+        self._ensure_user(
+            email=admin_email,
+            preferred_username="admin",
+            password=admin_password,
+            role=User.Role.ADMIN,
+            first_name=admin_first,
+            last_name=admin_last,
+            is_staff=True,
+            is_superuser=True,
+        )
+        self._ensure_user(
             email="teacher@example.com",
-            defaults={
-                "username": "teacher",
-                "first_name": "Nodira",
-                "last_name": "Toshpulatova",
-                "role": User.Role.TEACHER,
-            },
+            preferred_username="teacher",
+            password="TeacherPass123!",
+            role=User.Role.TEACHER,
+            first_name="Nodira",
+            last_name="Toshpulatova",
         )
-        if created:
-            teacher.set_password("TeacherPass123!")
-            teacher.save()
-        student, created = User.objects.get_or_create(
+        self._ensure_user(
             email="student@example.com",
-            defaults={
-                "username": "student",
-                "first_name": "Ali",
-                "last_name": "Valiyev",
-                "role": User.Role.STUDENT,
-            },
+            preferred_username="student",
+            password="StudentPass123!",
+            role=User.Role.STUDENT,
+            first_name="Ali",
+            last_name="Valiyev",
         )
-        if created:
-            student.set_password("StudentPass123!")
-            student.save()
 
     def _create_courses(self):
         specs = [
