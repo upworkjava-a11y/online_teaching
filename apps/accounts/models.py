@@ -142,7 +142,7 @@ class TelegramAccount(TimeStampedModel):
     class Meta:
         verbose_name = "Telegram hisobi"
         verbose_name_plural = "Telegram hisoblari"
-        indexes = [models.Index(fields=["telegram_id"])]
+        indexes = [models.Index(fields=["telegram_id"], name="accounts_te_telegra_idx")]
 
     def __str__(self):
         return f"{self.user} ({self.telegram_id})"
