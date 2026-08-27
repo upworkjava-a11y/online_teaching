@@ -48,10 +48,8 @@ class CoursePremiumOfferView(GuestBrowseMixin, View):
     def get(self, request, slug):
         course = get_object_or_404(Course, slug=slug, is_published=True, is_visible=True)
         ctx = {"course": course, **premium_offer_context(course)}
-        # Kurs nomlarini narx jadvaliga bog‘lash
-        titles = {c.slug: c.title for c in Course.objects.filter(slug__in=[r["slug"] for r in ctx["premium_price_rows"]])}
         for row in ctx["premium_price_rows"]:
-            row["title"] = titles.get(row["slug"], row["slug"].replace("-", " ").title())
+            row.setdefault("title", row["slug"].replace("-", " ").title())
             row["is_current"] = row["slug"] == course.slug
         ctx["already_premium"] = access_service.has_full_course_access(request.user, course)
         return render(request, "courses/premium.html", ctx)

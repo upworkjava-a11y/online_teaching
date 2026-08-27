@@ -12,9 +12,18 @@ class PremiumOfferTests(TestCase):
         self.course = make_course("sql", published=True, visible=True, title="SQL")
 
     def test_default_price(self):
-        self.assertEqual(price_for_course("sql"), 50_000)
+        self.assertEqual(price_for_course("sql", course=self.course), 50_000)
         self.assertEqual(price_for_course("python"), DEFAULT_PREMIUM_PRICE)
         self.assertIn("50 000", format_sum(50_000))
+
+    def test_admin_price_change_shows_on_page(self):
+        self.course.premium_price = 75_000
+        self.course.save(update_fields=["premium_price"])
+        self.client.force_login(self.student)
+        response = self.client.get(reverse("courses:premium", args=["sql"]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "75 000 so‘m")
+        self.assertNotContains(response, "50 000 so‘m")
 
     def test_premium_page_content(self):
         self.client.force_login(self.student)

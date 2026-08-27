@@ -19,11 +19,22 @@ class LectureInline(admin.TabularInline):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ("title", "slug", "order", "is_published", "is_visible")
+    list_display = ("title", "slug", "premium_price", "order", "is_published", "is_visible")
     list_filter = ("is_published", "is_visible")
     search_fields = ("title", "slug", "description")
-    list_editable = ("order", "is_published", "is_visible")
+    list_editable = ("premium_price", "order", "is_published", "is_visible")
     prepopulated_fields = {"slug": ("title",)}
+    fieldsets = (
+        (None, {"fields": ("title", "slug", "description", "order")}),
+        (
+            "Premium narx",
+            {
+                "fields": ("premium_price",),
+                "description": "Talabaga ko‘rsatiladigan to‘lov summasi (so‘m).",
+            },
+        ),
+        ("Holat", {"fields": ("is_published", "is_visible")}),
+    )
     inlines = [ModuleInline]
 
 

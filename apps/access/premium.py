@@ -2,7 +2,7 @@
 
 from django.conf import settings
 
-# Kurs slug → so‘m (default 50_000)
+# Fallback (kurs DB da yo‘q yoki premium_price=0 bo‘lsa)
 COURSE_PREMIUM_PRICES: dict[str, int] = {
     "sql": 50_000,
     "python": 50_000,
@@ -20,7 +20,20 @@ PREMIUM_TELEGRAM = "@just_585"
 PREMIUM_TELEGRAM_URL = "https://t.me/just_585"
 
 
-def price_for_course(slug: str) -> int:
+def price_for_course(slug: str, course=None) -> int:
+    """Admin dagi Course.premium_price asosiy manba; yo‘q bo‘lsa fallback."""
+    if course is not None:
+        amount = getattr(course, "premium_price", None)
+        if amount:
+            return int(amount)
+    try:
+        from apps.courses.models import Course
+
+        row = Course.objects.filter(slug=slug).values_list("premium_price", flat=True).first()
+        if row:
+            return int(row)
+    except Exception:
+        pass
     return COURSE_PREMIUM_PRICES.get(slug, DEFAULT_PREMIUM_PRICE)
 
 
@@ -29,10 +42,25 @@ def format_sum(amount: int) -> str:
 
 
 def premium_offer_context(course=None) -> dict:
+    from apps.courses.models import Course
+
     price_rows = []
-    for slug, amount in COURSE_PREMIUM_PRICES.items():
-        price_rows.append({"slug": slug, "amount": amount, "amount_label": format_sum(amount)})
-    selected_price = price_for_course(course.slug) if course else DEFAULT_PREMIUM_PRICE
+    for c in Course.objects.filter(is_published=True).order_by("order", "id"):
+        amount = price_for_course(c.slug, course=c)
+        price_rows.append(
+            {
+                "slug": c.slug,
+                "title": c.title,
+                "amount": amount,
+                "amount_label": format_sum(amount),
+            }
+        )
+    # Agar DB bo‘sh bo‘lsa (testlar), fallback jadval
+    if not price_rows:
+        for slug, amount in COURSE_PREMIUM_PRICES.items():
+            price_rows.append({"slug": slug, "amount": amount, "amount_label": format_sum(amount)})
+
+    selected_price = price_for_course(course.slug, course=course) if course else DEFAULT_PREMIUM_PRICE
     return {
         "premium_price": selected_price,
         "premium_price_label": format_sum(selected_price),

@@ -14,6 +14,10 @@ class Course(TimeStampedModel):
     slug = models.SlugField(max_length=220, unique=True)
     description = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
+    premium_price = models.PositiveIntegerField(
+        default=50_000,
+        help_text="Kurs premium narxi (so‘m). Admin orqali o‘zgartiriladi.",
+    )
     is_published = models.BooleanField(default=False)
     is_visible = models.BooleanField(default=False, help_text="Talabalar ro‘yxatida ko‘rinsinmi")
 
