@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from apps.access.services import PREMIUM_GROUP_NAME
+from apps.access.services import PREMIUM_GROUP_NAME, access_service
 from apps.accounts.models import TeacherProfile, User
 from apps.courses.models import Course, CourseEnrollment, Lecture, Module
 from apps.exercises.models import Dataset, Exercise, ExerciseDataset, ExerciseExpectedResult
@@ -51,10 +51,23 @@ class Command(BaseCommand):
         self._seed_structured_course(courses["excel"], build_excel_modules())
         self._seed_structured_course(courses["statistics"], build_statistics_modules())
         self._seed_structured_course(courses["python"], build_python_modules())
+        self._seed_python_skill_tests(courses["python"])
         self._seed_structured_course(courses["power-bi"], build_powerbi_modules())
         self._seed_structured_course(courses["real-projects"], build_projects_modules())
         for course in courses.values():
             self._assign_teacher(course)
+        self._seed_weekly_contest(
+            courses["sql"],
+            slug="haftalik-sql",
+            title="Haftalik SQL musobaqasi",
+            description=(
+                "Shu hafta ichida SQL masalalarini yeching. "
+                "Ball: Oson +1, O‘rta +2, Qiyin +3. Musobaqa reytingi umumiy reytingdan alohida."
+            ),
+            seed_skill_tests=True,
+        )
+        # Production release: faqat SQL — Python musobaqasini yashirish
+        self._hide_python_for_release(courses["python"])
         try:
             seed_sandbox_database()
             self.stdout.write(self.style.SUCCESS("Sandbox datasetlari yuklandi."))
@@ -123,6 +136,8 @@ class Command(BaseCommand):
         ]
         courses = {}
         for slug, title, description, order in specs:
+            # Release: Python yashirin; SQL ochiq; qolganlar “Hozir jarayonda” uchun ko‘rinadi
+            is_visible = slug != "python"
             course, _ = Course.objects.get_or_create(
                 slug=slug,
                 defaults={
@@ -130,14 +145,14 @@ class Command(BaseCommand):
                     "description": description,
                     "order": order,
                     "is_published": True,
-                    "is_visible": True,
+                    "is_visible": is_visible,
                 },
             )
             course.title = title
             course.description = description
             course.order = order
             course.is_published = True
-            course.is_visible = True
+            course.is_visible = is_visible
             course.save(update_fields=["title", "description", "order", "is_published", "is_visible"])
             courses[slug] = course
         return courses
@@ -167,9 +182,18 @@ class Command(BaseCommand):
                         "is_published": True,
                     },
                 )
-                practice = practice_map.get(lecture.slug)
-                if practice:
-                    self._upsert_exercise(module, practice, [], lecture=lecture, order=100 + index)
+                practices = practice_map.get(lecture.slug)
+                if practices:
+                    if isinstance(practices, dict):
+                        practices = [practices]
+                    for p_i, practice in enumerate(practices):
+                        self._upsert_exercise(
+                            module,
+                            practice,
+                            [],
+                            lecture=lecture,
+                            order=100 + index * 10 + p_i,
+                        )
                 if module_data.get("homework") and index == len(module_data["lectures"]):
                     HomeworkAssignment.objects.update_or_create(
                         lecture=lecture,
@@ -471,6 +495,13 @@ class Command(BaseCommand):
     def _upsert_exercise(self, module, exercise_data, datasets, lecture=None, order=1):
         kind = exercise_data.get("kind", "sql")
         difficulty = exercise_data.get("difficulty", "easy")
+        editorial = exercise_data.get("editorial") or (
+            "Yechim yo‘riqnomasi:\n"
+            "1) Topshiriqda qaysi ustunlar kerakligini aniqlang.\n"
+            "2) Kerakli jadval(lar)ni FROM qismida yozing.\n"
+            "3) WHERE / GROUP BY / ORDER BY shartlarini bosqichma-bosqich qo‘shing.\n"
+            "4) Natijani kutilgan ustunlar bilan solishtiring."
+        )
         exercise, _ = Exercise.objects.update_or_create(
             module=module,
             slug=exercise_data["slug"],
@@ -479,9 +510,11 @@ class Command(BaseCommand):
                 "description": exercise_data["description"],
                 "task": exercise_data["task"],
                 "hints": exercise_data.get("hints") or [],
+                "editorial": editorial,
                 "kind": kind,
                 "difficulty": difficulty,
                 "quiz_options": exercise_data.get("quiz_options") or [],
+                "is_skill_test": bool(exercise_data.get("is_skill_test", False)),
                 "order": order,
                 "is_published": True,
                 "require_row_order": exercise_data.get("require_row_order", False),
@@ -497,6 +530,126 @@ class Command(BaseCommand):
             defaults={"columns": exercise_data["columns"], "rows": exercise_data["rows"]},
         )
         return exercise
+
+    def _seed_weekly_contest(
+        self,
+        course: Course,
+        *,
+        slug: str,
+        title: str,
+        description: str,
+        seed_skill_tests: bool = False,
+        limit: int = 8,
+    ):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from apps.contests.models import Contest, ContestExercise
+
+        now = timezone.now()
+        week_start = now - timedelta(days=now.weekday())
+        starts = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
+        ends = starts + timedelta(days=7)
+        contest, _ = Contest.objects.update_or_create(
+            slug=slug,
+            defaults={
+                "title": title,
+                "description": description,
+                "starts_at": starts,
+                "ends_at": ends,
+                "is_published": True,
+            },
+        )
+        # Preview (ochiq) modullardan masala tanlash — bepul talaba ham yecha olsin
+        preview_ids = access_service.preview_module_ids(course)
+        exercises = list(
+            Exercise.objects.filter(
+                module__course=course,
+                module_id__in=preview_ids,
+                is_published=True,
+                is_skill_test=False,
+            ).order_by("difficulty", "order", "id")[:limit]
+        )
+        if len(exercises) < limit:
+            # preview yetmasa — kursdagi boshqa mashqlar
+            extra = list(
+                Exercise.objects.filter(
+                    module__course=course,
+                    is_published=True,
+                    is_skill_test=False,
+                )
+                .exclude(pk__in=[e.pk for e in exercises])
+                .order_by("module__order", "order", "id")[: limit - len(exercises)]
+            )
+            exercises.extend(extra)
+        ContestExercise.objects.filter(contest=contest).exclude(exercise__in=exercises).delete()
+        for index, exercise in enumerate(exercises, start=1):
+            ContestExercise.objects.update_or_create(
+                contest=contest,
+                exercise=exercise,
+                defaults={"order": index, "points": 0},
+            )
+        if seed_skill_tests:
+            self._seed_skill_tests(course)
+        self.stdout.write(self.style.SUCCESS(f"Musobaqa tayyor: {contest.title} ({len(exercises)} masala)."))
+
+    def _seed_skill_tests(self, course: Course):
+        """Har bir SQL moduliga kamida 10 ta 4 variantli bilim testi."""
+        from apps.core.sql_skill_tests import MODULE_SKILL_TESTS, skill_tests_for_module
+
+        total = 0
+        for module in course.modules.filter(is_published=True).order_by("order"):
+            # Eski bitta umumiy testni olib tashlash
+            Exercise.objects.filter(module=module, slug=f"{module.slug}-bilim-testi").delete()
+            quizzes = skill_tests_for_module(module.slug)
+            if not quizzes:
+                # Noma’lum modul — kamida SELECT asoslari to‘plamidan nusxa
+                quizzes = skill_tests_for_module("sql-asoslari")
+                for q in quizzes:
+                    q["slug"] = f"bt-{module.slug}-{q['slug'].rsplit('-', 1)[-1]}"
+            for index, quiz in enumerate(quizzes, start=1):
+                self._upsert_exercise(module, quiz, [], order=900 + index)
+                total += 1
+        covered = sorted(MODULE_SKILL_TESTS.keys())
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Bilim testlari yuklandi: {total} ta savol "
+                f"({len(covered)} modul uchun maxsus to‘plam)."
+            )
+        )
+
+    def _seed_python_skill_tests(self, course: Course):
+        """Python moduli uchun bilim testlari (SQL bilan bir xil format)."""
+        from apps.core.python_skill_tests import MODULE_SKILL_TESTS, skill_tests_for_module
+
+        total = 0
+        for module in course.modules.filter(is_published=True).order_by("order"):
+            quizzes = skill_tests_for_module(module.slug)
+            if not quizzes:
+                continue
+            for index, quiz in enumerate(quizzes, start=1):
+                self._upsert_exercise(module, quiz, [], order=900 + index)
+                total += 1
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Python bilim testlari: {total} ta savol ({len(MODULE_SKILL_TESTS)} modul)."
+            )
+        )
+
+    def _hide_python_for_release(self, course: Course):
+        """Hozirgi release: faqat SQL ochiq — Python kurs va musobaqasini yashirish."""
+        from apps.contests.models import Contest
+
+        course.is_visible = False
+        course.save(update_fields=["is_visible"])
+        updated = Contest.objects.filter(slug="haftalik-python").update(is_published=False)
+        self.stdout.write(
+            self.style.WARNING(
+                f"Release: Python kursi yashirildi (is_visible=False)"
+                f"{', musobaqa yopildi' if updated else ''}."
+            )
+        )
 
     def _assign_teacher(self, course: Course):
         teacher = User.objects.filter(email="teacher@example.com").first()

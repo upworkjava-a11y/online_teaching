@@ -62,6 +62,8 @@ class ExerciseService:
             "exercise_attempt",
             extra={"exercise_id": exercise.pk, "student_id": student.pk, "is_correct": ok, "kind": "quiz"},
         )
+        if ok:
+            self._on_correct(student, exercise)
         return attempt
 
     def _run_sql(self, student, exercise: Exercise, sql: str) -> ExerciseAttempt:
@@ -111,7 +113,19 @@ class ExerciseService:
                 "execution_ms": attempt.execution_ms,
             },
         )
+        if attempt.is_correct:
+            self._on_correct(student, exercise)
         return attempt
+
+    def _on_correct(self, student, exercise: Exercise) -> None:
+        from apps.contests.services import sync_student_contests_on_solve
+        from apps.progress.certificates import issue_course_certificate, issue_module_certificate
+        from apps.progress.streak import record_correct_solve
+
+        record_correct_solve(student)
+        sync_student_contests_on_solve(student, exercise)
+        issue_module_certificate(student, exercise.module)
+        issue_course_certificate(student, exercise.module.course)
 
 
 exercise_service = ExerciseService()

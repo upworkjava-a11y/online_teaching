@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Premium — {{ course.title }}{% endblock %}
+{% block content %}
+<div class="premium-offer">
+  <div class="premium-offer-hero">
+    <p class="premium-eyebrow">Premium ochish</p>
+    <h1>{{ course.title }}</h1>
+    <p class="premium-lead">
+      To‘liq kurs, barcha modullar va mentor yordami — bir marta to‘lov qilib, o‘qishni to‘xtovsiz davom ettiring.
+    </p>
+    {% if already_premium %}
+      <p class="ok font-semibold mt-4">Sizda bu kurs uchun to‘liq ruxsat bor.</p>
+      <a class="btn btn-primary mt-4" href="{% url 'courses:detail' course.slug %}">Kursga qaytish</a>
+    {% else %}
+      <p class="premium-price-big">{{ premium_price_label }}</p>
+      <p class="muted text-sm">{{ course.title }} — to‘liq Premium</p>
+    {% endif %}
+  </div>
+
+  {% if not already_premium %}
+  <section class="card premium-motivation">
+    <h2 class="text-xl font-bold">Nima uchun Premium?</h2>
+    <ul class="premium-benefits">
+      <li>Barcha yopiq modullar va bilim testlari ochiladi</li>
+      <li><strong>Uy vazifalari tekshirib boriladi</strong> — o‘qituvchi baho va izoh beradi</li>
+      <li><strong>Qo‘shimcha mentor izohlari</strong> — xatolarni tuzatish va keyingi qadamlar bo‘yicha yo‘l-yo‘riq</li>
+      <li>Amaliyot, musobaqa va sertifikat yo‘liga to‘liq kirish</li>
+    </ul>
+  </section>
+
+  <section class="card premium-pay">
+    <h2 class="text-xl font-bold">To‘lov yo‘riqnomasi</h2>
+    <ol class="premium-steps">
+      <li>Quyidagi kartaga <strong>{{ premium_price_label }}</strong> o‘tkazing.</li>
+      <li>To‘lov cheki (screenshot) ni Telegram orqali yuboring.</li>
+      <li>Ism-familiyangiz va qaysi kurs uchun to‘laganingizni yozing — <strong>faqat shu kurs</strong> ochiladi.</li>
+    </ol>
+
+    <div class="premium-card-box">
+      <p class="muted text-sm">Karta raqami</p>
+      <p class="premium-card-number" id="premium-card">{{ premium_card_number }}</p>
+      <p class="font-semibold mt-2">{{ premium_card_holder }}</p>
+      <button class="btn btn-ghost mt-3" type="button" id="copy-card-btn">Raqamni nusxalash</button>
+    </div>
+
+    <div class="premium-tg-box">
+      <p class="muted text-sm">Chek screenshotini yuboring</p>
+      <a class="btn btn-primary premium-tg-btn" href="{{ premium_telegram_url }}" target="_blank" rel="noopener noreferrer">
+        Telegram: {{ premium_telegram }}
+      </a>
+      <p class="muted text-sm mt-3">Invoice / chek rasmini shu akkauntga yuboring — Premium tez ochiladi.</p>
+    </div>
+  </section>
+
+  <div class="flex flex-wrap gap-3">
+    <a class="btn btn-ghost" href="{% url 'courses:detail' course.slug %}">← Kursga qaytish</a>
+    <a class="btn btn-ok" href="{{ premium_telegram_url }}" target="_blank" rel="noopener noreferrer">Chek yuborish</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+(function () {
+  var btn = document.getElementById("copy-card-btn");
+  var card = document.getElementById("premium-card");
+  if (!btn || !card) return;
+  btn.addEventListener("click", function () {
+    var text = card.textContent.replace(/\s+/g, " ").trim();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text.replace(/ /g, "")).then(function () {
+        btn.textContent = "Nusxa olindi ✓";
+        setTimeout(function () { btn.textContent = "Raqamni nusxalash"; }, 1800);
+      });
+    }
+  });
+})();
+</script>
+{% endblock %}

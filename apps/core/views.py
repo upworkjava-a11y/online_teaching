@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import connection
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views import View
 
 
@@ -26,7 +26,7 @@ class RootRedirectView(View):
     def get(self, request):
         user = request.user
         if not user.is_authenticated:
-            return redirect("accounts:login")
+            return redirect("courses:list")
         if user.is_admin:
             return redirect("admin:index")
         if user.is_teacher:
@@ -35,7 +35,38 @@ class RootRedirectView(View):
 
 
 class RoleRequiredMixin(LoginRequiredMixin):
+    """Kirish talab qilinadi. Mehmon uchun chiroyli o‘zbekcha sahifa."""
+
     allowed_roles: tuple[str, ...] = ()
+    auth_gate_title = "Davom etish uchun hisob kerak"
+    auth_gate_message = (
+        "Mashq, test yoki uy vazifasini bajarish uchun tizimga kiring yoki ro‘yxatdan o‘ting."
+    )
+
+    def get_auth_gate_next(self) -> str:
+        """GET uchun shu sahifa; POST uchun xavfsiz GET manzil (405 oldini olish)."""
+        from apps.accounts.redirects import safe_next_url
+
+        request = self.request
+        if request.method in ("GET", "HEAD"):
+            return request.get_full_path()
+        referer = request.META.get("HTTP_REFERER", "")
+        return safe_next_url(request, referer, fallback="/courses/") or "/courses/"
+
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            return redirect("root")
+        # 200: foydalanuvchi sahifasi (log shovqinini kamaytirish; API emas)
+        return render(
+            self.request,
+            "accounts/auth_gate.html",
+            {
+                "next": self.get_auth_gate_next(),
+                "gate_title": self.auth_gate_title,
+                "gate_message": self.auth_gate_message,
+            },
+            status=200,
+        )
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -44,6 +75,22 @@ class RoleRequiredMixin(LoginRequiredMixin):
             if request.user.is_admin:
                 return redirect("admin:index")
             if request.user.is_teacher:
+                return redirect("analytics:dashboard")
+            return redirect("dashboard:home")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class GuestBrowseMixin:
+    """Mehmon ham ko‘ra oladi; login bo‘lsa rol tekshiriladi."""
+
+    allowed_roles: tuple[str, ...] = ()
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated and self.allowed_roles and user.role not in self.allowed_roles:
+            if user.is_admin:
+                return redirect("admin:index")
+            if user.is_teacher:
                 return redirect("analytics:dashboard")
             return redirect("dashboard:home")
         return super().dispatch(request, *args, **kwargs)

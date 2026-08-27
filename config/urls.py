@@ -20,6 +20,8 @@ urlpatterns = [
     path("exercises/", include("apps.exercises.urls")),
     path("homework/", include("apps.homework.urls")),
     path("teacher/", include("apps.analytics.urls")),
+    path("musobaqalar/", include("apps.contests.urls")),
+    path("progress/", include("apps.progress.urls")),
 ]
 
 if settings.DEBUG:

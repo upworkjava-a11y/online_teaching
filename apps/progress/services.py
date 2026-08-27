@@ -41,20 +41,28 @@ class ProgressService:
     def course_stats(self, student, course: Course) -> dict:
         lectures = Lecture.objects.filter(module__course=course, is_published=True)
         lecture_ids = list(lectures.values_list("id", flat=True))
+        total_lectures = len(lecture_ids)
+        exercises = Exercise.objects.filter(module__course=course, is_published=True)
+        exercise_ids = list(exercises.values_list("id", flat=True))
+        total_exercises = len(exercise_ids)
+        if not getattr(student, "is_authenticated", False):
+            return {
+                "completed_lectures": 0,
+                "total_lectures": total_lectures,
+                "completed_exercises": 0,
+                "total_exercises": total_exercises,
+                "average_score": 0.0,
+                "percent": 0,
+            }
         completed_lectures = LectureProgress.objects.filter(
             student=student, lecture_id__in=lecture_ids, completed=True
         ).count()
-        total_lectures = len(lecture_ids)
-
-        exercises = Exercise.objects.filter(module__course=course, is_published=True)
-        exercise_ids = list(exercises.values_list("id", flat=True))
         completed_exercises = (
             ExerciseAttempt.objects.filter(student=student, exercise_id__in=exercise_ids, is_correct=True)
             .values("exercise_id")
             .distinct()
             .count()
         )
-        total_exercises = len(exercise_ids)
         best_scores = list(
             ExerciseAttempt.objects.filter(student=student, exercise_id__in=exercise_ids)
             .values("exercise_id")
@@ -77,6 +85,8 @@ class ProgressService:
         }
 
     def module_percent(self, student, module: Module) -> int:
+        if not getattr(student, "is_authenticated", False):
+            return 0
         lectures = module.lectures.filter(is_published=True)
         exercises = module.exercises.filter(is_published=True)
         total = lectures.count() + exercises.count()

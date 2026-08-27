@@ -46,7 +46,7 @@ class AccessService:
     5. Other registered students get the first 5 published modules per course.
     """
 
-    PREMIUM_REASON = "Bu modul premium. To‘liq kurs uchun admin Premium belgilashi kerak."
+    PREMIUM_REASON = "Bu modul premium. To‘liq ochish uchun shu kursga to‘lov qiling."
 
     def is_course_open(self, course: Course) -> bool:
         return course.slug in OPEN_COURSE_SLUGS
@@ -91,14 +91,40 @@ class AccessService:
             return False
         if user.is_admin or user.is_teacher:
             return True
+        # Global VIP (barcha kurslar) — ixtiyoriy
         if self.is_premium_user(user):
             return True
+        # To‘lov: faqat shu kurs uchun ALLOWED
         rule = self._rule(user, course)
         return bool(rule and rule.status == UserContentAccess.Status.ALLOWED)
 
+    def grant_course_access(self, user, course: Course, *, created_by=None, reason: str = "") -> UserContentAccess:
+        """To‘lov qabul qilinganda: faqat shu kursni to‘liq ochadi."""
+        ct = ContentType.objects.get_for_model(Course)
+        rule, _ = UserContentAccess.objects.update_or_create(
+            user=user,
+            content_type=ct,
+            object_id=course.pk,
+            defaults={
+                "status": UserContentAccess.Status.ALLOWED,
+                "reason": reason or f"To‘lov: {course.title} Premium ochildi",
+                "created_by": created_by,
+            },
+        )
+        return rule
+
+    def revoke_course_access(self, user, course: Course) -> int:
+        ct = ContentType.objects.get_for_model(Course)
+        return UserContentAccess.objects.filter(
+            user=user,
+            content_type=ct,
+            object_id=course.pk,
+            status=UserContentAccess.Status.ALLOWED,
+        ).delete()[0]
+
     def evaluate(self, user, obj) -> AccessDecision:
         if not user.is_authenticated:
-            return AccessDecision(False, "Avval tizimga kiring.", "unauthenticated")
+            return self._evaluate_guest(obj)
         if getattr(user, "is_blocked", False):
             return AccessDecision(False, "Hisobingiz bloklangan.", "account_blocked")
         if user.is_admin:
@@ -183,8 +209,70 @@ class AccessService:
             return AccessDecision(True, "", "published")
         return AccessDecision(False, "Bu kontent hozircha mavjud emas.", "unpublished")
 
+    def _evaluate_guest(self, obj) -> AccessDecision:
+        """Mehmon: ochiq kursning bepul preview modullarini ko‘ra oladi."""
+        from apps.exercises.models import Exercise
+
+        course = None
+        if isinstance(obj, Course):
+            course = obj
+        elif isinstance(obj, Module):
+            course = obj.course
+        elif isinstance(obj, Lecture):
+            course = obj.module.course
+        elif isinstance(obj, Exercise):
+            course = obj.module.course
+
+        if course is not None:
+            if not course.is_published or not course.is_visible:
+                return AccessDecision(False, "Bu kurs hozircha mavjud emas.", "unpublished")
+            if not self.is_course_open(course):
+                return AccessDecision(False, COMING_SOON_REASON, "coming_soon")
+
+        if isinstance(obj, Course):
+            return AccessDecision(True, "", "guest_published")
+
+        if isinstance(obj, Module):
+            if not obj.is_published:
+                return AccessDecision(False, "Bu modul hozircha mavjud emas.", "unpublished")
+            # Modul sahifasini ko‘rish mumkin; ichidagi dars premium bo‘lishi mumkin
+            return AccessDecision(True, "", "guest_module")
+
+        if isinstance(obj, Lecture):
+            if not obj.is_published:
+                return AccessDecision(False, "Bu ma’ruza hozircha mavjud emas.", "unpublished")
+            if self.is_preview_module(obj.module):
+                return AccessDecision(True, "", "guest_preview")
+            return AccessDecision(False, self.PREMIUM_REASON, "premium")
+
+        if isinstance(obj, Exercise):
+            # Mashqni yechish uchun login kerak — view darajasida gate
+            if obj.lecture_id:
+                return self._evaluate_guest(obj.lecture)
+            if not obj.is_published:
+                return AccessDecision(False, "Bu mashq hozircha mavjud emas.", "unpublished")
+            if self.is_preview_module(obj.module):
+                return AccessDecision(True, "", "guest_preview")
+            return AccessDecision(False, self.PREMIUM_REASON, "premium")
+
+        if getattr(obj, "is_published", False):
+            return AccessDecision(True, "", "guest_published")
+        return AccessDecision(False, "Bu kontent hozircha mavjud emas.", "unpublished")
+
     def can_access(self, user, obj) -> bool:
         return self.evaluate(user, obj).allowed
+
+    def can_take_skill_test(self, user, module: Module) -> bool:
+        """Bilim testi faqat ochiq (preview) yoki to‘liq kurs ruxsati bilan."""
+        if not getattr(user, "is_authenticated", False):
+            return False
+        if getattr(user, "is_admin", False) or getattr(user, "is_teacher", False):
+            return module.is_published
+        if not module.is_published:
+            return False
+        if not self.is_course_open(module.course):
+            return False
+        return self.has_full_course_access(user, module.course) or self.is_preview_module(module)
 
 
 access_service = AccessService()

@@ -66,20 +66,24 @@
   {% if previous %}
     <a class="btn btn-ghost" href="{% url 'learning:lecture' previous.pk %}">Oldingi dars</a>
   {% endif %}
-  {% if not progress.completed %}
-    <form method="post" action="{% url 'learning:complete' lecture.pk %}">
-      {% csrf_token %}
-      <button class="btn btn-ok" type="submit">Darsni tugalladim</button>
-    </form>
-  {% elif practice_left %}
-    <span class="self-center font-semibold" style="color:#b45309">Dars o‘qildi — amaliyot hali yechilmagan</span>
+  {% if user.is_authenticated %}
+    {% if not progress or not progress.completed %}
+      <form method="post" action="{% url 'learning:complete' lecture.pk %}">
+        {% csrf_token %}
+        <button class="btn btn-ok" type="submit">Darsni tugalladim</button>
+      </form>
+    {% elif practice_left %}
+      <span class="self-center font-semibold" style="color:#b45309">Dars o‘qildi — amaliyot hali yechilmagan</span>
+    {% else %}
+      <span class="ok self-center font-semibold">Bu dars tugallangan</span>
+    {% endif %}
   {% else %}
-    <span class="ok self-center font-semibold">Bu dars tugallangan</span>
+    <a class="btn btn-ok" href="{% url 'accounts:login' %}?next={% url 'learning:lecture' lecture.pk %}">Darsni saqlash uchun kiring</a>
   {% endif %}
   {% if next_item %}
     <a class="btn btn-primary" href="{% url 'learning:lecture' next_item.pk %}">Keyingi dars</a>
   {% elif next_locked %}
-    <span class="self-center font-semibold" style="color:#b45309">🔒 Keyingi modul — Premium</span>
+    <a class="btn btn-primary" href="{% url 'courses:premium' lecture.module.course.slug %}">🔒 Keyingi modul — Premium ochish</a>
   {% endif %}
 </div>
 {% endblock %}

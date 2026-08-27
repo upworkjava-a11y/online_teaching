@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Bilim testi — {{ module.title }}{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <p class="muted text-sm">{{ module.course.title }}</p>
+    <h1 class="text-3xl font-extrabold">Bilim testi: {{ module.title }}</h1>
+    <p class="muted mt-1">Modul oxirida o‘z bilimingizni tekshiring. {{ done_count }}/{{ total_count }} yechilgan.</p>
+  </div>
+
+  <div class="card">
+    <ul class="space-y-3">
+      {% for test in tests %}
+        <li class="lesson-item is-exercise flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <a class="font-semibold" href="{% url 'exercises:detail' test.pk %}">{{ forloop.counter }}. {{ test.title }}</a>
+            <div class="text-sm muted mt-1">
+              <span class="diff-pill diff-{{ test.difficulty }}">{{ test.difficulty_label }}</span>
+              · Test · 4 ta variant
+            </div>
+          </div>
+          {% if test.pk in solved_ids %}
+            <span class="ok font-semibold">Yechilgan</span>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'exercises:detail' test.pk %}">Boshlash</a>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li class="muted">Bu modul uchun bilim testi hali qo‘yilmagan. Admin: <code>python manage.py bootstrap_platform</code></li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {% if total_count and done_count >= total_count %}
+    <form method="post" action="{% url 'progress:claim_module' module.pk %}">
+      {% csrf_token %}
+      <button class="btn btn-ok" type="submit">Modul sertifikatini olish</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

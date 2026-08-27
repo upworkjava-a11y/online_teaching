@@ -96,8 +96,12 @@ class UserAccessControlTests(TestCase):
         self.assertFalse(access_service.can_access(self.student, lecture6))
         self.client.force_login(self.student)
         locked = self.client.get(reverse("learning:lecture", args=[lecture6.pk]))
-        self.assertEqual(locked.status_code, 403)
-        self.assertContains(locked, "Premium", status_code=403)
+        self.assertEqual(locked.status_code, 302)
+        self.assertIn("/courses/sql/premium/", locked.url)
+        offer = self.client.get(locked.url)
+        self.assertEqual(offer.status_code, 200)
+        self.assertContains(offer, "Premium")
+        self.assertContains(offer, "50 000")
         outline = self.client.get(reverse("courses:detail", args=["sql"]))
         self.assertContains(outline, "🔒")
         self.assertContains(outline, "Dars 6")
@@ -119,6 +123,20 @@ class UserAccessControlTests(TestCase):
         self._allow(self.course)
         self.assertTrue(access_service.has_full_course_access(self.student, self.course))
         self.assertTrue(access_service.can_access(self.student, lecture6))
+
+    def test_grant_course_access_opens_only_that_course(self):
+        *_rest, lecture6 = self._six_modules()
+        other = make_course("python", published=True, visible=True, title="Python")
+        py_lectures = []
+        for i in range(1, 7):
+            mod = make_module(other, slug=f"py-mod-{i}", order=i, title=f"Py modul {i}")
+            py_lectures.append(make_lecture(mod, slug=f"py-dars-{i}", title=f"Py dars {i}", order=1))
+
+        access_service.grant_course_access(self.student, self.course, reason="To‘lov SQL")
+        self.assertTrue(access_service.has_full_course_access(self.student, self.course))
+        self.assertTrue(access_service.can_access(self.student, lecture6))
+        self.assertFalse(access_service.has_full_course_access(self.student, other))
+        self.assertFalse(access_service.can_access(self.student, py_lectures[-1]))
 
     def test_premium_group_unlocks_full_course(self):
         from django.contrib.auth.models import Group

@@ -8,3 +8,6 @@ class AccountsConfig(AppConfig):
 
     def ready(self):
         from . import signals  # noqa: F401
+        from .anonymous import patch_anonymous_user
+
+        patch_anonymous_user()

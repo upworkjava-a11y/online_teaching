@@ -23,8 +23,14 @@ class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {"fields": ("email", "username", "password")}),
         ("Shaxsiy ma’lumot", {"fields": ("first_name", "last_name")}),
-        ("Rol va holat", {"fields": ("role", "is_premium", "is_active", "is_blocked", "is_staff", "is_superuser")}),
-        ("Guruhlar", {"fields": ("groups",), "description": "Premium guruhiga qo‘shilsa, barcha kurslar ochiladi."}),
+        ("Rol va holat", {
+            "fields": ("role", "is_premium", "is_active", "is_blocked", "is_staff", "is_superuser"),
+            "description": (
+                "is_premium = barcha kurslar (VIP). "
+                "Oddiy to‘lov: Access → «To‘lov: kursni ochish» — faqat tanlangan kurs."
+            ),
+        }),
+        ("Guruhlar", {"fields": ("groups",), "description": "Premium guruh = barcha kurslar. Bitta kurs uchun Access ishlating."}),
         ("Ruxsatlar", {"fields": ("user_permissions",)}),
         ("Sanalar", {"fields": ("last_login", "last_activity_at", "date_joined")}),
     )
@@ -49,7 +55,7 @@ class UserAdmin(DjangoUserAdmin):
     readonly_fields = ("last_login", "last_activity_at", "date_joined")
 
     def get_changeform_initial_data(self, request):
-        return {"is_premium": True}
+        return {"is_premium": False}
 
 
 @admin.register(StudentProfile)

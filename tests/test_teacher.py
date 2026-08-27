@@ -83,3 +83,38 @@ class TeacherAccessTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Reyting")
         self.assertContains(response, "Reytingni ochish")
+
+    def test_teacher_skill_tests_page(self):
+        from apps.exercises.models import Exercise, ExerciseAttempt, ExerciseExpectedResult
+
+        quiz = Exercise.objects.create(
+            module=self.module,
+            title="Bilim testi 1",
+            slug="bt-1",
+            description="desc",
+            task="Savol?",
+            kind=Exercise.Kind.QUIZ,
+            is_skill_test=True,
+            is_published=True,
+            quiz_options=["A) bir", "B) ikki", "C) uch", "D) tort"],
+            order=901,
+        )
+        ExerciseExpectedResult.objects.create(exercise=quiz, columns=["javob"], rows=[["A"]])
+        ExerciseAttempt.objects.create(
+            student=self.student,
+            exercise=quiz,
+            sql_query="A",
+            is_correct=True,
+            score=100,
+        )
+        self.client.force_login(self.teacher)
+        overview = self.client.get(reverse("analytics:skill_tests"))
+        self.assertEqual(overview.status_code, 200)
+        self.assertContains(overview, "Bilim testi natijalari")
+        self.assertContains(overview, "Ali")
+        self.assertContains(overview, "1")
+        detail = self.client.get(reverse("analytics:student_skill_tests", args=[self.student.pk]))
+        self.assertEqual(detail.status_code, 200)
+        self.assertContains(detail, "Bilim testi 1")
+        self.assertContains(detail, "To‘g‘ri")
+        self.assertContains(detail, "A")

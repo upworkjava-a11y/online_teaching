@@ -9,6 +9,7 @@
 <div class="mb-4 text-sm muted">
   {{ exercise.module.course.title }} · {{ exercise.module.title }}
   {% if exercise.lecture %} · {{ exercise.lecture.title }}{% endif %}
+  {% if exercise.is_skill_test %} · Bilim testi{% endif %}
 </div>
 <p class="mb-3 flex flex-wrap gap-2">
   {% if exercise.kind == "quiz" %}
@@ -16,12 +17,9 @@
   {% else %}
     <span class="inline-block rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1">SQL</span>
   {% endif %}
-  {% if exercise.difficulty == "hard" %}
-    <span class="inline-block rounded-full bg-rose-100 text-rose-800 text-xs font-bold px-3 py-1">Hard</span>
-  {% elif exercise.difficulty == "medium" %}
-    <span class="inline-block rounded-full bg-amber-100 text-amber-900 text-xs font-bold px-3 py-1">Medium</span>
-  {% else %}
-    <span class="inline-block rounded-full bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1">Easy</span>
+  <span class="diff-pill diff-{{ exercise.difficulty }}">{{ exercise.difficulty_label }}</span>
+  {% if exercise.is_skill_test %}
+    <span class="inline-block rounded-full bg-indigo-100 text-indigo-900 text-xs font-bold px-3 py-1">Bilim testi</span>
   {% endif %}
 </p>
 <div class="grid gap-4 xl:grid-cols-2">
@@ -55,14 +53,19 @@
       </details>
       {% endfor %}
     {% endif %}
-    {% if exercise.lecture %}
-      <a class="btn btn-ghost mt-4" href="{% url 'learning:lecture' exercise.lecture.pk %}">Darsga qaytish</a>
-    {% endif %}
+    <div class="mt-4 flex flex-wrap gap-2">
+      {% if exercise.lecture %}
+        <a class="btn btn-ghost" href="{% url 'learning:lecture' exercise.lecture.pk %}">Darsga qaytish</a>
+      {% endif %}
+      <a class="btn btn-ghost" href="{% url 'exercises:catalog' %}">Amaliyot katalogi</a>
+      <a class="btn btn-ghost" href="{% url 'exercises:skill_tests' exercise.module_id %}">Modul bilim testi</a>
+    </div>
   </section>
   <section class="card">
     {% if exercise.kind == "quiz" %}
-      <form method="post" class="space-y-3">
+      <form method="post" class="space-y-3" id="quiz-form">
         {% csrf_token %}
+        <input type="hidden" name="action" value="run">
         <p class="font-semibold">Javobni tanlang:</p>
         {% for option in exercise.quiz_options %}
           <label class="lesson-item is-exercise cursor-pointer">
@@ -74,16 +77,19 @@
         {% empty %}
           <input class="input" name="answer" value="{{ last_sql }}" placeholder="Javob (A/B/C/D)" required>
         {% endfor %}
-        <button class="btn btn-primary" type="submit">Tekshirish</button>
+        <div class="flex flex-wrap gap-3">
+          <button class="btn btn-primary" type="submit">Tekshirish</button>
+        </div>
       </form>
     {% else %}
       <form method="post" id="sql-form">
         {% csrf_token %}
+        <input type="hidden" name="action" value="run" id="sql-action">
         <textarea class="hidden" name="sql" id="sql-input">{{ last_sql }}</textarea>
         <div id="monaco" style="height: 360px; border-radius: 12px; overflow: hidden;"></div>
-        <div class="mt-4 flex gap-3">
-          <button class="btn btn-primary" type="submit">RUN SQL</button>
-          <button class="btn btn-ghost" type="button" id="reset-sql">Reset</button>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button class="btn btn-primary" type="submit" onclick="document.getElementById('sql-action').value='run'">SQL ni ishga tushirish</button>
+          <button class="btn btn-ghost" type="button" id="reset-sql">Tozalash</button>
         </div>
       </form>
     {% endif %}
@@ -92,6 +98,28 @@
     </div>
   </section>
 </div>
+
+<section class="card mt-6">
+  <h2 class="text-lg font-bold">Muhokama</h2>
+  <p class="muted text-sm mt-1">Savolingizni yozing yoki boshqalarga yordam bering. Yechimni to‘liq ochib yubormang.</p>
+  <ul class="mt-4 space-y-3">
+    {% for comment in comments %}
+      <li class="rounded-xl border border-slate-200 p-3">
+        <p class="text-sm font-semibold">{{ comment.author.get_full_name|default:comment.author.email }}</p>
+        <p class="mt-1 text-sm whitespace-pre-line">{{ comment.body }}</p>
+        <p class="muted text-xs mt-2">{{ comment.created_at|date:"d.m.Y H:i" }}</p>
+      </li>
+    {% empty %}
+      <li class="muted text-sm">Hali izoh yo‘q. Birinchilardan bo‘ling.</li>
+    {% endfor %}
+  </ul>
+  <form method="post" class="mt-4 space-y-3">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="comment">
+    <textarea class="input" name="body" rows="3" maxlength="2000" placeholder="Savol yoki foydali maslahat yozing..." required></textarea>
+    <button class="btn btn-primary" type="submit">Izoh qoldirish</button>
+  </form>
+</section>
 {% endblock %}
 {% block extra_js %}
 {% if exercise.kind == "sql" %}

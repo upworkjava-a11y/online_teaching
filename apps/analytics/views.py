@@ -24,8 +24,10 @@ from .services import (
     module_progress_series,
     progress_distribution,
     score_series,
+    skill_test_overview,
     student_belongs_to_teacher,
     student_rows,
+    student_skill_test_detail,
     teacher_courses,
     teacher_students,
 )
@@ -96,6 +98,7 @@ class TeacherStudentDetailView(TeacherRequiredMixin, View):
         lectures = LectureProgress.objects.filter(student=student).select_related("lecture", "lecture__module")
         submissions = student.homework_submissions.select_related("assignment", "assignment__lecture").prefetch_related("reviews")[:20]
         failed = ExerciseAttempt.objects.filter(student=student, is_correct=False).count()
+        skill_modules = student_skill_test_detail(student, course)
         return render(
             request,
             "analytics/student_detail.html",
@@ -109,6 +112,63 @@ class TeacherStudentDetailView(TeacherRequiredMixin, View):
                 "uncompleted_count": (course.modules.filter(is_published=True).count() if course else 0),
                 "submissions": submissions,
                 "failed_attempts": failed,
+                "skill_modules": skill_modules,
+            },
+        )
+
+
+class TeacherSkillTestsView(TeacherRequiredMixin, View):
+    def get(self, request):
+        courses = teacher_courses(request.user)
+        course_id = request.GET.get("course")
+        module_id = request.GET.get("module")
+        status = request.GET.get("status", "")
+        course = courses.filter(pk=course_id).first() if course_id else courses.filter(is_published=True).first()
+        module = None
+        if module_id:
+            module = Module.objects.filter(pk=module_id, course__in=courses).first()
+        rows = skill_test_overview(request.user, course=course, module=module)
+        if status:
+            rows = [r for r in rows if r["status"] == status]
+        completed = sum(1 for r in rows if r["status"] == "tugallangan")
+        started = sum(1 for r in rows if r["status"] == "boshlangan")
+        not_started = sum(1 for r in rows if r["status"] == "boshlanmagan")
+        return render(
+            request,
+            "analytics/skill_tests.html",
+            {
+                "rows": rows,
+                "courses": courses,
+                "modules": Module.objects.filter(course__in=courses, is_published=True).order_by(
+                    "course__order", "order"
+                ),
+                "selected_course": course,
+                "selected_module": module,
+                "status": status,
+                "completed": completed,
+                "started": started,
+                "not_started": not_started,
+            },
+        )
+
+
+class TeacherStudentSkillTestsView(TeacherRequiredMixin, View):
+    def get(self, request, pk):
+        student = get_object_or_404(User, pk=pk, role=User.Role.STUDENT)
+        if not request.user.is_admin and not student_belongs_to_teacher(request.user, student):
+            raise Http404()
+        courses = teacher_courses(request.user)
+        course_id = request.GET.get("course")
+        course = courses.filter(pk=course_id).first() if course_id else courses.filter(is_published=True).first()
+        skill_modules = student_skill_test_detail(student, course)
+        return render(
+            request,
+            "analytics/student_skill_tests.html",
+            {
+                "student": student,
+                "course": course,
+                "courses": courses,
+                "skill_modules": skill_modules,
             },
         )
 

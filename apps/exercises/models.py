@@ -22,12 +22,12 @@ class Dataset(TimeStampedModel):
 class Exercise(TimeStampedModel):
     class Kind(models.TextChoices):
         SQL = "sql", "SQL"
-        QUIZ = "quiz", "Test / quiz"
+        QUIZ = "quiz", "Test"
 
     class Difficulty(models.TextChoices):
-        EASY = "easy", "Easy"
-        MEDIUM = "medium", "Medium"
-        HARD = "hard", "Hard"
+        EASY = "easy", "Oson"
+        MEDIUM = "medium", "O‘rta"
+        HARD = "hard", "Qiyin"
 
     module = models.ForeignKey("courses.Module", on_delete=models.CASCADE, related_name="exercises")
     lecture = models.ForeignKey(
@@ -43,6 +43,10 @@ class Exercise(TimeStampedModel):
     description = models.TextField()
     task = models.TextField()
     hints = models.JSONField(default=list, blank=True)
+    editorial = models.TextField(
+        blank=True,
+        help_text="To‘g‘ri yechgandan keyin ko‘rsatiladigan yechim yo‘riqnomasi (o‘zbekcha)",
+    )
     kind = models.CharField(max_length=20, choices=Kind.choices, default=Kind.SQL)
     difficulty = models.CharField(
         max_length=10,
@@ -53,7 +57,12 @@ class Exercise(TimeStampedModel):
     quiz_options = models.JSONField(
         default=list,
         blank=True,
-        help_text='Quiz variantlari, masalan: ["A) ...", "B) ..."]',
+        help_text='Test variantlari, masalan: ["A) ...", "B) ..."]',
+    )
+    is_skill_test = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Modul oxiridagi bilimsini tekshirish testi",
     )
     order = models.PositiveIntegerField(default=0)
     is_published = models.BooleanField(default=False)
@@ -75,6 +84,14 @@ class Exercise(TimeStampedModel):
     @property
     def course(self):
         return self.module.course
+
+    @property
+    def difficulty_label(self) -> str:
+        return {
+            self.Difficulty.EASY: "Oson",
+            self.Difficulty.MEDIUM: "O‘rta",
+            self.Difficulty.HARD: "Qiyin",
+        }.get(self.difficulty, self.difficulty)
 
 
 class ExerciseDataset(models.Model):
@@ -125,3 +142,25 @@ class ExerciseAttempt(TimeStampedModel):
 
     def __str__(self):
         return f"{self.student} — {self.exercise} — {self.created_at}"
+
+
+class ExerciseComment(TimeStampedModel):
+    """Masala ostidagi muhokama."""
+
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="exercise_comments",
+    )
+    body = models.TextField(max_length=2000)
+    is_hidden = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name = "Masala izohi"
+        verbose_name_plural = "Masala izohlari"
+        indexes = [models.Index(fields=["exercise", "created_at"])]
+
+    def __str__(self):
+        return f"{self.author} — {self.exercise_id}"

@@ -24,6 +24,7 @@ from .google import (
     verify_google_id_token,
 )
 from .models import User
+from .redirects import safe_next_url
 
 logger = logging.getLogger("apps.accounts")
 
@@ -35,10 +36,12 @@ class RegisterView(FormView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            from django.shortcuts import redirect
-
             return redirect("root")
         return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        next_url = self.request.GET.get("next") or self.request.POST.get("next")
+        return safe_next_url(self.request, next_url, fallback=super().get_success_url())
 
     def form_valid(self, form):
         user = form.save()
@@ -58,7 +61,7 @@ class StudentLoginView(LoginView):
 
 
 class StudentLogoutView(LogoutView):
-    next_page = reverse_lazy("accounts:login")
+    next_page = reverse_lazy("courses:list")
 
 
 class ProfileView(LoginRequiredMixin, UpdateView):
@@ -128,8 +131,9 @@ class GoogleOAuthCallbackView(View):
             return redirect("accounts:login")
         if created:
             messages.success(request, "Google hisobi orqali ro‘yxatdan o‘tdingiz.")
-        if next_url:
-            return redirect(next_url)
+        target = safe_next_url(request, next_url)
+        if target:
+            return redirect(target)
         return redirect(reverse("root"))
 
 
@@ -150,6 +154,7 @@ class GoogleIdentityTokenView(View):
             return redirect("accounts:login")
         if created:
             messages.success(request, "Google hisobi orqali ro‘yxatdan o‘tdingiz.")
-        if next_url.startswith("/"):
-            return redirect(next_url)
+        target = safe_next_url(request, next_url)
+        if target:
+            return redirect(target)
         return redirect(reverse("root"))

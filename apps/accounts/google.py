@@ -57,8 +57,10 @@ def authorization_url(request) -> str:
         raise GoogleOAuthError("Google orqali kirish hozircha sozlanmagan.")
     state = secrets.token_urlsafe(32)
     request.session[SESSION_STATE_KEY] = state
-    next_url = request.GET.get("next") or ""
-    if next_url.startswith("/"):
+    from .redirects import safe_next_url
+
+    next_url = safe_next_url(request, request.GET.get("next") or "")
+    if next_url:
         request.session[SESSION_NEXT_KEY] = next_url
     params = {
         "client_id": settings.GOOGLE_CLIENT_ID,

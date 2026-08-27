@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+<div id="content-main" style="max-width: 560px;">
+  <h1>{{ title }}</h1>
+  <p style="margin: 0 0 1.25rem;">
+    Talaba <strong>bitta kurs</strong> uchun to‘laganda shu yerda oching.
+    Boshqa kurslar ochilmaydi.
+  </p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <fieldset class="module aligned">
+      {% for field in form %}
+        <div class="form-row{% if field.errors %} errors{% endif %}">
+          {{ field.errors }}
+          <div>
+            <label for="{{ field.id_for_label }}"{% if field.field.required %} class="required"{% endif %}>{{ field.label }}:</label>
+            {{ field }}
+            {% if field.help_text %}<div class="help">{{ field.help_text }}</div>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </fieldset>
+    <div class="submit-row">
+      <input type="submit" value="Shu kursni ochish" class="default">
+      <a href="{% url 'admin:access_usercontentaccess_changelist' %}" class="button cancel-link">Bekor qilish</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

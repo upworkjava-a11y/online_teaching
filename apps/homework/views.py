@@ -28,6 +28,10 @@ def _can_manage_submission(user, submission: HomeworkSubmission) -> bool:
 
 class HomeworkListView(RoleRequiredMixin, View):
     allowed_roles = ("student",)
+    auth_gate_title = "Uy vazifasi uchun hisob kerak"
+    auth_gate_message = (
+        "Uy vazifasini ko‘rish va yuborish uchun tizimga kiring yoki ro‘yxatdan o‘ting."
+    )
 
     def get(self, request):
         assignments = (
@@ -77,6 +81,10 @@ class HomeworkListView(RoleRequiredMixin, View):
 
 class HomeworkSubmitView(RoleRequiredMixin, View):
     allowed_roles = ("student",)
+    auth_gate_title = "Uy vazifasi uchun hisob kerak"
+    auth_gate_message = (
+        "Uy vazifasini yuborish uchun tizimga kiring yoki ro‘yxatdan o‘ting."
+    )
 
     def get_assignment(self, request, pk):
         assignment = get_object_or_404(

@@ -7,6 +7,12 @@
       <p class="bad text-lg font-semibold">❌ {% if latest_attempt.error_message %}{{ latest_attempt.error_message }}{% else %}Noto‘g‘ri. Qayta urinib ko‘ring.{% endif %}</p>
     {% endif %}
     {% if exercise_solved %}
+      {% if exercise.editorial %}
+        <details class="mt-4 editorial-box" open>
+          <summary class="font-bold cursor-pointer">Yechim yo‘riqnomasi</summary>
+          <div class="mt-2 text-sm prose">{{ exercise.editorial|linebreaks }}</div>
+        </details>
+      {% endif %}
       {% if next_exercise or next_lecture or exercise.lecture %}
         <div class="exercise-next-nav mt-4 flex flex-wrap gap-3">
           {% if next_exercise %}

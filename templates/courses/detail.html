@@ -8,16 +8,21 @@
   <p class="mt-4 font-bold">Umumiy progress: {{ stats.percent }}%</p>
   <div class="progress-track mt-2 max-w-xl"><div class="progress-fill" style="width: {{ stats.percent }}%"></div></div>
   {% if not full_access %}
-    <p class="mt-4 text-sm font-semibold" style="color:#b45309">Dastlabki 5 modul ochiq. Qolganlari 🔒 Premium — admin foydalanuvchiga to‘liq ruxsat bersin.</p>
+    <p class="mt-4 text-sm font-semibold" style="color:#b45309">
+      Dastlabki 5 modul ochiq. Qolganlari 🔒 Premium.
+    </p>
+    <a class="premium-cta" href="{% url 'courses:premium' course.slug %}">
+      Premium ochish — narx va to‘lov →
+    </a>
   {% endif %}
 </div>
 <div class="space-y-4">
   {% for item in modules %}
-    <section class="card">
+    <section class="card {% if item.premium_locked %}premium-module-card{% endif %}">
       <div class="flex items-center justify-between gap-4">
         <h2 class="text-xl font-bold">{% if item.premium_locked %}🔒 {% endif %}Modul {{ forloop.counter }}. {{ item.module.title }}</h2>
         {% if item.premium_locked %}
-          <span class="lesson-status">Premium</span>
+          <a class="lesson-status" href="{% url 'courses:premium' course.slug %}" style="color:#b45309;font-weight:700">Premium →</a>
         {% elif item.decision.allowed %}
           <span class="font-semibold">{{ item.percent }}%</span>
         {% elif item.decision.code == "blocked" %}
@@ -26,7 +31,21 @@
           <span class="muted">Yashirin</span>
         {% endif %}
       </div>
-      {% if item.decision.allowed %}
+      {% if item.premium_locked %}
+        <p class="mt-3 muted text-sm">Bu modul Premium. To‘liq ochish uchun narx va to‘lov yo‘riqnomasini ko‘ring.</p>
+        <a class="btn btn-primary mt-4" href="{% url 'courses:premium' course.slug %}">Narx va to‘lov</a>
+        <div class="lesson-list mt-4" style="opacity:0.72">
+          {% for row in item.lectures %}
+            <a class="lesson-item is-locked premium-locked-link" href="{% url 'courses:premium' course.slug %}">
+              <div class="lesson-main">
+                <span class="lesson-num">{{ forloop.counter }}</span>
+                <span class="lesson-title">🔒 {{ row.lecture.title }}</span>
+              </div>
+              <span class="lesson-status">Premium</span>
+            </a>
+          {% endfor %}
+        </div>
+      {% elif item.decision.allowed %}
         <div class="progress-track mt-3"><div class="progress-fill" style="width: {{ item.percent }}%"></div></div>
         <div class="lesson-list">
           {% if item.lectures %}
@@ -45,15 +64,13 @@
                 {% endif %}
               </a>
               {% else %}
-              <div class="lesson-item is-locked">
+              <a class="lesson-item is-locked premium-locked-link" href="{% url 'courses:premium' course.slug %}">
                 <div class="lesson-main">
                   <span class="lesson-num">{{ forloop.counter }}</span>
-                  <span class="lesson-title">{% if not item.premium_locked %}🔒 {% endif %}{{ row.lecture.title }}</span>
+                  <span class="lesson-title">🔒 {{ row.lecture.title }}</span>
                 </div>
-                {% if not item.premium_locked %}
-                  <span class="lesson-status">Yopiq</span>
-                {% endif %}
-              </div>
+                <span class="lesson-status">Premium</span>
+              </a>
               {% endif %}
             {% endfor %}
           {% endif %}
@@ -68,17 +85,34 @@
                 </div>
               </a>
               {% else %}
-              <div class="lesson-item is-exercise is-locked">
+              <a class="lesson-item is-exercise is-locked premium-locked-link" href="{% url 'courses:premium' course.slug %}">
                 <div class="lesson-main">
                   <span class="lesson-num">M{{ forloop.counter }}</span>
-                  <span class="lesson-title">{% if not item.premium_locked %}🔒 {% endif %}{% if row.exercise.kind == "quiz" %}Test: {% endif %}{{ row.exercise.title }}</span>
+                  <span class="lesson-title">🔒 {% if row.exercise.kind == "quiz" %}Test: {% endif %}{{ row.exercise.title }}</span>
                 </div>
-                {% if not item.premium_locked %}
-                  <span class="lesson-status">Yopiq</span>
-                {% endif %}
-              </div>
+                <span class="lesson-status">Premium</span>
+              </a>
               {% endif %}
             {% endfor %}
+          {% endif %}
+          {% if item.skill_test_allowed or item.percent >= 100 %}
+            <div class="mt-4">
+              {% if item.skill_test_allowed %}
+                <a class="btn btn-skill-test" href="{% url 'exercises:skill_tests' item.module.pk %}">
+                  <svg class="btn-skill-test__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 11.5l2 2 4-4"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 3.5h10a2 2 0 0 1 2 2v13l-3.5-1.8L12 19l-3.5-2.3L5 18.5v-13a2 2 0 0 1 2-2Z"/>
+                  </svg>
+                  Modul bilim testi
+                </a>
+              {% endif %}
+              {% if item.percent >= 100 and user.is_authenticated %}
+                <form class="inline" method="post" action="{% url 'progress:claim_module' item.module.pk %}">
+                  {% csrf_token %}
+                  <button class="btn btn-ok" type="submit">Sertifikatni olish</button>
+                </form>
+              {% endif %}
+            </div>
           {% endif %}
         </div>
       {% else %}

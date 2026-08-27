@@ -33,6 +33,26 @@
     <a class="btn" href="{% url 'dashboard:leaderboard' %}">Reytingni ko‘rish</a>
   </div>
 
+  <div class="grid gap-4 md:grid-cols-3">
+    <div class="card">
+      <p class="muted text-sm">Kunlik zanjir</p>
+      <p class="text-2xl font-extrabold">🔥 {% if streak %}{{ streak.current_streak }}{% else %}0{% endif %} kun</p>
+      <p class="muted text-sm mt-1">Har kuni kamida 1 masala yeching</p>
+    </div>
+    <a class="card block" href="{% url 'exercises:catalog' %}">
+      <p class="muted text-sm">Amaliyot</p>
+      <p class="text-xl font-extrabold">Mashqlar katalogi</p>
+      <p class="muted text-sm mt-1">Oson / O‘rta / Qiyin filter</p>
+    </a>
+    <a class="card block" href="{% url 'contests:list' %}">
+      <p class="muted text-sm">Musobaqalar</p>
+      <p class="text-xl font-extrabold">
+        {% if active_contests %}{{ active_contests.0.title }}{% else %}Haftalik musobaqa{% endif %}
+      </p>
+      <p class="muted text-sm mt-1">Alohida reyting bilan</p>
+    </a>
+  </div>
+
   <div class="grid gap-4 md:grid-cols-2">
     {% for card in course_cards %}
       {% if card.coming_soon %}

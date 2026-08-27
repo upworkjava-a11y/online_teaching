@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Bilim testi natijalari{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <p class="muted text-sm">O‘qituvchi paneli</p>
+    <h1 class="text-3xl font-extrabold">Bilim testi natijalari</h1>
+    <p class="muted mt-1">Modul va talaba bo‘yicha nechta savol to‘g‘ri yechilganini ko‘ring.</p>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <div class="card stat-card"><h3>Tugallangan</h3><p>{{ completed }}</p></div>
+    <div class="card stat-card"><h3>Boshlangan</h3><p>{{ started }}</p></div>
+    <div class="card stat-card"><h3>Boshlanmagan</h3><p>{{ not_started }}</p></div>
+  </div>
+
+  <form method="get" class="card flex flex-wrap gap-3 items-end">
+    <label class="text-sm">
+      <span class="muted">Kurs</span>
+      <select class="input mt-1" name="course">
+        {% for c in courses %}
+          <option value="{{ c.pk }}" {% if selected_course and selected_course.pk == c.pk %}selected{% endif %}>{{ c.title }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="text-sm">
+      <span class="muted">Modul</span>
+      <select class="input mt-1" name="module">
+        <option value="">Barcha modullar</option>
+        {% for m in modules %}
+          {% if not selected_course or m.course_id == selected_course.pk %}
+            <option value="{{ m.pk }}" {% if selected_module and selected_module.pk == m.pk %}selected{% endif %}>{{ m.title }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </label>
+    <label class="text-sm">
+      <span class="muted">Holat</span>
+      <select class="input mt-1" name="status">
+        <option value="" {% if not status %}selected{% endif %}>Barchasi</option>
+        <option value="tugallangan" {% if status == "tugallangan" %}selected{% endif %}>Tugallangan</option>
+        <option value="boshlangan" {% if status == "boshlangan" %}selected{% endif %}>Boshlangan</option>
+        <option value="boshlanmagan" {% if status == "boshlanmagan" %}selected{% endif %}>Boshlanmagan</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" type="submit">Filtrlash</button>
+  </form>
+
+  <section class="card overflow-x-auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Talaba</th>
+          <th>Modul</th>
+          <th>To‘g‘ri</th>
+          <th>Foiz</th>
+          <th>Holat</th>
+          <th>So‘nggi urinish</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr>
+            <td>
+              <a class="font-semibold text-blue-700" href="{% url 'analytics:student_detail' row.student.pk %}">
+                {{ row.student.get_full_name|default:row.student.email }}
+              </a>
+            </td>
+            <td>{{ row.module.title }}</td>
+            <td><strong>{{ row.done }}</strong> / {{ row.total }}</td>
+            <td>
+              <div class="progress-track w-24 inline-block align-middle"><div class="progress-fill" style="width: {{ row.percent }}%"></div></div>
+              {{ row.percent }}%
+            </td>
+            <td>
+              {% if row.status == "tugallangan" %}<span class="ok">Tugallangan</span>
+              {% elif row.status == "boshlangan" %}<span class="warn">Boshlangan</span>
+              {% else %}<span class="muted">Boshlanmagan</span>{% endif %}
+            </td>
+            <td>{% if row.last_at %}{{ row.last_at|date:"d.m.Y H:i" }}{% else %}—{% endif %}</td>
+            <td>
+              <a class="btn btn-ghost" href="{% url 'analytics:student_skill_tests' row.student.pk %}?course={{ row.course.pk }}">Batafsil</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="muted">Hali natija yo‘q yoki filtr bo‘yicha topilmadi.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% endblock %}

@@ -29,13 +29,13 @@ def make_course(slug="sql", published=True, visible=True, title="SQL"):
     )
 
 
-def make_module(course, slug="basics", published=True, title="SQL asoslari"):
+def make_module(course, slug="basics", published=True, title="SQL asoslari", order=1):
     return Module.objects.create(
         course=course,
         title=title,
         slug=slug,
         description="Test module",
-        order=1,
+        order=order,
         is_published=published,
     )
 

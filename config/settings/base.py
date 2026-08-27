@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "apps.learning.apps.LearningConfig",
     "apps.dashboard.apps.DashboardConfig",
     "apps.analytics.apps.AnalyticsConfig",
+    "apps.contests.apps.ContestsConfig",
 ]
 
 MIDDLEWARE = [
@@ -89,7 +90,7 @@ AUTH_USER_MODEL = "accounts.User"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "root"
-LOGOUT_REDIRECT_URL = "accounts:login"
+LOGOUT_REDIRECT_URL = "courses:list"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Amaliyot — mashqlar{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <p class="muted text-sm">Amaliyot</p>
+    <h1 class="text-3xl font-extrabold">Mashqlar katalogi</h1>
+    <p class="muted mt-1">SQL mashqlari — oson, o‘rta va qiyin.</p>
+  </div>
+
+  <form method="get" class="card flex flex-wrap gap-3 items-end">
+    <label class="text-sm">
+      <span class="muted">Kurs</span>
+      <select class="input mt-1" name="course">
+        <option value="" {% if not course_slug %}selected{% endif %}>Barchasi</option>
+        {% for course in open_courses %}
+          <option value="{{ course.slug }}" {% if course_slug == course.slug %}selected{% endif %}>{{ course.title }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="text-sm">
+      <span class="muted">Qidiruv</span>
+      <input class="input mt-1" type="search" name="q" value="{{ q }}" placeholder="Masala nomi...">
+    </label>
+    <label class="text-sm">
+      <span class="muted">Qiyinlik</span>
+      <select class="input mt-1" name="difficulty">
+        {% for key, label in difficulty_filters.items %}
+          <option value="{{ key }}" {% if difficulty == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label class="text-sm">
+      <span class="muted">Holat</span>
+      <select class="input mt-1" name="status">
+        <option value="" {% if not status %}selected{% endif %}>Barchasi</option>
+        <option value="unsolved" {% if status == "unsolved" %}selected{% endif %}>Yechilmagan</option>
+        <option value="solved" {% if status == "solved" %}selected{% endif %}>Yechilgan</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" type="submit">Filtrlash</button>
+  </form>
+
+  <div class="card overflow-x-auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Masala</th>
+          <th>Kurs</th>
+          <th>Modul</th>
+          <th>Daraja</th>
+          <th>Tur</th>
+          <th>Holat</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for exercise in page %}
+          <tr>
+            <td>
+              <a class="font-semibold text-blue-700" href="{% url 'exercises:detail' exercise.pk %}">{{ exercise.title }}</a>
+            </td>
+            <td class="text-sm font-semibold">{{ exercise.module.course.title }}</td>
+            <td class="text-sm">{{ exercise.module.title }}</td>
+            <td><span class="diff-pill diff-{{ exercise.difficulty }}">{{ exercise.difficulty_label }}</span></td>
+            <td>
+              {% if exercise.module.course.slug == "python" %}
+                Python {% if exercise.kind == "quiz" %}test{% else %}mashq{% endif %}
+              {% elif exercise.kind == "quiz" %}
+                Test
+              {% else %}
+                SQL
+              {% endif %}
+            </td>
+            <td>
+              {% if exercise.pk in solved_ids %}
+                <span class="ok">Yechilgan</span>
+              {% else %}
+                <span class="muted">Yechilmagan</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="muted">Mos mashq topilmadi.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page.has_other_pages %}
+    <div class="flex gap-2">
+      {% if page.has_previous %}
+        <a class="btn btn-ghost" href="?page={{ page.previous_page_number }}&difficulty={{ difficulty }}&q={{ q }}&status={{ status }}&course={{ course_slug }}">Oldingi</a>
+      {% endif %}
+      <span class="self-center muted text-sm">Sahifa {{ page.number }} / {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}
+        <a class="btn btn-ghost" href="?page={{ page.next_page_number }}&difficulty={{ difficulty }}&q={{ q }}&status={{ status }}&course={{ course_slug }}">Keyingi</a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -7,6 +7,7 @@
     <p class="muted mt-2">Email va parol bilan kiring.</p>
     <form method="post" class="mt-4 space-y-4">
       {% csrf_token %}
+      {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
       {{ form.non_field_errors }}
       {% for field in form %}
         <label class="block">
@@ -17,7 +18,8 @@
       {% endfor %}
       <button class="btn btn-primary w-full" type="submit">Kirish</button>
     </form>
-    <p class="mt-4 text-sm">Hisobingiz yo‘qmi? <a class="text-sky-600" href="{% url 'accounts:register' %}">Ro‘yxatdan o‘ting</a></p>
+    <p class="mt-4 text-sm">Hisobingiz yo‘qmi? <a class="text-sky-600" href="{% url 'accounts:register' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Ro‘yxatdan o‘ting</a></p>
+    <p class="mt-2 text-sm"><a class="text-sky-600" href="{% url 'courses:list' %}">← Kurslarni ko‘rish</a></p>
   </div>
 </div>
 {% endblock %}

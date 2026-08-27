@@ -29,7 +29,9 @@ class CourseAccessTests(TestCase):
         self.client.force_login(self.student)
         response = self.client.get(reverse("courses:list"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "yashirin")
+        # Yashirin kurslar ro‘yxatda umuman chiqmaydi
+        self.assertNotContains(response, "Excel")
+        self.assertContains(response, "SQL")
 
     def test_lecture_partial_when_read_but_practice_unsolved(self):
         make_exercise(self.module, slug="practice", lecture=self.lecture)
@@ -41,7 +43,7 @@ class CourseAccessTests(TestCase):
         self.assertNotContains(response, "is-done")
 
     def test_course_ordering(self):
-        later = make_course("python", published=True, visible=True, title="Python")
+        later = make_course("power-bi", published=True, visible=True, title="Power BI")
         later.order = 5
         later.save()
         self.published.order = 1
@@ -49,20 +51,26 @@ class CourseAccessTests(TestCase):
         courses = list(type(self.published).objects.filter(is_published=True).order_by("order"))
         self.assertEqual(courses[0].slug, "sql")
 
-    def test_non_sql_course_shows_coming_soon(self):
-        make_course("python", published=True, visible=True, title="Python")
+    def test_coming_soon_course_locked(self):
+        soon = make_course("power-bi", published=True, visible=True, title="Power BI")
         self.client.force_login(self.student)
-        detail = self.client.get(reverse("courses:detail", args=["python"]))
+        detail = self.client.get(reverse("courses:detail", args=[soon.slug]))
         self.assertEqual(detail.status_code, 403)
         self.assertContains(detail, "Hozir jarayonda", status_code=403)
         dashboard = self.client.get(reverse("dashboard:home"))
         self.assertEqual(dashboard.status_code, 200)
         self.assertContains(dashboard, "Hozir jarayonda")
         self.assertContains(dashboard, "course-card-locked")
-        self.assertContains(dashboard, "Mening panelim")
         courses_list = self.client.get(reverse("courses:list"))
         self.assertEqual(courses_list.status_code, 200)
         self.assertContains(courses_list, "Hozir jarayonda")
         self.assertContains(courses_list, "course-card-locked")
-        # Non-SQL cards must not show the free-module preview line
-        self.assertEqual(courses_list.content.decode().count("Dastlabki 5 modul ochiq"), 1)
+
+    def test_python_course_is_hidden_for_release(self):
+        make_course("python", published=True, visible=False, title="Python")
+        self.client.force_login(self.student)
+        detail = self.client.get(reverse("courses:detail", args=["python"]))
+        # Yashirin / ochiq emas — 403 yoki coming_soon
+        self.assertIn(detail.status_code, (403, 404))
+        courses_list = self.client.get(reverse("courses:list"))
+        self.assertNotContains(courses_list, 'href="/courses/python/"')

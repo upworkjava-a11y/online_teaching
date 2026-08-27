@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Sertifikatlar{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <p class="muted text-sm">Yutuqlar</p>
+    <h1 class="text-3xl font-extrabold">Sertifikatlarim</h1>
+    <p class="muted mt-1">Modul yoki kursni to‘liq tugatganingizdan keyin sertifikat chiqadi.</p>
+  </div>
+
+  {% if streak %}
+    <div class="card">
+      <p class="muted text-sm">Kunlik zanjir</p>
+      <p class="text-2xl font-extrabold">🔥 {{ streak.current_streak }} kun</p>
+      <p class="muted text-sm mt-1">Eng uzun: {{ streak.longest_streak }} kun</p>
+    </div>
+  {% endif %}
+
+  <div class="grid gap-4 md:grid-cols-2">
+    {% for cert in certificates %}
+      <a class="card block" href="{% url 'progress:certificate_detail' cert.code %}">
+        <p class="text-sm muted">{% if cert.kind == "course" %}Kurs{% else %}Modul{% endif %}</p>
+        <h2 class="text-lg font-bold">{{ cert.title }}</h2>
+        <p class="muted text-sm mt-2">Kod: {{ cert.code }} · {{ cert.issued_at|date:"d.m.Y" }}</p>
+      </a>
+    {% empty %}
+      <div class="card muted">Hali sertifikat yo‘q. Modullarni tugating.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

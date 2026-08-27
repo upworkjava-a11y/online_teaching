@@ -2,19 +2,25 @@ from django.shortcuts import render
 from django.views import View
 
 from apps.access.services import access_service
-from apps.core.views import RoleRequiredMixin
+from apps.core.views import GuestBrowseMixin, RoleRequiredMixin
 from apps.courses.models import Course
 from apps.exercises.models import Exercise, ExerciseAttempt
 from apps.homework.models import HomeworkAssignment
 from apps.homework.services import homework_service
 from apps.progress.models import LectureProgress
 from apps.progress.services import progress_service
+from apps.progress.streak import get_streak
+from apps.contests.services import active_contests
 
 from .leaderboard import DIFFICULTY_LABELS, DIFFICULTY_POINTS, build_leaderboard, my_rank, recent_correct_solves
 
 
 class StudentDashboardView(RoleRequiredMixin, View):
     allowed_roles = ("student",)
+    auth_gate_title = "Kabinet uchun hisob kerak"
+    auth_gate_message = (
+        "Shaxsiy kabinet, progress va uy vazifalarini ko‘rish uchun tizimga kiring yoki ro‘yxatdan o‘ting."
+    )
 
     def get(self, request):
         courses = Course.objects.filter(is_published=True, is_visible=True).order_by("order")
@@ -63,6 +69,8 @@ class StudentDashboardView(RoleRequiredMixin, View):
                 "recent_lectures": recent_lectures,
                 "homework_rows": homework_rows,
                 "leaderboard_me": my_rank(board, request.user.pk),
+                "streak": get_streak(request.user),
+                "active_contests": list(active_contests()[:2]),
             },
         )
 
@@ -99,13 +107,15 @@ class StudentProgressView(RoleRequiredMixin, View):
         return render(request, "dashboard/progress.html", {"rows": rows})
 
 
-class StudentLeaderboardView(RoleRequiredMixin, View):
+class StudentLeaderboardView(GuestBrowseMixin, View):
     allowed_roles = ("student", "teacher", "admin")
 
     def get(self, request):
         board = build_leaderboard(limit=50)
         podium = board[:3]
-        me = my_rank(board, request.user.pk) if request.user.is_student else None
+        me = None
+        if request.user.is_authenticated and getattr(request.user, "is_student", False):
+            me = my_rank(board, request.user.pk)
         recent = recent_correct_solves(limit=12)
         return render(
             request,

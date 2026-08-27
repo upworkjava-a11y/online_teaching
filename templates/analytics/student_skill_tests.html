@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Bilim testi — {{ student }}{% endblock %}
+{% block content %}
+<div class="space-y-6">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <p class="muted text-sm">Bilim testi · batafsil</p>
+      <h1 class="text-3xl font-extrabold">{{ student.get_full_name|default:student.email }}</h1>
+      <p class="muted mt-1">{{ student.email }}</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <a class="btn btn-ghost" href="{% url 'analytics:student_detail' student.pk %}">Talaba profili</a>
+      <a class="btn btn-ghost" href="{% url 'analytics:skill_tests' %}">Barcha natijalar</a>
+    </div>
+  </div>
+
+  <form method="get" class="card flex flex-wrap gap-3 items-end">
+    <label class="text-sm">
+      <span class="muted">Kurs</span>
+      <select class="input mt-1" name="course" onchange="this.form.submit()">
+        {% for c in courses %}
+          <option value="{{ c.pk }}" {% if course and course.pk == c.pk %}selected{% endif %}>{{ c.title }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </form>
+
+  {% for block in skill_modules %}
+    <section class="card">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="text-xl font-bold">{{ block.module.title }}</h2>
+          <p class="muted text-sm">To‘g‘ri: {{ block.done }}/{{ block.total }} · {{ block.percent }}%</p>
+        </div>
+        <div class="progress-track w-40"><div class="progress-fill" style="width: {{ block.percent }}%"></div></div>
+      </div>
+      <div class="mt-4 overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Savol</th>
+              <th>Holat</th>
+              <th>Talaba javobi</th>
+              <th>To‘g‘ri javob</th>
+              <th>Urinishlar</th>
+              <th>So‘nggi vaqt</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for q in block.questions %}
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                  <div class="font-semibold">{{ q.exercise.title }}</div>
+                  <div class="text-sm muted">{{ q.exercise.task|truncatechars:90 }}</div>
+                </td>
+                <td>
+                  {% if q.solved %}<span class="ok">To‘g‘ri</span>
+                  {% elif q.latest %}<span class="bad">Noto‘g‘ri</span>
+                  {% else %}<span class="muted">Yechilmagan</span>{% endif %}
+                </td>
+                <td>{% if q.answer %}<strong>{{ q.answer }}</strong>{% else %}—{% endif %}</td>
+                <td>{{ q.expected|default:"—" }}</td>
+                <td>{{ q.attempts_count }}</td>
+                <td>{% if q.latest %}{{ q.latest.created_at|date:"d.m.Y H:i" }}{% else %}—{% endif %}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  {% empty %}
+    <div class="card muted">Bu kursda bilim testi topilmadi yoki hali natija yo‘q.</div>
+  {% endfor %}
+</div>
+{% endblock %}

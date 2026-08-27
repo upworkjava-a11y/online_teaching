@@ -3,9 +3,9 @@ Python for Data Analytics — chuqur o‘zbekcha ma’ruzalar, kod namuna va tes
 """
 
 COURSE_DESCRIPTION = (
-    "Pythonni tahlilchi sifatida, noldan: o‘zgaruvchi, pandas, tozalash, grafik. "
-    "Excelda qo‘lda qilgan ishingizni qayta-qayta ishlatiladigan kodga aylantirasiz. "
-    "Har muhim mavzuda qisqa kod namunasi bor."
+    "Python data analytics — boshlang‘ichdan o‘rtagacha: o‘zgaruvchi, mantiq, NumPy, Pandas, "
+    "tozalash, groupby/merge, EDA va mini-loyiha. Har darsda mashq + puzzle, modul oxirida bilim testi "
+    "(W3Schools/CodeChef ruhida, lekin tahlilchiga mos)."
 )
 
 
@@ -929,11 +929,22 @@ recency = (as_of - last).dt.days</pre>
 
 
 def build_python_modules():
+    from apps.core.python_puzzles import merge_python_exercises, merge_python_practice
     from apps.core.python_teacher_lessons import LECTURES
 
+    modules = []
     for module in MODULES:
-        for lecture in module["lectures"]:
+        data = {
+            **module,
+            "lectures": [dict(lec) for lec in module["lectures"]],
+            "practice": dict(module.get("practice") or {}),
+            "exercises": list(module.get("exercises") or []),
+        }
+        for lecture in data["lectures"]:
             html = LECTURES.get(lecture["slug"])
             if html:
                 lecture["content"] = html.strip()
-    return MODULES
+        merge_python_practice(data)
+        merge_python_exercises(data)
+        modules.append(data)
+    return modules
