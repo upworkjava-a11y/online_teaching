@@ -8,6 +8,7 @@ from apps.core.views import RoleRequiredMixin
 from apps.progress.models import CourseProgress
 
 from .models import Exercise, ExerciseAttempt
+from .navigation import exercise_nav_context
 from .services import RateLimited, exercise_service
 
 
@@ -27,6 +28,27 @@ class ExerciseDetailView(RoleRequiredMixin, View):
             return None, decision
         return exercise, decision
 
+    def _context(self, request, exercise, attempts, last_sql, latest_attempt):
+        solved = ExerciseAttempt.objects.filter(
+            student=request.user,
+            exercise=exercise,
+            is_correct=True,
+        ).exists()
+        context = {
+            "exercise": exercise,
+            "attempts": attempts,
+            "last_sql": last_sql,
+            "datasets": exercise.datasets.all(),
+            "latest_attempt": latest_attempt,
+            "exercise_solved": solved,
+        }
+        if solved:
+            context.update(exercise_nav_context(request.user, exercise))
+        else:
+            context["next_exercise"] = None
+            context["next_lecture"] = None
+        return context
+
     def get(self, request, pk):
         exercise, decision = self.get_exercise(request, pk)
         if exercise is None:
@@ -44,13 +66,7 @@ class ExerciseDetailView(RoleRequiredMixin, View):
         return render(
             request,
             self.template_name,
-            {
-                "exercise": exercise,
-                "attempts": attempts,
-                "last_sql": last_sql,
-                "datasets": exercise.datasets.all(),
-                "latest_attempt": attempts[0] if attempts else None,
-            },
+            self._context(request, exercise, attempts, last_sql, attempts[0] if attempts else None),
         )
 
     def post(self, request, pk):
@@ -68,13 +84,7 @@ class ExerciseDetailView(RoleRequiredMixin, View):
             return redirect("exercises:detail", pk=exercise.pk)
 
         attempts = ExerciseAttempt.objects.filter(student=request.user, exercise=exercise)[:10]
-        context = {
-            "exercise": exercise,
-            "attempts": attempts,
-            "last_sql": submission,
-            "datasets": exercise.datasets.all(),
-            "latest_attempt": attempt,
-        }
+        context = self._context(request, exercise, attempts, submission, attempt)
         if request.htmx:
             return render(request, "exercises/partials/result.html", context)
         return render(request, self.template_name, context)

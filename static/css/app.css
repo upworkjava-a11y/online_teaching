@@ -450,6 +450,10 @@ a.lesson-item:hover {
   background: #fee2e2;
   color: #991b1b;
 }
+.exercise-next-nav {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
 .leaderboard-teaser {
   display: flex;
   flex-wrap: wrap;

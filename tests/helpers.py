@@ -40,14 +40,14 @@ def make_module(course, slug="basics", published=True, title="SQL asoslari"):
     )
 
 
-def make_lecture(module, slug="select", published=True, title="SELECT nima?"):
+def make_lecture(module, slug="select", published=True, title="SELECT nima?", order=1):
     return Lecture.objects.create(
         module=module,
         title=title,
         slug=slug,
         content="<p>Test ma’ruza</p>",
         sql_examples=["SELECT 1;"],
-        order=1,
+        order=order,
         is_published=published,
     )
 
