@@ -1,10 +1,31 @@
 from django import forms
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    UserCreationForm,
+)
 from django.core.exceptions import ValidationError
 
 from .models import User
 from .utils import unique_username_from_email
+
+
+class StyledPasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["email"].label = "Email"
+        self.fields["email"].widget.attrs.update({"class": "input", "autofocus": True})
+
+
+class StyledSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["new_password1"].label = "Yangi parol"
+        self.fields["new_password2"].label = "Yangi parolni tasdiqlang"
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "input"
 
 
 class StudentRegistrationForm(UserCreationForm):
