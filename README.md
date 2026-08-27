@@ -126,6 +126,8 @@ Quick idea:
 - Local coding → `config.settings.local` + `run.bat`
 - Live site → `config.settings.pythonanywhere` + SQLite (free tier OK)
 - After content updates: `git pull` then `bash scripts/pa_update.sh` and **Reload** the web app
+- Only when you need to re-seed courses/exercises: `RUN_BOOTSTRAP=1 bash scripts/pa_update.sh`
+- Always back up `pa_platform.sqlite3` before bootstrap on a live site with real students
 
 ## Tests
 

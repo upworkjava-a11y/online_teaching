@@ -42,6 +42,25 @@ SQL_FUTURE_MODULES = []  # modules 4–11 now seeded with full content via build
 class Command(BaseCommand):
     help = "Create initial courses, Uzbek SQL content, demo users, and sandbox datasets."
 
+    def _retire_exercises(self, queryset, *, reason: str = ""):
+        """
+        Never hard-delete exercises that students already solved.
+        CASCADE on Exercise would wipe ExerciseAttempt (scores / reyting).
+        """
+        qs = queryset.distinct()
+        with_progress = qs.filter(attempts__isnull=False).distinct()
+        empty = qs.exclude(pk__in=with_progress.values_list("pk", flat=True))
+        kept = with_progress.update(is_published=False)
+        removed, _ = empty.delete()
+        if kept or removed:
+            detail = reason or "eski mashqlar"
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Retire ({detail}): {removed} o‘chirildi, "
+                    f"{kept} ta ball/urinish bor — faqat yashirildi."
+                )
+            )
+
     @transaction.atomic
     def handle(self, *args, **options):
         self._create_users()
@@ -286,7 +305,10 @@ class Command(BaseCommand):
             "lc-credit-sum",
             "lc-customers-per-city",
         ]
-        Exercise.objects.filter(slug__in=old_practice_slugs).delete()
+        self._retire_exercises(
+            Exercise.objects.filter(slug__in=old_practice_slugs),
+            reason="eski practice sluglar",
+        )
 
         modules_data = [
             {
@@ -463,12 +485,9 @@ class Command(BaseCommand):
         LECTURE_PRACTICE.update(ADVANCED_PRACTICE)
         modules_data.extend(build_advanced_modules())
 
-        # Dars mashqlari modul/slug o‘zgarganda eski nusxalar qolmasin
-        Exercise.objects.filter(
-            module__course=course,
-            lecture__isnull=False,
-            slug__startswith="lc-",
-        ).delete()
+        # IMPORTANT: do not delete lc-* exercises here.
+        # Hard delete CASCADE-wipes ExerciseAttempt (student scores / reyting).
+        # _upsert_exercise(module, slug=...) updates in place and keeps attempts.
 
         for module_data in modules_data:
             module, _ = Module.objects.update_or_create(
@@ -628,8 +647,11 @@ class Command(BaseCommand):
 
         total = 0
         for module in course.modules.filter(is_published=True).order_by("order"):
-            # Eski bitta umumiy testni olib tashlash
-            Exercise.objects.filter(module=module, slug=f"{module.slug}-bilim-testi").delete()
+            # Eski bitta umumiy test: urinishlar bo‘lsa yashirish
+            self._retire_exercises(
+                Exercise.objects.filter(module=module, slug=f"{module.slug}-bilim-testi"),
+                reason=f"{module.slug} eski bilim testi",
+            )
             quizzes = skill_tests_for_module(module.slug)
             if not quizzes:
                 # Noma’lum modul — kamida SELECT asoslari to‘plamidan nusxa

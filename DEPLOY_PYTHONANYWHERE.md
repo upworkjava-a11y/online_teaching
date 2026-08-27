@@ -152,16 +152,19 @@ On PythonAnywhere Bash:
 cd ~/My-online-platform
 source .venv/bin/activate
 git pull
-pip install -r requirements/pythonanywhere.txt
-export DJANGO_SETTINGS_MODULE=config.settings.pythonanywhere
-python manage.py migrate
-python manage.py bootstrap_platform
-python manage.py collectstatic --noinput
+bash scripts/pa_update.sh
 ```
 
 Then **Web → Reload**.
 
-This workflow is what you’ll use when adding Excel/Python content and new features later.
+**Important:** `pa_update.sh` does **not** run `bootstrap_platform` by default.  
+Bootstrap re-seeds courses/exercises. Older versions deleted exercises and wiped student scores (CASCADE). Use bootstrap only when you intentionally want to refresh content:
+
+```bash
+RUN_BOOTSTRAP=1 bash scripts/pa_update.sh
+```
+
+Before any risky DB change, download a copy of `pa_platform.sqlite3` from the Files tab (backup).
 
 ---
 
