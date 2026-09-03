@@ -197,6 +197,11 @@ STRINGS: dict[str, dict[str, str]] = {
         "Задачи SQL — лёгкие, средние и сложные.",
         "SQL exercises — easy, medium, and hard.",
     ),
+    "SQL va English for Banking mashqlari — oson, o‘rta va qiyin.": S(
+        "SQL ва English for Banking машқлари — осон, ўрта ва қийин.",
+        "Задачи SQL и English for Banking — лёгкие, средние и сложные.",
+        "SQL and English for Banking exercises — easy, medium, and hard.",
+    ),
     "Qidiruv": S("Қидирув", "Поиск", "Search"),
     "Qiyinlik": S("Қийинлик", "Сложность", "Difficulty"),
     "Holat": S("Ҳолат", "Статус", "Status"),
@@ -804,6 +809,21 @@ STRINGS.update(
             "Incorrect. Try again.",
         ),
         "Yechim yo‘riqnomasi": S("Ечим йўриқномаси", "Разбор решения", "Solution guide"),
+        "To‘g‘ri javob darsdagi bank terminiga mos keladi.": S(
+            "Тўғри жавоб дарсдаги банк терминига мос келади.",
+            "Правильный ответ соответствует банковскому термину из урока.",
+            "The correct answer matches the banking term from the lesson.",
+        ),
+        "Darsdagi inglizcha so‘zlarni eslang.": S(
+            "Дарсдаги инглизча сўзларни эсланг.",
+            "Вспомните английские слова из урока.",
+            "Remember the English words from the lesson.",
+        ),
+        "Darsdagi bank so‘zlarini eslang.": S(
+            "Дарсдаги банк сўзларини эсланг.",
+            "Вспомните банковские слова из урока.",
+            "Remember the banking words from the lesson.",
+        ),
         "Keyingi masala →": S("Кейинги масала →", "Следующая задача →", "Next exercise →"),
         "Keyingi dars →": S("Кейинги дарс →", "Следующий урок →", "Next lesson →"),
         "Bajarilish:": S("Бажарилиш:", "Выполнение:", "Runtime:"),
@@ -1050,6 +1070,11 @@ STRINGS.update(
             "Модул билим тести. Тўғри жавобни танланг.",
             "Тест знаний модуля. Выберите правильный ответ.",
             "Module skill test. Choose the correct answer.",
+        ),
+        "Modul bilim testi. To‘g‘ri inglizcha javobni tanlang.": S(
+            "Модул билим тести. Тўғри инглизча жавобни танланг.",
+            "Тест знаний модуля. Выберите правильный ответ на английском.",
+            "Module skill test. Choose the correct English answer.",
         ),
         "Modul hali tugallanmagan. Barcha darslar, mashqlar va bilim testini yakunlang.": S(
             "Модул ҳали тугалланмаган. Барча дарслар, машқлар ва билим тестини якунланг.",

@@ -5,6 +5,7 @@ from django.conf import settings
 # Fallback (kurs DB da yo‘q yoki premium_price=0 bo‘lsa)
 COURSE_PREMIUM_PRICES: dict[str, int] = {
     "sql": 50_000,
+    "english-banking": 50_000,
     "python": 50_000,
     "excel": 50_000,
     "statistics": 50_000,

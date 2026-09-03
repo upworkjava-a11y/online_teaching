@@ -40,3 +40,4 @@ class PythonContentTests(TestCase):
 
         self.assertNotIn("python", OPEN_COURSE_SLUGS)
         self.assertIn("sql", OPEN_COURSE_SLUGS)
+        self.assertIn("english-banking", OPEN_COURSE_SLUGS)

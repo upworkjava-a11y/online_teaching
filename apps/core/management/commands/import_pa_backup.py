@@ -166,11 +166,19 @@ class Command(BaseCommand):
             "certificates": 0,
             "streaks": 0,
             "contest_scores": 0,
+            "access_rules": 0,
+            "access_skipped": 0,
         }
 
         if dry_run:
             summary["users_upserted"] = cur.execute("SELECT COUNT(*) FROM accounts_user").fetchone()[0]
             summary["attempts"] = cur.execute("SELECT COUNT(*) FROM exercises_exerciseattempt").fetchone()[0]
+            try:
+                summary["access_rules"] = cur.execute(
+                    "SELECT COUNT(*) FROM access_usercontentaccess"
+                ).fetchone()[0]
+            except sqlite3.Error:
+                summary["access_rules"] = 0
             return summary
 
         with transaction.atomic():
@@ -344,10 +352,13 @@ class Command(BaseCommand):
                 if row.get("last_lecture_id"):
                     lec_slug = old_lec_id_to_slug.get(row["last_lecture_id"])
                     last_lecture = lecture_by_slug.get(lec_slug) if lec_slug else None
+                defaults = {"last_lecture": last_lecture}
+                if "last_activity_at" in row.keys():
+                    defaults["last_activity_at"] = _parse_dt(row["last_activity_at"])
                 CourseProgress.objects.update_or_create(
                     student=user,
                     course=course,
-                    defaults={"last_lecture": last_lecture},
+                    defaults=defaults,
                 )
                 summary["course_progress"] += 1
 
@@ -404,5 +415,57 @@ class Command(BaseCommand):
                     },
                 )
                 summary["contest_scores"] += 1
+
+            # Premium / allow-deny rules (generic FK → map by app_label.model + slug)
+            from django.contrib.contenttypes.models import ContentType
+
+            from apps.access.models import UserContentAccess
+
+            old_ct = {
+                row["id"]: (row["app_label"], row["model"])
+                for row in _row_dicts(cur, "SELECT id, app_label, model FROM django_content_type")
+            }
+            try:
+                access_rows = list(_row_dicts(cur, "SELECT * FROM access_usercontentaccess"))
+            except sqlite3.Error:
+                access_rows = []
+
+            for row in access_rows:
+                user = user_by_old_id.get(row["user_id"])
+                ct_info = old_ct.get(row["content_type_id"])
+                if not user or not ct_info:
+                    summary["access_skipped"] += 1
+                    continue
+                app_label, model = ct_info
+                target = None
+                oid = row["object_id"]
+                if app_label == "courses" and model == "course":
+                    slug = old_course_id_to_slug.get(oid)
+                    target = course_by_slug.get(slug) if slug else None
+                elif app_label == "courses" and model == "module":
+                    slug = old_module_id_to_slug.get(oid)
+                    target = module_by_slug.get(slug) if slug else None
+                elif app_label == "courses" and model == "lecture":
+                    slug = old_lec_id_to_slug.get(oid)
+                    target = lecture_by_slug.get(slug) if slug else None
+                elif app_label == "exercises" and model == "exercise":
+                    slug = old_ex_id_to_slug.get(oid)
+                    target = exercise_by_slug.get(slug) if slug else None
+                if target is None:
+                    summary["access_skipped"] += 1
+                    continue
+                new_ct = ContentType.objects.get_for_model(target.__class__)
+                created_by = user_by_old_id.get(row["created_by_id"]) if row.get("created_by_id") else None
+                UserContentAccess.objects.update_or_create(
+                    user=user,
+                    content_type=new_ct,
+                    object_id=target.pk,
+                    defaults={
+                        "status": row["status"],
+                        "reason": row.get("reason") or "",
+                        "created_by": created_by,
+                    },
+                )
+                summary["access_rules"] += 1
 
         return summary

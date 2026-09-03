@@ -9,7 +9,7 @@ from .models import UserContentAccess
 FREE_PREVIEW_MODULES = 5
 PREMIUM_GROUP_NAME = "Premium"
 # Talabalar uchun hozircha ochiq kurs(lar). Qolganlari “Hozir jarayonda”.
-OPEN_COURSE_SLUGS = frozenset({"sql"})
+OPEN_COURSE_SLUGS = frozenset({"sql", "english-banking"})
 COMING_SOON_REASON = "Hozir jarayonda"
 
 
@@ -169,9 +169,16 @@ class AccessService:
             course_decision = self.evaluate(user, obj.course)
             if not course_decision.allowed:
                 return course_decision
-            if obj.is_published:
-                return AccessDecision(True, "", "published")
-            return AccessDecision(False, "Bu modul hozircha mavjud emas.", "unpublished")
+            if not obj.is_published:
+                return AccessDecision(False, "Bu modul hozircha mavjud emas.", "unpublished")
+            if self.has_full_course_access(user, obj.course):
+                return AccessDecision(True, "", "full")
+            module_rule = self._rule(user, obj)
+            if module_rule and module_rule.status == UserContentAccess.Status.ALLOWED:
+                return AccessDecision(True, "", "explicit_allow")
+            if self.is_preview_module(obj):
+                return AccessDecision(True, "", "preview")
+            return AccessDecision(False, self.PREMIUM_REASON, "premium")
 
         if isinstance(obj, Lecture):
             module_decision = self.evaluate(user, obj.module)

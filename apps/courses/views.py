@@ -128,8 +128,7 @@ class CourseDetailView(GuestBrowseMixin, View):
                     }
                 )
             premium_locked = (
-                module_decision.allowed
-                and not full_access
+                not full_access
                 and module.is_published
                 and module.pk not in preview_ids
             )
@@ -137,7 +136,9 @@ class CourseDetailView(GuestBrowseMixin, View):
                 {
                     "module": module,
                     "decision": module_decision,
-                    "percent": progress_service.module_percent(request.user, module) if module_decision.allowed else 0,
+                    "percent": progress_service.module_percent(request.user, module)
+                    if module_decision.allowed and not premium_locked
+                    else 0,
                     "lectures": lectures,
                     "exercises": exercises,
                     "premium_locked": premium_locked,

@@ -7,6 +7,8 @@ from apps.accounts.models import TeacherProfile, User
 from apps.courses.models import Course, CourseEnrollment, Lecture, Module
 from apps.exercises.models import Dataset, Exercise, ExerciseDataset, ExerciseExpectedResult
 from apps.homework.models import HomeworkAssignment
+from apps.core.english_banking_content import COURSE_DESCRIPTION as EB_COURSE_DESCRIPTION
+from apps.core.english_banking_content import build_english_banking_modules
 from apps.core.excel_content import COURSE_DESCRIPTION as EXCEL_COURSE_DESCRIPTION
 from apps.core.excel_content import build_excel_modules
 from apps.core.powerbi_content import COURSE_DESCRIPTION as PBI_COURSE_DESCRIPTION
@@ -66,6 +68,8 @@ class Command(BaseCommand):
         self._create_users()
         courses = self._create_courses()
         self._create_sql_content(courses["sql"])
+        self._seed_structured_course(courses["english-banking"], build_english_banking_modules())
+        self._seed_english_banking_skill_tests(courses["english-banking"])
         self._seed_structured_course(courses["excel"], build_excel_modules())
         self._seed_structured_course(courses["statistics"], build_statistics_modules())
         self._seed_structured_course(courses["python"], build_python_modules())
@@ -175,15 +179,16 @@ class Command(BaseCommand):
     def _create_courses(self):
         specs = [
             ("sql", "SQL", COURSE_DESCRIPTION, 1),
-            ("excel", "Excel", EXCEL_COURSE_DESCRIPTION, 2),
-            ("statistics", "Statistika", STATS_COURSE_DESCRIPTION, 3),
-            ("python", "Python", PYTHON_COURSE_DESCRIPTION, 4),
-            ("power-bi", "Power BI", PBI_COURSE_DESCRIPTION, 5),
-            ("real-projects", "Amaliy loyihalar", PROJECTS_COURSE_DESCRIPTION, 6),
+            ("english-banking", "English for Banking", EB_COURSE_DESCRIPTION, 2),
+            ("excel", "Excel", EXCEL_COURSE_DESCRIPTION, 3),
+            ("statistics", "Statistika", STATS_COURSE_DESCRIPTION, 4),
+            ("python", "Python", PYTHON_COURSE_DESCRIPTION, 5),
+            ("power-bi", "Power BI", PBI_COURSE_DESCRIPTION, 6),
+            ("real-projects", "Amaliy loyihalar", PROJECTS_COURSE_DESCRIPTION, 7),
         ]
         courses = {}
         for slug, title, description, order in specs:
-            # Release: Python yashirin; SQL ochiq; qolganlar “Hozir jarayonda” uchun ko‘rinadi
+            # Release: Python yashirin; SQL + English for Banking ochiq; qolganlar “Hozir jarayonda”
             is_visible = slug != "python"
             course, _ = Course.objects.get_or_create(
                 slug=slug,
@@ -684,6 +689,24 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 f"Python bilim testlari: {total} ta savol ({len(MODULE_SKILL_TESTS)} modul)."
+            )
+        )
+
+    def _seed_english_banking_skill_tests(self, course: Course):
+        """English for Banking — bilim testlari (quiz format)."""
+        from apps.core.english_banking_skill_tests import MODULE_SKILL_TESTS, skill_tests_for_module
+
+        total = 0
+        for module in course.modules.filter(is_published=True).order_by("order"):
+            quizzes = skill_tests_for_module(module.slug)
+            if not quizzes:
+                continue
+            for index, quiz in enumerate(quizzes, start=1):
+                self._upsert_exercise(module, quiz, [], order=900 + index)
+                total += 1
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"English for Banking bilim testlari: {total} ta savol ({len(MODULE_SKILL_TESTS)} modul)."
             )
         )
 

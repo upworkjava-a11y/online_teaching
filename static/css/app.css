@@ -284,6 +284,111 @@ body.app-body {
   padding: 0.9rem;
   overflow: auto;
 }
+
+/* English for Banking — bilingual lesson chrome */
+.eb-lesson {
+  --eb-accent: #0f766e;
+  --eb-soft: #f0fdfa;
+  --eb-line: #99f6e4;
+}
+.eb-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ecfeff, #f0fdfa);
+  border: 1px solid var(--eb-line);
+  color: #115e59;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.eb-explain {
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: var(--eb-soft);
+  border: 1px solid var(--eb-line);
+  border-left: 4px solid var(--eb-accent);
+}
+.eb-explain-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--eb-accent);
+  margin-bottom: 0.35rem;
+}
+.eb-explain p {
+  margin: 0;
+  color: #134e4a;
+  line-height: 1.55;
+}
+.eb-h {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+.eb-h-loc {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #0f766e;
+}
+.eb-th-loc {
+  font-weight: 600;
+  color: #0f766e;
+  font-size: 0.9em;
+}
+.eb-meaning .eb-loc-mean {
+  display: block;
+  font-weight: 600;
+  color: #0f172a;
+}
+.eb-meaning .eb-en-mean {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.86em;
+  color: #64748b;
+}
+.eb-dialogue-tr {
+  margin: 0.75rem 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px dashed #94a3b8;
+  border-left: 4px solid #0f766e;
+}
+.eb-dialogue-tr .eb-explain-label {
+  margin-bottom: 0.55rem;
+}
+.eb-dialogue-tr p {
+  margin: 0.35rem 0;
+  color: #334155;
+  line-height: 1.5;
+}
+.eb-dialogue-tr strong {
+  color: #0f766e;
+}
+.eb-lesson table {
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid #d1fae5;
+}
+.eb-lesson th {
+  background: #ecfdf5;
+  color: #115e59;
+}
+.eb-lesson tr:nth-child(even) td {
+  background: #f8fffc;
+}
+.eb-lesson strong {
+  color: #0f766e;
+}
+
 .lesson-list {
   margin-top: 1rem;
   display: flex;

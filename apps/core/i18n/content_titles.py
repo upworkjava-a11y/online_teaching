@@ -553,4 +553,216 @@ TITLE_STRINGS: dict[str, dict[str, str]] = {
         "COALESCE syntax and 1 example.\n"
         "Explain Person LEFT JOIN Address.",
     ),
+    # English for Banking — UI titles (English learning body stays English)
+    "English for Banking": S(
+        "English for Banking",
+        "English for Banking",
+        "English for Banking",
+    ),
+    (
+        "Bank sohasi uchun pre-intermediate ingliz tili: mijoz xizmati, hisoblar, kartalar, "
+        "kredit, HR, KYC va ish yozishmalari. Grammatika, so‘z boyligi, o‘qish va gapirish "
+        "mashqlari — SQL kursidagi kabi modullar, puzzle va bilim testlari bilan."
+    ): S(
+        (
+            "Банк соҳаси учун pre-intermediate инглиз тили: мижоз хизмати, ҳисоблар, карталар, "
+            "кредит, HR, KYC ва иш ёзишмалари. Грамматика, сўз бойлиги, ўқиш ва гапириш "
+            "машқлари — SQL курсидаги каби модуллар, puzzle ва билим тестлари билан."
+        ),
+        (
+            "Английский для банковской сферы (pre-intermediate): обслуживание клиентов, счета, карты, "
+            "кредиты, HR, KYC и деловая переписка. Грамматика, лексика, чтение и говорение — "
+            "модули, задания и тесты знаний, как в курсе SQL."
+        ),
+        (
+            "Pre-intermediate English for banking: customer service, accounts, cards, "
+            "credit, HR, KYC, and workplace writing. Grammar, vocabulary, reading, and speaking — "
+            "with modules, puzzles, and skill tests like the SQL course."
+        ),
+    ),
+    (
+        "Bank sohasi uchun pre-intermediate ingliz tili (11 modul): asoslar, hisoblar, kartalar, "
+        "kredit, FX/remittance, SME/trade finance, raqamli banking va firibgarlik, HR, mijoz xizmati, "
+        "KYC/compliance, email va uchrashuvlar. Grammatika, so‘z boyligi, o‘qish va gapirish — "
+        "puzzle va bilim testlari bilan."
+    ): S(
+        (
+            "Банк соҳаси учун pre-intermediate инглиз тили (11 модул): асослар, ҳисоблар, карталар, "
+            "кредит, FX/remittance, SME/trade finance, рақамли banking ва фирибгарлик, HR, мижоз хизмати, "
+            "KYC/compliance, email ва учрашувлар. Грамматика, сўз бойлиги, ўқиш ва гапириш — "
+            "puzzle ва билим тестлари билан."
+        ),
+        (
+            "Английский для банковской сферы (pre-intermediate, 11 модулей): основы, счета, карты, "
+            "кредиты, FX/переводы, SME/trade finance, цифровой банкинг и мошенничество, HR, "
+            "обслуживание клиентов, KYC/compliance, email и встречи. Грамматика, лексика, чтение и говорение — "
+            "с заданиями и тестами знаний."
+        ),
+        (
+            "Pre-intermediate English for banking (11 modules): basics, accounts, cards, "
+            "credit, FX/remittances, SME/trade finance, digital banking and fraud, HR, customer service, "
+            "KYC/compliance, emails and meetings. Grammar, vocabulary, reading, and speaking — "
+            "with puzzles and skill tests."
+        ),
+    ),
+    "Bank asoslari (Bank basics)": S(
+        "Банк асослари (Bank basics)",
+        "Основы банка (Bank basics)",
+        "Bank basics",
+    ),
+    "Hisoblar va depozitlar (Accounts)": S(
+        "Ҳисоблар ва депозитлар (Accounts)",
+        "Счета и депозиты (Accounts)",
+        "Accounts & deposits",
+    ),
+    "Kartalar va to‘lovlar (Cards & payments)": S(
+        "Карталар ва тўловлар (Cards & payments)",
+        "Карты и платежи (Cards & payments)",
+        "Cards & payments",
+    ),
+    "Kredit va qarzlar (Loans & credit)": S(
+        "Кредит ва қарзлар (Loans & credit)",
+        "Кредиты и займы (Loans & credit)",
+        "Loans & credit",
+    ),
+    "Bankda HR (HR in banking)": S(
+        "Банкда HR (HR in banking)",
+        "HR в банке (HR in banking)",
+        "HR in banking",
+    ),
+    "Mijozlarga xizmat (Customer service)": S(
+        "Мижозларга хизмат (Customer service)",
+        "Обслуживание клиентов (Customer service)",
+        "Customer service",
+    ),
+    "KYC va compliance": S(
+        "KYC ва compliance",
+        "KYC и compliance",
+        "KYC & compliance",
+    ),
+    "Email va uchrashuvlar (Emails & meetings)": S(
+        "Email ва учрашувлар (Emails & meetings)",
+        "Email и встречи (Emails & meetings)",
+        "Emails & meetings",
+    ),
+    "Valyuta va pul o‘tkazmalari (FX & remittances)": S(
+        "Валюта ва пул ўтказмалари (FX & remittances)",
+        "Валюта и переводы (FX & remittances)",
+        "FX & remittances",
+    ),
+    "Biznes va trade finance (SME & trade)": S(
+        "Бизнес ва trade finance (SME & trade)",
+        "Бизнес и trade finance (SME & trade)",
+        "SME & trade finance",
+    ),
+    "Raqamli banking va firibgarlik (Digital & fraud)": S(
+        "Рақамли banking ва фирибгарлик (Digital & fraud)",
+        "Цифровой банкинг и мошенничество (Digital & fraud)",
+        "Digital banking & fraud",
+    ),
+    # Module descriptions
+    "Bankda ishlash, rollar, salomlashish va asosiy so‘zlar.": S(
+        "Банкда ишлаш, роллар, саломлашиш ва асосий сўзлар.",
+        "Работа в банке, роли, приветствия и базовая лексика.",
+        "Working in a bank, roles, greetings, and basic vocabulary.",
+    ),
+    "Account types, deposit, withdraw, balance.": S(
+        "Ҳисоб турлари, депозит, ечиш, баланс.",
+        "Типы счетов, депозит, снятие, баланс.",
+        "Account types, deposit, withdraw, balance.",
+    ),
+    "Debit/credit cards, transfers, ATM, online payments.": S(
+        "Дебет/кредит карталар, ўтказмалар, ATM, онлайн тўловлар.",
+        "Дебетовые/кредитные карты, переводы, банкомат, онлайн-платежи.",
+        "Debit/credit cards, transfers, ATM, online payments.",
+    ),
+    "Loan types, interest, collateral, overdue payments.": S(
+        "Кредит турлари, фоиз, гаров, кечиккан тўловлар.",
+        "Типы кредитов, проценты, залог, просрочки.",
+        "Loan types, interest, collateral, overdue payments.",
+    ),
+    "Exchange rates, buying/selling currency, remittances, and wire basics.": S(
+        "Валюта курслари, сотиб олиш/сотиш, ўтказмалар ва wire асослари.",
+        "Курсы валют, покупка/продажа, переводы и основы wire.",
+        "Exchange rates, buying/selling currency, remittances, and wire basics.",
+    ),
+    "SME banking, working capital, letters of credit and guarantees — simplified.": S(
+        "SME банкинг, айланма маблағ, аккредитив ва кафолатлар — соддалаштирилган.",
+        "SME-банкинг, оборотный капитал, аккредитивы и гарантии — упрощённо.",
+        "SME banking, working capital, letters of credit and guarantees — simplified.",
+    ),
+    "Mobile/internet banking, OTP, phishing, and fraud awareness English.": S(
+        "Мобил/интернет-банкинг, OTP, фишинг ва фирибгарлик хавфсизлиги.",
+        "Мобильный/интернет-банкинг, OTP, фишинг и антифрод-английский.",
+        "Mobile/internet banking, OTP, phishing, and fraud awareness English.",
+    ),
+    "Jobs, CV, interviews, and workplace English in a bank.": S(
+        "Лавозимлар, CV, суҳбатлар ва банкдаги иш инглизчаси.",
+        "Вакансии, CV, интервью и рабочий английский в банке.",
+        "Jobs, CV, interviews, and workplace English in a bank.",
+    ),
+    "Complaints, phone English, problem solving.": S(
+        "Шикоятлар, телефон инглизчаси, муаммо ечиш.",
+        "Жалобы, телефонный английский, решение проблем.",
+        "Complaints, phone English, problem solving.",
+    ),
+    "Identity checks, KYC/AML basics in clear English.": S(
+        "Шахсни текшириш, KYC/AML асослари оддий инглизчада.",
+        "Проверка личности, основы KYC/AML на понятном английском.",
+        "Identity checks, KYC/AML basics in clear English.",
+    ),
+    "Workplace emails, meetings, and short presentations.": S(
+        "Иш emailлари, учрашувлар ва қисқа тақдимотлар.",
+        "Рабочие письма, встречи и короткие презентации.",
+        "Workplace emails, meetings, and short presentations.",
+    ),
+    # Exercise UI descriptions (second side)
+    "Hisob turlari.": S("Ҳисоб турлари.", "Типы счетов.", "Account types."),
+    "Ish o‘rinlari.": S("Иш ўринлари.", "Должности.", "Job roles."),
+    "Bo‘limlar.": S("Бўлимлар.", "Отделы.", "Departments."),
+    "Mijoz bilan gaplashish.": S("Мижоз билан гаплашиш.", "Общение с клиентом.", "Talking with a customer."),
+    "Salomlashish.": S("Саломлашиш.", "Приветствие.", "Greeting."),
+    "Fe’llar.": S("Феъллар.", "Глаголы.", "Verbs."),
+    "Statement.": S("Кўчирма.", "Выписка.", "Statement."),
+    "Kartalar.": S("Карталар.", "Карты.", "Cards."),
+    "O‘tkazmalar.": S("Ўтказмалар.", "Переводы.", "Transfers."),
+    "Xavfsizlik.": S("Хавфсизлик.", "Безопасность.", "Security."),
+    "Terminologiya.": S("Терминология.", "Терминология.", "Terminology."),
+    "Kredit turlari.": S("Кредит турлари.", "Типы кредитов.", "Loan types."),
+    "Kechikish.": S("Кечикиш.", "Просрочка.", "Overdue."),
+    "Grammatika.": S("Грамматика.", "Грамматика.", "Grammar."),
+    "Lavozimlar.": S("Лавозимлар.", "Должности.", "Job titles."),
+    "Gapirish.": S("Гапириш.", "Говорение.", "Speaking."),
+    "Shikoyat.": S("Шикоят.", "Жалоба.", "Complaint."),
+    "Telefon.": S("Телефон.", "Телефон.", "Phone."),
+    "O‘qish.": S("Ўқиш.", "Чтение.", "Reading."),
+    "Jarayon.": S("Жараён.", "Процесс.", "Process."),
+    "Yozish.": S("Ёзиш.", "Письмо.", "Writing."),
+    "Uchrashuv.": S("Учрашув.", "Встреча.", "Meeting."),
+    "Taqdimot.": S("Тақдимот.", "Презентация.", "Presentation."),
+    "Yozishma.": S("Ёзишма.", "Переписка.", "Correspondence."),
+    "Muloyim tilak.": S("Мулойим тилак.", "Вежливое пожелание.", "Polite wish."),
+    "Kredit karta.": S("Кредит карта.", "Кредитная карта.", "Credit card."),
+    "Ish tavsifi.": S("Иш тавсифи.", "Описание работы.", "Job description."),
+    "Risk.": S("Риск.", "Риск.", "Risk."),
+    "Termin.": S("Термин.", "Термин.", "Term."),
+    "FX.": S("FX.", "FX.", "FX."),
+    "SME.": S("SME.", "SME.", "SME."),
+    "Trade.": S("Trade.", "Trade.", "Trade."),
+    "Security.": S("Хавфсизлик.", "Безопасность.", "Security."),
+    "Fraud.": S("Фирибгарлик.", "Мошенничество.", "Fraud."),
+    "Fraud terms.": S("Фирибгарлик терминлари.", "Термины мошенничества.", "Fraud terms."),
+    "Compliance.": S("Compliance.", "Комплаенс.", "Compliance."),
+    "Bank sohasidagi asosiy so‘z.": S(
+        "Банк соҳасидаги асосий сўз.",
+        "Ключевое банковское слово.",
+        "A basic banking word.",
+    ),
+    "FX terminlari.": S("FX терминлари.", "FX-термины.", "FX terms."),
+    "Xalqaro o‘tkazma.": S("Халқаро ўтказма.", "Международный перевод.", "International transfer."),
+    "Muddat.": S("Муддат.", "Срок.", "Deadline / timing."),
+    "Biznes banking.": S("Бизнес банкинг.", "Бизнес-банкинг.", "Business banking."),
+    "Trade finance.": S("Trade finance.", "Trade finance.", "Trade finance."),
+    "Guarantee.": S("Кафолат.", "Гарантия.", "Guarantee."),
+    "Digital banking.": S("Рақамли банкинг.", "Цифровой банкинг.", "Digital banking."),
 }

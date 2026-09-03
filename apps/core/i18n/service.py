@@ -10,6 +10,126 @@ from .protect import protect_sql_and_code, restore_protected
 
 _local = threading.local()
 _HTML_SPLIT = re.compile(r"(<[^>]+>)")
+_EN_OPTION_RE = re.compile(r"^[A-D]\)\s+\S")
+_EN_MARKERS = (
+    " is ",
+    " are ",
+    " for ",
+    " the ",
+    " a ",
+    " an ",
+    " to ",
+    " of ",
+    " and ",
+    " or ",
+    " with ",
+    " what ",
+    " which ",
+    " means",
+    " mainly ",
+    " usually ",
+    " should ",
+    " would ",
+    " could ",
+    " account",
+    " savings",
+    " debit",
+    " credit",
+    " loan",
+    " bank",
+    " card",
+    " customer",
+    " mortgage",
+    " interest",
+    " please",
+    " choose ",
+    " correct ",
+)
+
+
+def _fold_latin_punct(text: str) -> str:
+    return (
+        text.replace("…", "...")
+        .replace("\u2026", "...")
+        .replace("\u2018", "'")
+        .replace("\u2019", "'")
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+        .replace("—", "-")
+        .replace("–", "-")
+        .replace("\u00a0", " ")
+    )
+
+
+def _looks_uzbek_latin(padded_lower: str) -> bool:
+    """Heuristic: Uzbek Latin chrome (after punctuation fold) must still Cyrillicize."""
+    hints = (
+        " quyidagi ",
+        " so'rov ",
+        " shart ",
+        " yozing ",
+        " hisob ",
+        " modul ",
+        " dars ",
+        " mashq ",
+        " javob ",
+        " mijoz ",
+        " salom ",
+        " bilim ",
+        " savol ",
+        " termin ",
+        " keladi ",
+        " bankda ",
+        " bolim ",
+        " bo'lim ",
+        " to'g ",
+        " tugri ",
+        " uchun ",
+        " bilan ",
+        " emas ",
+        " kerak ",
+        " tanlang ",
+        " qiling ",
+        " so'z ",
+        " dagi ",
+        " ning ",
+        " shartini ",
+        " yozing.",
+    )
+    return any(h in padded_lower for h in hints)
+
+
+def _is_english_learning_text(text: str) -> bool:
+    """True for English-for-Banking lines that must stay Latin under Cyrillic UI.
+
+    Prevents fake transliteration like «А савингс аccоунт» / «усер вантс тиме».
+    """
+    folded = _fold_latin_punct(text).strip()
+    if not folded or not any(ch.isalpha() for ch in folded):
+        return False
+    if _EN_OPTION_RE.match(folded):
+        return True
+
+    letters = [ch for ch in folded if ch.isalpha()]
+    ascii_letters = [ch for ch in letters if ord(ch) < 128]
+    if not letters or len(ascii_letters) / len(letters) < 0.9:
+        return False
+
+    padded = f" {folded.lower()} "
+    if _looks_uzbek_latin(padded):
+        return False
+
+    if any(marker in padded for marker in _EN_MARKERS):
+        return True
+
+    # Short ASCII glosses/titles ("Branch", "Client borrows.", "KYC") — keep Latin.
+    # Folded Uzbek (so‘→so') is excluded by _looks_uzbek_latin above.
+    if folded.isascii() and len(folded) <= 160:
+        if "=" in folded or folded.isupper():
+            return True
+        if len(folded.split()) <= 6:
+            return True
+    return False
 
 
 def set_language(code: str) -> str:
@@ -79,6 +199,9 @@ def localize(text: str | None, lang: str | None = None) -> str:
 
     masked, tokens = protect_sql_and_code(raw)
     if lang == LANG_CYRL:
+        # Never Cyrillic-transliterate English learning tasks ("А савингс аccоунт…").
+        if _is_english_learning_text(raw):
+            return raw
         masked = latin_to_cyrillic(masked)
     return restore_protected(masked, tokens)
 
@@ -87,6 +210,13 @@ def localize_html(html: str | None, lang: str | None = None, slug: str | None = 
     if not html:
         return ""
     lang = normalize_language(lang or get_language())
+
+    # English for Banking: bilingual chrome for every UI language, including Uzbek Latin.
+    if slug and str(slug).startswith("eb-"):
+        from .english_banking_bilingual import enhance_eb_lesson
+
+        return enhance_eb_lesson(html, lang, slug)
+
     if lang == LANG_UZ:
         return html
 
