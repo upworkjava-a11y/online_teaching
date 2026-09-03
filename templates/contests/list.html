@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% block title %}Musobaqalar{% endblock %}
+{% block title %}{{ "Musobaqalar"|loc }}{% endblock %}
 {% block content %}
 <div class="space-y-6">
   <div>
-    <p class="muted text-sm">Haftalik musobaqa</p>
-    <h1 class="text-3xl font-extrabold">Musobaqalar</h1>
-    <p class="muted mt-1">Vaqt ichida masala yeching va alohida reytingda o‘rin egallang.</p>
+    <p class="muted text-sm">{{ "Haftalik musobaqa"|loc }}</p>
+    <h1 class="text-3xl font-extrabold">{{ "Musobaqalar"|loc }}</h1>
+    <p class="muted mt-1">{{ "Vaqt ichida masala yeching va alohida reytingda o‘rin egallang."|loc }}</p>
   </div>
   <div class="grid gap-4 md:grid-cols-2">
     {% for contest in contests %}
       <a class="card block" href="{% url 'contests:detail' contest.slug %}">
-        <p class="text-sm font-bold {% if contest.is_active %}ok{% else %}muted{% endif %}">{{ contest.status_label }}</p>
-        <h2 class="text-xl font-extrabold mt-1">{{ contest.title }}</h2>
+        <p class="text-sm font-bold {% if contest.is_active %}ok{% else %}muted{% endif %}">{{ contest.status_label|loc }}</p>
+        <h2 class="text-xl font-extrabold mt-1">{{ contest.title|loc }}</h2>
         <p class="muted text-sm mt-2">{{ contest.starts_at|date:"d.m.Y H:i" }} — {{ contest.ends_at|date:"d.m.Y H:i" }}</p>
-        <p class="mt-3 text-sm">{{ contest.description|truncatechars:140 }}</p>
+        <p class="mt-3 text-sm">{{ contest.description|loc|truncatechars:140 }}</p>
       </a>
     {% empty %}
-      <div class="card muted">Hozircha e’lon qilingan musobaqa yo‘q.</div>
+      <div class="card muted">{{ "Hozircha e’lon qilingan musobaqa yo‘q."|loc }}</div>
     {% endfor %}
   </div>
 </div>

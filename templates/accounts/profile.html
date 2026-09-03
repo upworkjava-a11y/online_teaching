@@ -1,31 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Profil{% endblock %}
+{% block title %}{{ "Profil"|loc }}{% endblock %}
 {% block content %}
 <div class="mx-auto max-w-xl">
   <div class="card">
-    <h1 class="text-2xl font-semibold">Profil</h1>
-    <p class="muted mt-1">Ism, foydalanuvchi nomi, email va parolni yangilashingiz mumkin.</p>
+    <h1 class="text-2xl font-semibold">{{ "Profil"|loc }}</h1>
+    <p class="muted mt-1">{{ "Ism, foydalanuvchi nomi, email va parolni yangilashingiz mumkin."|loc }}</p>
     <form method="post" class="mt-6 space-y-4">
       {% csrf_token %}
       {% if form.non_field_errors %}
-        <div class="bad text-sm">{{ form.non_field_errors }}</div>
+        <div class="form-error">{{ form.non_field_errors|striptags }}</div>
       {% endif %}
       {% for field in form %}
         <label class="block">
           <span class="mb-1 block text-sm font-medium">{{ field.label }}</span>
           {{ field }}
           {% if field.help_text %}<p class="muted mt-1 text-xs">{{ field.help_text }}</p>{% endif %}
-          {% if field.errors %}<p class="bad mt-1 text-sm">{{ field.errors|striptags }}</p>{% endif %}
+          {% if field.errors %}<p class="form-error mt-1">{{ field.errors|striptags }}</p>{% endif %}
         </label>
       {% endfor %}
-      <button class="btn btn-primary" type="submit">Saqlash</button>
+      <button class="btn btn-primary" type="submit">{{ "Saqlash"|loc }}</button>
     </form>
     <p class="muted mt-4 text-sm">
       Telegram:
       {% if user.telegram_account %}
-        bog‘langan (@{{ user.telegram_account.telegram_username|default:user.telegram_account.telegram_id }})
+        {{ "bog‘langan"|loc }} (@{{ user.telegram_account.telegram_username|default:user.telegram_account.telegram_id }})
       {% else %}
-        hali bog‘lanmagan. Botda email/parol bilan kiring — web va Telegram bir xil akkaunt bo‘ladi.
+        {{ "hali bog‘lanmagan. Botda email/parol bilan kiring — web va Telegram bir xil akkaunt bo‘ladi."|loc }}
       {% endif %}
     </p>
   </div>

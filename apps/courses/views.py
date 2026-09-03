@@ -13,7 +13,7 @@ from .models import Course
 
 
 class CourseListView(GuestBrowseMixin, View):
-    allowed_roles = ("student",)
+    allowed_roles = ("student", "teacher", "admin")
 
     def get(self, request):
         courses = Course.objects.filter(is_visible=True).order_by("order")
@@ -56,7 +56,7 @@ class CoursePremiumOfferView(GuestBrowseMixin, View):
 
 
 class CourseDetailView(GuestBrowseMixin, View):
-    allowed_roles = ("student",)
+    allowed_roles = ("student", "teacher", "admin")
 
     def get(self, request, slug):
         course = get_object_or_404(

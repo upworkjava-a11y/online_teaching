@@ -1,52 +1,52 @@
 {% extends "base.html" %}
-{% block title %}Progress{% endblock %}
+{% block title %}{{ "Progress"|loc }}{% endblock %}
 {% block content %}
-<h1 class="text-3xl font-semibold">Progress</h1>
-<p class="muted mt-2">Hozircha faqat SQL ochiq. Boshqa kurslar — Hozir jarayonda.</p>
+<h1 class="text-3xl font-semibold">{{ "Progress"|loc }}</h1>
+<p class="muted mt-2">{{ "Hozircha faqat SQL ochiq. Boshqa kurslar — Hozir jarayonda."|loc }}</p>
 <div class="mt-6 space-y-4">
   {% for row in rows %}
     {% if row.coming_soon %}
       <section class="card course-card-locked" aria-disabled="true" style="min-height: 180px;">
         <div class="course-card-body">
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold">{{ row.course.title }}</h2>
+            <h2 class="text-xl font-semibold">{{ row.course.title|loc }}</h2>
             <span class="text-2xl font-bold">{{ row.stats.percent }}%</span>
           </div>
-          <p class="muted mt-2">Ma’ruzalar {{ row.stats.completed_lectures }}/{{ row.stats.total_lectures }} · Mashqlar {{ row.stats.completed_exercises }}/{{ row.stats.total_exercises }}</p>
+          <p class="muted mt-2">{{ "Ma’ruzalar"|loc }} {{ row.stats.completed_lectures }}/{{ row.stats.total_lectures }} · {{ "Mashqlar"|loc }} {{ row.stats.completed_exercises }}/{{ row.stats.total_exercises }}</p>
           <div class="mt-4 space-y-2">
             <div class="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2">
-              <span>Modul 1</span><span>0%</span>
+              <span>{{ "Modul"|loc }} 1</span><span>0%</span>
             </div>
             <div class="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2">
-              <span>Modul 2</span><span>0%</span>
+              <span>{{ "Modul"|loc }} 2</span><span>0%</span>
             </div>
           </div>
         </div>
         <div class="course-card-overlay">
-          <span>🔒 Hozir jarayonda</span>
+          <span>{{ "🔒 Hozir jarayonda"|loc }}</span>
         </div>
       </section>
     {% else %}
       <section class="card">
         <div class="flex items-center justify-between">
-          <h2 class="text-xl font-semibold">{{ row.course.title }}</h2>
+          <h2 class="text-xl font-semibold">{{ row.course.title|loc }}</h2>
           <span class="text-2xl font-bold">{{ row.stats.percent }}%</span>
         </div>
-        <p class="muted mt-2">Ma’ruzalar {{ row.stats.completed_lectures }}/{{ row.stats.total_lectures }} · Mashqlar {{ row.stats.completed_exercises }}/{{ row.stats.total_exercises }}</p>
+        <p class="muted mt-2">{{ "Ma’ruzalar"|loc }} {{ row.stats.completed_lectures }}/{{ row.stats.total_lectures }} · {{ "Mashqlar"|loc }} {{ row.stats.completed_exercises }}/{{ row.stats.total_exercises }}</p>
         <div class="mt-4 space-y-2">
           {% for item in row.modules %}
             <div class="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2">
-              <span>{{ item.module.title }}</span>
+              <span>{{ item.module.title|loc }}</span>
               <span>{{ item.percent }}% {% if item.percent == 100 %}✅{% endif %}</span>
             </div>
           {% empty %}
-            <p class="muted text-sm">Hali modul yo‘q.</p>
+            <p class="muted text-sm">{{ "Hali modul yo‘q."|loc }}</p>
           {% endfor %}
         </div>
       </section>
     {% endif %}
   {% empty %}
-    <div class="card muted">Hozircha progress yo‘q.</div>
+    <div class="card muted">{{ "Hozircha progress yo‘q."|loc }}</div>
   {% endfor %}
 </div>
 {% endblock %}

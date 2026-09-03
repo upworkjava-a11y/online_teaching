@@ -1,27 +1,27 @@
 {% if latest_attempt %}
   <div class="rounded-xl border border-slate-800 p-4">
     {% if latest_attempt.is_correct %}
-      <p class="ok text-lg font-semibold">✅ To‘g‘ri!</p>
-      <p class="muted">Ball: {{ latest_attempt.score }}</p>
+      <p class="ok text-lg font-semibold">{{ "✅ To‘g‘ri!"|loc }}</p>
+      <p class="muted">{{ "Ball:"|loc }} {{ latest_attempt.score }}</p>
     {% else %}
-      <p class="bad text-lg font-semibold">❌ {% if latest_attempt.error_message %}{{ latest_attempt.error_message }}{% else %}Noto‘g‘ri. Qayta urinib ko‘ring.{% endif %}</p>
+      <p class="bad text-lg font-semibold">❌ {% if latest_attempt.error_message %}{{ latest_attempt.error_message|loc }}{% else %}{{ "Noto‘g‘ri. Qayta urinib ko‘ring."|loc }}{% endif %}</p>
     {% endif %}
     {% if exercise_solved %}
       {% if exercise.editorial %}
         <details class="mt-4 editorial-box" open>
-          <summary class="font-bold cursor-pointer">Yechim yo‘riqnomasi</summary>
-          <div class="mt-2 text-sm prose">{{ exercise.editorial|linebreaks }}</div>
+          <summary class="font-bold cursor-pointer">{{ "Yechim yo‘riqnomasi"|loc }}</summary>
+          <div class="mt-2 text-sm prose">{{ exercise.editorial|loc|linebreaks }}</div>
         </details>
       {% endif %}
       {% if next_exercise or next_lecture or exercise.lecture %}
         <div class="exercise-next-nav mt-4 flex flex-wrap gap-3">
           {% if next_exercise %}
-            <a class="btn btn-primary" href="{% url 'exercises:detail' next_exercise.pk %}">Keyingi masala →</a>
+            <a class="btn btn-primary" href="{% url 'exercises:detail' next_exercise.pk %}">{{ "Keyingi masala →"|loc }}</a>
           {% endif %}
           {% if next_lecture %}
-            <a class="btn btn-ok" href="{% url 'learning:lecture' next_lecture.pk %}">Keyingi dars →</a>
+            <a class="btn btn-ok" href="{% url 'learning:lecture' next_lecture.pk %}">{{ "Keyingi dars →"|loc }}</a>
           {% elif exercise.lecture %}
-            <a class="btn btn-ghost" href="{% url 'learning:lecture' exercise.lecture.pk %}">Darsga qaytish</a>
+            <a class="btn btn-ghost" href="{% url 'learning:lecture' exercise.lecture.pk %}">{{ "Darsga qaytish"|loc }}</a>
           {% endif %}
         </div>
       {% endif %}
@@ -36,15 +36,15 @@
         </table>
       </div>
     {% endif %}
-    <p class="muted mt-2 text-sm">Bajarilish: {{ latest_attempt.execution_ms }} ms</p>
+    <p class="muted mt-2 text-sm">{{ "Bajarilish:"|loc }} {{ latest_attempt.execution_ms }} ms</p>
   </div>
 {% endif %}
 {% if attempts %}
   <details class="mt-3">
-    <summary>Oldingi urinishlar</summary>
+    <summary>{{ "Oldingi urinishlar"|loc }}</summary>
     <ul class="mt-2 space-y-1 text-sm">
       {% for attempt in attempts %}
-        <li>{% if attempt.is_correct %}✅{% else %}❌{% endif %} {{ attempt.created_at }} — {{ attempt.score }} ball</li>
+        <li>{% if attempt.is_correct %}✅{% else %}❌{% endif %} {{ attempt.created_at }} — {{ attempt.score }} {{ "ball"|loc }}</li>
       {% endfor %}
     </ul>
   </details>

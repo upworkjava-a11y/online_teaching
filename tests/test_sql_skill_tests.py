@@ -1,3 +1,5 @@
+from collections import Counter
+
 from django.test import SimpleTestCase
 
 from apps.core.sql_skill_tests import MODULE_SKILL_TESTS, skill_tests_for_module
@@ -12,9 +14,23 @@ class SqlSkillTestsContentTests(SimpleTestCase):
                 self.assertEqual(len(item["quiz_options"]), 4)
                 self.assertEqual(item["kind"], "quiz")
                 self.assertTrue(item["is_skill_test"])
-                self.assertIn(item["rows"][0][0], "ABCD")
+                answer = item["rows"][0][0]
+                self.assertIn(answer, "ABCD")
+                self.assertIn(f"To‘g‘ri javob: {answer}.", item["editorial"])
                 for opt in item["quiz_options"]:
                     self.assertRegex(opt, r"^[A-D]\) ")
+
+    def test_correct_answers_are_shuffled(self):
+        counts = Counter()
+        for items in MODULE_SKILL_TESTS.values():
+            for item in items:
+                counts[item["rows"][0][0]] += 1
+        self.assertEqual(set(counts), set("ABCD"))
+        total = sum(counts.values())
+        self.assertLess(counts["A"] / total, 0.5)
+        self.assertGreater(counts["B"], 5)
+        self.assertGreater(counts["C"], 5)
+        self.assertGreater(counts["D"], 5)
 
     def test_skill_tests_for_module_slugs(self):
         quizzes = skill_tests_for_module("sql-asoslari")

@@ -2,8 +2,8 @@
 {% block title %}Yopiq bo‘lim{% endblock %}
 {% block content %}
 <div class="card max-w-xl">
-  <h1 class="text-2xl font-semibold">Kirish cheklangan</h1>
-  <p class="bad mt-4">{{ reason|default:"Bu bo‘lim siz uchun hozircha yopilgan." }}</p>
-  <a class="btn btn-ghost mt-6" href="{% url 'courses:list' %}">Kurslarga qaytish</a>
+  <h1 class="text-2xl font-semibold">{{ "Kirish cheklangan"|loc }}</h1>
+  <p class="bad mt-4">{{ reason|default:"Bu bo‘lim siz uchun hozircha yopilgan."|loc }}</p>
+  <a class="btn btn-ghost mt-6" href="{% url 'courses:list' %}">{{ "Kurslarga qaytish"|loc }}</a>
 </div>
 {% endblock %}

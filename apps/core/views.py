@@ -54,16 +54,17 @@ class RoleRequiredMixin(LoginRequiredMixin):
         return safe_next_url(request, referer, fallback="/courses/") or "/courses/"
 
     def handle_no_permission(self):
+        from apps.core.i18n.service import t
+
         if self.request.user.is_authenticated:
             return redirect("root")
-        # 200: foydalanuvchi sahifasi (log shovqinini kamaytirish; API emas)
         return render(
             self.request,
             "accounts/auth_gate.html",
             {
                 "next": self.get_auth_gate_next(),
-                "gate_title": self.auth_gate_title,
-                "gate_message": self.auth_gate_message,
+                "gate_title": t(self.auth_gate_title),
+                "gate_message": t(self.auth_gate_message),
             },
             status=200,
         )

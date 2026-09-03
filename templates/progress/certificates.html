@@ -1,30 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Sertifikatlar{% endblock %}
+{% block title %}{{ "Sertifikatlar"|loc }}{% endblock %}
 {% block content %}
 <div class="space-y-6">
   <div>
-    <p class="muted text-sm">Yutuqlar</p>
-    <h1 class="text-3xl font-extrabold">Sertifikatlarim</h1>
-    <p class="muted mt-1">Modul yoki kursni to‘liq tugatganingizdan keyin sertifikat chiqadi.</p>
+    <p class="muted text-sm">{{ "Yutuqlar"|loc }}</p>
+    <h1 class="text-3xl font-extrabold">{{ "Sertifikatlarim"|loc }}</h1>
+    <p class="muted mt-1">{{ "Modul yoki kursni to‘liq tugatganingizdan keyin sertifikat chiqadi."|loc }}</p>
   </div>
 
   {% if streak %}
     <div class="card">
-      <p class="muted text-sm">Kunlik zanjir</p>
-      <p class="text-2xl font-extrabold">🔥 {{ streak.current_streak }} kun</p>
-      <p class="muted text-sm mt-1">Eng uzun: {{ streak.longest_streak }} kun</p>
+      <p class="muted text-sm">{{ "Kunlik zanjir"|loc }}</p>
+      <p class="text-2xl font-extrabold">🔥 {{ streak.current_streak }} {{ "kun"|loc }}</p>
+      <p class="muted text-sm mt-1">{{ "Eng uzun:"|loc }} {{ streak.longest_streak }} {{ "kun"|loc }}</p>
     </div>
   {% endif %}
 
   <div class="grid gap-4 md:grid-cols-2">
     {% for cert in certificates %}
       <a class="card block" href="{% url 'progress:certificate_detail' cert.code %}">
-        <p class="text-sm muted">{% if cert.kind == "course" %}Kurs{% else %}Modul{% endif %}</p>
-        <h2 class="text-lg font-bold">{{ cert.title }}</h2>
-        <p class="muted text-sm mt-2">Kod: {{ cert.code }} · {{ cert.issued_at|date:"d.m.Y" }}</p>
+        <p class="text-sm muted">{% if cert.kind == "course" %}{{ "Kurs"|loc }}{% else %}{{ "Modul"|loc }}{% endif %}</p>
+        <h2 class="text-lg font-bold">{{ cert.title|loc }}</h2>
+        <p class="muted text-sm mt-2">{{ "Kod:"|loc }} {{ cert.code }} · {{ cert.issued_at|date:"d.m.Y" }}</p>
       </a>
     {% empty %}
-      <div class="card muted">Hali sertifikat yo‘q. Modullarni tugating.</div>
+      <div class="card muted">{{ "Hali sertifikat yo‘q. Modullarni tugating."|loc }}</div>
     {% endfor %}
   </div>
 </div>

@@ -1,25 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Ro‘yxatdan o‘tish{% endblock %}
+{% block title %}{{ "Ro‘yxatdan o‘tish"|loc }}{% endblock %}
 {% block content %}
 <div class="mx-auto max-w-md">
   <div class="card">
-    <h1 class="text-2xl font-semibold">Ro‘yxatdan o‘tish</h1>
-    <p class="muted mt-2">Email va parol bilan hisob yarating.</p>
+    <h1 class="text-2xl font-semibold">{{ "Ro‘yxatdan o‘tish"|loc }}</h1>
+    <p class="muted mt-2">{{ "Email va parol bilan hisob yarating."|loc }}</p>
     <form method="post" class="mt-4 space-y-4">
       {% csrf_token %}
       {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
-      {{ form.non_field_errors }}
+      {% if form.non_field_errors %}
+        <div class="form-error">{{ form.non_field_errors|striptags }}</div>
+      {% endif %}
       {% for field in form %}
         <label class="block">
           <span class="mb-1 block text-sm">{{ field.label }}</span>
           {{ field }}
-          {{ field.errors }}
+          {% if field.help_text %}<p class="muted mt-1 text-xs">{{ field.help_text }}</p>{% endif %}
+          {% for err in field.errors %}
+            <p class="form-error mt-1">{{ err|loc }}</p>
+          {% endfor %}
         </label>
       {% endfor %}
-      <button class="btn btn-primary" type="submit">Hisob yaratish</button>
+      <button class="btn btn-primary" type="submit">{{ "Hisob yaratish"|loc }}</button>
     </form>
-    <p class="mt-4 text-sm">Allaqachon hisobingiz bormi? <a class="text-sky-600" href="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">Kirish</a></p>
-    <p class="mt-2 text-sm"><a class="text-sky-600" href="{% url 'courses:list' %}">← Kurslarni ko‘rish</a></p>
+    <p class="mt-4 text-sm">{{ "Allaqachon hisobingiz bormi?"|loc }} <a class="text-sky-600" href="{% url 'accounts:login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">{{ "Kirish"|loc }}</a></p>
+    <p class="mt-2 text-sm"><a class="text-sky-600" href="{% url 'courses:list' %}">{{ "← Kurslarni ko‘rish"|loc }}</a></p>
   </div>
 </div>
 {% endblock %}

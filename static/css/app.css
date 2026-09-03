@@ -110,6 +110,89 @@ body.app-body {
   opacity: 1;
 }
 
+.lang-switch {
+  margin-top: 1.1rem;
+  position: relative;
+}
+.lang-switch form { margin: 0; }
+.lang-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: #e8f1ff;
+  border-radius: 10px;
+  padding: 0.48rem 0.7rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.lang-summary::-webkit-details-marker { display: none; }
+.lang-summary::marker { content: ""; }
+.lang-summary:hover { background: rgba(255,255,255,0.14); }
+.lang-switch[open] .lang-summary {
+  background: #fff;
+  color: #0b2c4f;
+  border-color: #fff;
+}
+.lang-summary__name { flex: 1; text-align: left; }
+.lang-caret {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  opacity: 0.8;
+  transition: transform 0.15s ease;
+}
+.lang-switch[open] .lang-caret { transform: rotate(180deg); }
+.lang-menu {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.35rem);
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.35rem;
+  background: #0b2c4f;
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(5, 18, 36, 0.35);
+}
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #e8f1ff;
+  border-radius: 8px;
+  padding: 0.48rem 0.55rem;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-align: left;
+}
+.lang-btn:hover { background: rgba(255,255,255,0.12); }
+.lang-btn.is-active {
+  background: #fff;
+  color: #0b2c4f;
+}
+.lang-flag {
+  width: 1.2rem;
+  height: 0.86rem;
+  border-radius: 2px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
+}
+.lang-flag svg { display: block; width: 100%; height: 100%; }
+
 .input, textarea.input, select.input {
   width: 100%;
   border: 1px solid var(--line);
@@ -165,6 +248,16 @@ body.app-body {
 .ok { color: var(--ok); }
 .warn { color: var(--warn); }
 .bad { color: var(--bad); }
+.form-error { color: var(--bad); font-weight: 700; font-size: 0.875rem; }
+.errorlist {
+  color: var(--bad);
+  font-weight: 700;
+  list-style: none;
+  padding: 0;
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+}
+.errorlist li { margin: 0.15rem 0 0; }
 
 .progress-track {
   height: 10px;

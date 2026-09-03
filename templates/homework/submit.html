@@ -1,54 +1,54 @@
 {% extends "base.html" %}
-{% block title %}{{ assignment.title }}{% endblock %}
+{% block title %}{{ assignment.title|loc }}{% endblock %}
 {% block content %}
-<div class="mb-2 text-sm muted">{{ assignment.lecture.module.title }}</div>
-<h1 class="text-3xl font-semibold">{{ assignment.title }}</h1>
-<div class="prose card mt-6">{{ assignment.instructions|linebreaks }}</div>
+<div class="mb-2 text-sm muted">{{ assignment.lecture.module.title|loc }}</div>
+<h1 class="text-3xl font-semibold">{{ assignment.title|loc }}</h1>
+<div class="prose card mt-6">{{ assignment.instructions|loc|linebreaks }}</div>
 
 <form method="post" enctype="multipart/form-data" class="card mt-6 space-y-4">
   {% csrf_token %}
   <label class="block">
     <span class="mb-2 block">
-      {% if latest %}Yangi .txt fayl bilan almashtirish{% else %}.txt fayl yuklang{% endif %}
+      {% if latest %}{{ "Yangi .txt fayl bilan almashtirish"|loc }}{% else %}{{ ".txt fayl yuklang"|loc }}{% endif %}
     </span>
-    <span class="muted text-sm block mb-2">Faqat 1 ta .txt fayl. Bir nechta fayl yuborib bo‘lmaydi.</span>
+    <span class="muted text-sm block mb-2">{{ "Faqat 1 ta .txt fayl. Bir nechta fayl yuborib bo‘lmaydi."|loc }}</span>
     <input class="input" type="file" name="file" accept=".txt,text/plain" required>
   </label>
   <button class="btn btn-primary" type="submit">
-    {% if latest %}Qayta yuborish{% else %}Yuborish{% endif %}
+    {% if latest %}{{ "Qayta yuborish"|loc }}{% else %}{{ "Yuborish"|loc }}{% endif %}
   </button>
 </form>
 
 <section class="card mt-6">
-  <h2 class="text-lg font-semibold">Topshiriqlar tarixi</h2>
+  <h2 class="text-lg font-semibold">{{ "Sizning topshirig‘ingiz"|loc }}</h2>
   <div class="mt-3 space-y-3">
     {% for item in history %}
       <div class="rounded-xl border border-slate-200 p-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <strong>Topshiriq #{{ item.pk }}</strong>
-          <span>{{ item.get_status_display }}</span>
+          <strong>{{ "Topshiriq"|loc }} #{{ item.pk }}</strong>
+          <span>{{ item.get_status_display|loc }}</span>
         </div>
         <p class="muted text-sm mt-1">
           {{ item.updated_at|date:"d-F, Y-yil H:i" }} ·
           <a class="text-sky-600 underline" href="{% url 'homework:download' item.pk %}">{{ item.original_filename }}</a>
         </p>
         <div class="mt-3 flex flex-wrap gap-2">
-          <a class="btn btn-ghost" href="{% url 'homework:download' item.pk %}">Yuklab olish</a>
-          <form method="post" action="{% url 'homework:delete' item.pk %}" onsubmit="return confirm('Topshiriqni o‘chirasizmi?');">
+          <a class="btn btn-ghost" href="{% url 'homework:download' item.pk %}">{{ "Yuklab olish"|loc }}</a>
+          <form method="post" action="{% url 'homework:delete' item.pk %}" onsubmit="return confirm('{{ "Topshiriqni o‘chirasizmi?"|loc|escapejs }}');">
             {% csrf_token %}
-            <button class="btn btn-bad" type="submit">O‘chirish</button>
+            <button class="btn btn-bad" type="submit">{{ "O‘chirish"|loc }}</button>
           </form>
         </div>
         {% for review in item.reviews.all %}
           <div class="mt-3 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm">
-            <p class="font-semibold">O‘qituvchi bahosi: {{ review.score }}/{{ assignment.max_score }} · {{ review.get_status_display }}</p>
-            <p class="mt-1">{{ review.feedback }}</p>
-            {% if review.additional_instructions %}<p class="warn mt-1">{{ review.additional_instructions }}</p>{% endif %}
+            <p class="font-semibold">{{ "O‘qituvchi bahosi:"|loc }} {{ review.score }}/{{ assignment.max_score }} · {{ review.get_status_display|loc }}</p>
+            <p class="mt-1">{{ review.feedback|loc }}</p>
+            {% if review.additional_instructions %}<p class="warn mt-1">{{ review.additional_instructions|loc }}</p>{% endif %}
           </div>
         {% endfor %}
       </div>
     {% empty %}
-      <p class="muted">Hali topshiriq yo‘q.</p>
+      <p class="muted">{{ "Hali topshiriq yo‘q."|loc }}</p>
     {% endfor %}
   </div>
 </section>

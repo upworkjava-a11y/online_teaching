@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Bilim testi — {{ module.title }}{% endblock %}
+{% block title %}{{ "Bilim testi"|loc }} — {{ module.title|loc }}{% endblock %}
 {% block content %}
 <div class="space-y-6">
   <div>
-    <p class="muted text-sm">{{ module.course.title }}</p>
-    <h1 class="text-3xl font-extrabold">Bilim testi: {{ module.title }}</h1>
-    <p class="muted mt-1">Modul oxirida o‘z bilimingizni tekshiring. {{ done_count }}/{{ total_count }} yechilgan.</p>
+    <p class="muted text-sm">{{ module.course.title|loc }}</p>
+    <h1 class="text-3xl font-extrabold">{{ "Bilim testi:"|loc }} {{ module.title|loc }}</h1>
+    <p class="muted mt-1">{{ "Modul oxirida o‘z bilimingizni tekshiring."|loc }} {{ done_count }}/{{ total_count }} {{ "yechilgan"|loc }}.</p>
   </div>
 
   <div class="card">
@@ -13,20 +13,20 @@
       {% for test in tests %}
         <li class="lesson-item is-exercise flex flex-wrap items-center justify-between gap-3">
           <div>
-            <a class="font-semibold" href="{% url 'exercises:detail' test.pk %}">{{ forloop.counter }}. {{ test.title }}</a>
+            <a class="font-semibold" href="{% url 'exercises:detail' test.pk %}">{{ forloop.counter }}. {{ test.title|loc }}</a>
             <div class="text-sm muted mt-1">
-              <span class="diff-pill diff-{{ test.difficulty }}">{{ test.difficulty_label }}</span>
-              · Test · 4 ta variant
+              <span class="diff-pill diff-{{ test.difficulty }}">{{ test.difficulty_label|loc }}</span>
+              · {{ "Test"|loc }} · {{ "4 ta variant"|loc }}
             </div>
           </div>
           {% if test.pk in solved_ids %}
-            <span class="ok font-semibold">Yechilgan</span>
+            <span class="ok font-semibold">{{ "Yechilgan"|loc }}</span>
           {% else %}
-            <a class="btn btn-primary" href="{% url 'exercises:detail' test.pk %}">Boshlash</a>
+            <a class="btn btn-primary" href="{% url 'exercises:detail' test.pk %}">{{ "Boshlash"|loc }}</a>
           {% endif %}
         </li>
       {% empty %}
-        <li class="muted">Bu modul uchun bilim testi hali qo‘yilmagan. Admin: <code>python manage.py bootstrap_platform</code></li>
+        <li class="muted">{{ "Bu modul uchun bilim testi hali qo‘yilmagan."|loc }}</li>
       {% endfor %}
     </ul>
   </div>
@@ -34,7 +34,7 @@
   {% if total_count and done_count >= total_count %}
     <form method="post" action="{% url 'progress:claim_module' module.pk %}">
       {% csrf_token %}
-      <button class="btn btn-ok" type="submit">Modul sertifikatini olish</button>
+      <button class="btn btn-ok" type="submit">{{ "Modul sertifikatini olish"|loc }}</button>
     </form>
   {% endif %}
 </div>

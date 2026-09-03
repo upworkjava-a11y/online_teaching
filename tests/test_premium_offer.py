@@ -37,3 +37,15 @@ class PremiumOfferTests(TestCase):
         self.assertContains(response, "mentor izohlari")
         self.assertNotContains(response, "Kurslar narxi")
         self.assertNotContains(response, "Amaliy loyihalar")
+
+    def test_premium_page_translates_to_russian(self):
+        self.client.post(reverse("set_language"), {"language": "ru", "next": "/"})
+        self.client.force_login(self.student)
+        response = self.client.get(reverse("courses:premium", args=["sql"]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Почему Premium?")
+        self.assertContains(response, "Инструкция по оплате")
+        self.assertContains(response, "Номер карты")
+        self.assertContains(response, "сум")
+        self.assertNotContains(response, "Nima uchun Premium?")
+        self.assertNotContains(response, "To‘lov yo‘riqnomasi")

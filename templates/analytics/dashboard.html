@@ -1,34 +1,34 @@
 {% extends "base.html" %}
-{% block title %}Natijalar paneli{% endblock %}
+{% block title %}{{ "Natijalar paneli"|loc }}{% endblock %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 {% endblock %}
 {% block content %}
 <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
   <div>
-    <p class="muted text-sm">O‘qituvchi paneli</p>
-    <h1 class="text-3xl font-extrabold">Talabalar natijalari</h1>
-    <p class="muted mt-1">Progress, mashq ballari va faollik bitta joyda.</p>
+    <p class="muted text-sm">{{ "O‘qituvchi paneli"|loc }}</p>
+    <h1 class="text-3xl font-extrabold">{{ "Talabalar natijalari"|loc }}</h1>
+    <p class="muted mt-1">{{ "Progress, mashq ballari va faollik bitta joyda."|loc }}</p>
   </div>
-  <a class="btn btn-primary" href="{% url 'dashboard:leaderboard' %}">Reytingni ochish</a>
+  <a class="btn btn-primary" href="{% url 'dashboard:leaderboard' %}">{{ "Reytingni ochish"|loc }}</a>
 </div>
 <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-  <div class="card stat-card"><h3>Jami talabalar</h3><p>{{ overview.total_students }}</p></div>
-  <div class="card stat-card"><h3>Faol (7 kun)</h3><p>{{ overview.active_students }}</p></div>
-  <div class="card stat-card"><h3>O‘rtacha progress ball</h3><p>{{ overview.average_score }}%</p></div>
-  <div class="card stat-card"><h3>Kutayotgan uy vazifasi</h3><p>{{ overview.pending_reviews }}</p></div>
+  <div class="card stat-card"><h3>{{ "Jami talabalar"|loc }}</h3><p>{{ overview.total_students }}</p></div>
+  <div class="card stat-card"><h3>{{ "Faol (7 kun)"|loc }}</h3><p>{{ overview.active_students }}</p></div>
+  <div class="card stat-card"><h3>{{ "O‘rtacha progress ball"|loc }}</h3><p>{{ overview.average_score }}%</p></div>
+  <div class="card stat-card"><h3>{{ "Kutayotgan uy vazifasi"|loc }}</h3><p>{{ overview.pending_reviews }}</p></div>
 </div>
 <p class="mt-4">
-  <a class="btn btn-primary" href="{% url 'analytics:skill_tests' %}">Bilim testi natijalari</a>
+  <a class="btn btn-primary" href="{% url 'analytics:skill_tests' %}">{{ "Bilim testi natijalari"|loc }}</a>
 </p>
 
 <section class="card mt-6">
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
-      <h2 class="text-lg font-bold">Reyting</h2>
-      <p class="muted text-sm">Oson +1 · O‘rta +2 · Qiyin +3 — kim ko‘proq masala yechgan.</p>
+      <h2 class="text-lg font-bold">{{ "Reyting"|loc }}</h2>
+      <p class="muted text-sm">{{ "Oson +1 · O‘rta +2 · Qiyin +3 — kim ko‘proq masala yechgan."|loc }}</p>
     </div>
-    <a class="text-blue-700 font-semibold" href="{% url 'dashboard:leaderboard' %}">To‘liq jadval →</a>
+    <a class="text-blue-700 font-semibold" href="{% url 'dashboard:leaderboard' %}">{{ "To‘liq jadval →"|loc }}</a>
   </div>
   <div class="podium mt-4">
     {% for item in leaderboard_top %}
@@ -36,13 +36,13 @@
         <div class="cup cup-{{ item.rank }}" aria-hidden="true">
           {% if item.rank == 1 %}🥇{% elif item.rank == 2 %}🥈{% else %}🥉{% endif %}
         </div>
-        <p class="podium-rank">{{ item.rank }}-o‘rin</p>
+        <p class="podium-rank">{{ item.rank }}-{{ "o‘rin"|loc }}</p>
         <h3 class="podium-name">{{ item.name }}</h3>
-        <p class="podium-points">{{ item.points }} ball</p>
-        <p class="podium-meta">{{ item.solved_count }} masala</p>
+        <p class="podium-points">{{ item.points }} {{ "ball"|loc }}</p>
+        <p class="podium-meta">{{ item.solved_count }} {{ "masala"|loc }}</p>
       </article>
     {% empty %}
-      <p class="muted">Hali reyting bo‘sh — talabalar masala yechishi kerak.</p>
+      <p class="muted">{{ "Hali reyting bo‘sh — talabalar masala yechishi kerak."|loc }}</p>
     {% endfor %}
   </div>
   {% if leaderboard_preview %}
@@ -51,10 +51,10 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Talaba</th>
-            <th>Ball</th>
-            <th>Masalalar</th>
-            <th>So‘nggi yechim</th>
+            <th>{{ "Talaba"|loc }}</th>
+            <th>{{ "Ball"|loc }}</th>
+            <th>{{ "Masalalar"|loc }}</th>
+            <th>{{ "So‘nggi yechim"|loc }}</th>
           </tr>
         </thead>
         <tbody>
@@ -77,16 +77,16 @@
     </div>
   {% endif %}
   {% if recent_solves %}
-    <h3 class="mt-5 font-bold">So‘nggi yechimlar</h3>
+    <h3 class="mt-5 font-bold">{{ "So‘nggi yechimlar"|loc }}</h3>
     <ul class="mt-2 space-y-2 text-sm">
       {% for attempt in recent_solves %}
         <li class="recent-solve">
           <span class="font-semibold">{{ attempt.student.get_full_name|default:attempt.student.email }}</span>
-          · {{ attempt.exercise.title }}
+          · {{ attempt.exercise.title|loc }}
           <span class="diff-pill diff-{{ attempt.exercise.difficulty }}">
-            {% if attempt.exercise.difficulty == "easy" %}Oson · +1
-            {% elif attempt.exercise.difficulty == "medium" %}O‘rta · +2
-            {% else %}Qiyin · +3{% endif %}
+            {% if attempt.exercise.difficulty == "easy" %}{{ "Oson"|loc }} · +1
+            {% elif attempt.exercise.difficulty == "medium" %}{{ "O‘rta"|loc }} · +2
+            {% else %}{{ "Qiyin"|loc }} · +3{% endif %}
           </span>
           <span class="muted">{{ attempt.created_at|date:"d.m.Y H:i" }}</span>
         </li>

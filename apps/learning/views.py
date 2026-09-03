@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from apps.access.services import access_service
+from apps.core.i18n.service import t
 from apps.core.views import GuestBrowseMixin, RoleRequiredMixin
 from apps.courses.models import Lecture
 from apps.homework.services import homework_service
@@ -12,7 +13,7 @@ from apps.exercises.models import ExerciseAttempt
 
 
 class LectureDetailView(GuestBrowseMixin, View):
-    allowed_roles = ("student",)
+    allowed_roles = ("student", "teacher", "admin")
 
     def get_lecture(self, request, pk):
         lecture = get_object_or_404(
@@ -95,13 +96,13 @@ class CompleteLectureView(RoleRequiredMixin, View):
             if any(ex.pk not in solved for ex in practices):
                 messages.info(
                     request,
-                    "Dars o‘qildi. Endi amaliyotni yeching — shunda dars to‘liq tugallangan hisoblanadi.",
+                    t("Dars o‘qildi. Endi amaliyotni yeching — shunda dars to‘liq tugallangan hisoblanadi."),
                 )
                 return redirect("learning:lecture", pk=lecture.pk)
-        messages.success(request, "Ma’ruza tugallandi.")
+        messages.success(request, t("Ma’ruza tugallandi."))
         nxt = lecture.get_next()
         if nxt and access_service.can_access(request.user, nxt):
             return redirect("learning:lecture", pk=nxt.pk)
         if nxt:
-            messages.info(request, "Keyingi modullar Premium. To‘liq kurs uchun admin ruxsati kerak.")
+            messages.info(request, t("Keyingi modullar Premium. To‘liq kurs uchun admin ruxsati kerak."))
         return redirect("courses:detail", slug=lecture.course.slug)

@@ -5,7 +5,7 @@ from django.urls import reverse
 from apps.access.models import UserContentAccess
 from apps.access.services import access_service
 from apps.accounts.models import User
-from tests.helpers import make_course, make_lecture, make_module, make_user
+from tests.helpers import make_course, make_exercise, make_lecture, make_module, make_user
 
 
 class UserAccessControlTests(TestCase):
@@ -106,6 +106,42 @@ class UserAccessControlTests(TestCase):
         self.assertContains(outline, "🔒")
         self.assertContains(outline, "Dars 6")
         self.assertContains(outline, "Dastlabki 5 modul ochiq")
+
+    def test_free_user_exercises_locked_outside_preview_modules(self):
+        lectures = self._six_modules()
+        free_ex = make_exercise(self.module, slug="free-ex", lecture=self.lecture, title="Free mashq")
+        locked_lecture = lectures[-1]
+        locked_ex = make_exercise(
+            locked_lecture.module,
+            slug="prem-ex",
+            lecture=locked_lecture,
+            title="Premium mashq",
+        )
+        self.assertTrue(access_service.can_access(self.student, free_ex))
+        self.assertFalse(access_service.can_access(self.student, locked_ex))
+
+        self.client.force_login(self.student)
+        open_page = self.client.get(reverse("exercises:detail", args=[free_ex.pk]))
+        self.assertEqual(open_page.status_code, 200)
+        locked_page = self.client.get(reverse("exercises:detail", args=[locked_ex.pk]))
+        self.assertEqual(locked_page.status_code, 302)
+        self.assertIn("/courses/sql/premium/", locked_page.url)
+
+        catalog = self.client.get(reverse("exercises:catalog"))
+        self.assertEqual(catalog.status_code, 200)
+        self.assertContains(catalog, "Free mashq")
+        self.assertContains(catalog, "Premium mashq")
+        self.assertContains(catalog, "🔒 Premium mashq")
+        self.assertContains(catalog, "Dastlabki 5 modul mashqlari ochiq")
+
+        self.student.is_premium = True
+        self.student.save(update_fields=["is_premium"])
+        self.assertTrue(access_service.can_access(self.student, locked_ex))
+        premium_open = self.client.get(reverse("exercises:detail", args=[locked_ex.pk]))
+        self.assertEqual(premium_open.status_code, 200)
+        premium_catalog = self.client.get(reverse("exercises:catalog"))
+        self.assertContains(premium_catalog, "Premium mashq")
+        self.assertNotContains(premium_catalog, "🔒 Premium mashq")
 
     def test_premium_user_gets_full_course(self):
         *_rest, lecture6 = self._six_modules()

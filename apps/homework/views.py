@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from apps.access.services import access_service
+from apps.core.i18n.service import t
 from apps.core.views import RoleRequiredMixin
 
 from .models import HomeworkAssignment, HomeworkSubmission
@@ -101,12 +102,11 @@ class HomeworkSubmitView(RoleRequiredMixin, View):
     def get(self, request, pk):
         assignment = self.get_assignment(request, pk)
         latest = homework_service.latest_for_student(request.user, assignment)
-        history = []
-        if latest:
-            history = (
-                assignment.submissions.filter(pk=latest.pk)
-                .prefetch_related("reviews")
-            )
+        history = (
+            assignment.submissions.filter(student=request.user)
+            .prefetch_related("reviews")
+            .order_by("-updated_at")
+        )
         return render(
             request,
             "homework/submit.html",
@@ -117,14 +117,14 @@ class HomeworkSubmitView(RoleRequiredMixin, View):
         assignment = self.get_assignment(request, pk)
         uploaded = request.FILES.get("file")
         if len(request.FILES.getlist("file")) > 1:
-            messages.error(request, "Faqat 1 ta .txt fayl yuborish mumkin.")
+            messages.error(request, t("Faqat 1 ta .txt fayl yuborish mumkin."))
             return redirect("homework:submit", pk=assignment.pk)
         try:
             homework_service.submit(request.user, assignment, uploaded)
         except ValidationError as exc:
             messages.error(request, " ".join(exc.messages))
             return redirect("homework:submit", pk=assignment.pk)
-        messages.success(request, "Uy vazifasi saqlandi.")
+        messages.success(request, t("Uy vazifasi saqlandi."))
         return redirect("homework:submit", pk=assignment.pk)
 
 
@@ -163,7 +163,7 @@ class HomeworkDeleteView(RoleRequiredMixin, View):
         assignment_pk = submission.assignment_id
         was_student = request.user.is_student and submission.student_id == request.user.pk
         homework_service.delete_submission(submission)
-        messages.success(request, "Topshiriq o‘chirildi.")
+        messages.success(request, t("Topshiriq o‘chirildi."))
         if was_student:
             return redirect("homework:submit", pk=assignment_pk)
         return redirect("analytics:homework")

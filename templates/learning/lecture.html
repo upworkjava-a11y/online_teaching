@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}{{ lecture.title }}{% endblock %}
+{% block title %}{{ lecture.title|loc }}{% endblock %}
 {% block content %}
-<div class="mb-2 text-sm muted">{{ lecture.course.title }} · {{ lecture.module.title }}</div>
-<h1 class="text-3xl font-extrabold">{{ lecture.title }}</h1>
+<div class="mb-2 text-sm muted">{{ lecture.course.title|loc }} · {{ lecture.module.title|loc }}</div>
+<h1 class="text-3xl font-extrabold">{{ lecture.title|loc }}</h1>
 <article class="prose card mt-6">
-  {{ lecture.content|safe }}
+  {{ lecture.content|loc_html:lecture.slug }}
   {% for example in lecture.sql_examples %}
     <pre class="sql-block mt-4"><code>{{ example }}</code></pre>
   {% endfor %}
@@ -13,14 +13,14 @@
 {% if practices %}
   <section class="card mt-6" id="practice">
     <p class="text-sm font-semibold text-blue-700">📚 Learn → 🧠 Practice → 💻 Solve</p>
-    <h2 class="text-lg font-bold mt-1">Tavsiya etilgan mashqlar</h2>
-    <p class="muted mt-2">Darsdan keyin Easy → Medium → Hard tartibida yeching.</p>
+    <h2 class="text-lg font-bold mt-1">{{ "Tavsiya etilgan mashqlar"|loc }}</h2>
+    <p class="muted mt-2">{{ "Darsdan keyin Easy → Medium → Hard tartibida yeching."|loc }}</p>
     <div class="mt-4 space-y-3">
       {% for item in practices %}
         <a class="lesson-item is-exercise {% if item.pk in solved_ids %}is-done{% endif %}" href="{% url 'exercises:detail' item.pk %}">
           <div class="lesson-main">
             <span class="lesson-num">{{ forloop.counter }}</span>
-            <span class="lesson-title">{% if item.pk in solved_ids %}✓ {% endif %}{{ item.title }}</span>
+            <span class="lesson-title">{% if item.pk in solved_ids %}✓ {% endif %}{{ item.title|loc }}</span>
           </div>
           <span class="flex items-center gap-3 shrink-0">
             {% if item.difficulty == "hard" %}
@@ -38,52 +38,52 @@
 {% elif practice %}
   <section class="card mt-6">
     {% if practice.kind == "quiz" %}
-      <p class="text-sm font-semibold text-amber-700">Amaliy test</p>
-      <h2 class="text-lg font-bold mt-1">{{ practice.title }}</h2>
-      <p class="muted mt-2">Dars mavzusi bo‘yicha test savoli. Javob vebda tekshiriladi.</p>
-      <a class="btn btn-primary mt-4" href="{% url 'exercises:detail' practice.pk %}">Testni yechish</a>
+      <p class="text-sm font-semibold text-amber-700">{{ "Amaliy test"|loc }}</p>
+      <h2 class="text-lg font-bold mt-1">{{ practice.title|loc }}</h2>
+      <p class="muted mt-2">{{ "Dars mavzusi bo‘yicha test savoli. Javob vebda tekshiriladi."|loc }}</p>
+      <a class="btn btn-primary mt-4" href="{% url 'exercises:detail' practice.pk %}">{{ "Testni yechish"|loc }}</a>
     {% else %}
-      <p class="text-sm font-semibold text-blue-700">SQL amaliyot</p>
-      <h2 class="text-lg font-bold mt-1">{{ practice.title }}</h2>
-      <p class="muted mt-2">Dars mavzusi bo‘yicha SQL yozing. Natija to‘plami tekshiriladi.</p>
-      <a class="btn btn-primary mt-4" href="{% url 'exercises:detail' practice.pk %}">Kod yozish</a>
+      <p class="text-sm font-semibold text-blue-700">{{ "SQL amaliyot"|loc }}</p>
+      <h2 class="text-lg font-bold mt-1">{{ practice.title|loc }}</h2>
+      <p class="muted mt-2">{{ "Dars mavzusi bo‘yicha SQL yozing. Natija to‘plami tekshiriladi."|loc }}</p>
+      <a class="btn btn-primary mt-4" href="{% url 'exercises:detail' practice.pk %}">{{ "Kod yozish"|loc }}</a>
     {% endif %}
   </section>
 {% endif %}
 
 {% if homework %}
   <section class="card mt-6">
-    <h2 class="text-lg font-bold">Uy vazifasi</h2>
-    <p class="muted mt-2">{{ homework.instructions }}</p>
-    <a class="btn btn-primary mt-4" href="{% url 'homework:submit' homework.pk %}">Uy vazifasi yuborish</a>
+    <h2 class="text-lg font-bold">{{ "Uy vazifasi"|loc }}</h2>
+    <p class="muted mt-2">{{ homework.instructions|loc }}</p>
+    <a class="btn btn-primary mt-4" href="{% url 'homework:submit' homework.pk %}">{{ "Uy vazifasi yuborish"|loc }}</a>
     {% if latest_hw %}
-      <p class="mt-3 text-sm">Holat: {{ latest_hw.get_status_display }}</p>
+      <p class="mt-3 text-sm">{{ "Holat:"|loc }} {{ latest_hw.get_status_display|loc }}</p>
     {% endif %}
   </section>
 {% endif %}
 
 <div class="mt-6 flex flex-wrap gap-3">
   {% if previous %}
-    <a class="btn btn-ghost" href="{% url 'learning:lecture' previous.pk %}">Oldingi dars</a>
+    <a class="btn btn-ghost" href="{% url 'learning:lecture' previous.pk %}">{{ "Oldingi dars"|loc }}</a>
   {% endif %}
   {% if user.is_authenticated %}
     {% if not progress or not progress.completed %}
       <form method="post" action="{% url 'learning:complete' lecture.pk %}">
         {% csrf_token %}
-        <button class="btn btn-ok" type="submit">Darsni tugalladim</button>
+        <button class="btn btn-ok" type="submit">{{ "Darsni tugalladim"|loc }}</button>
       </form>
     {% elif practice_left %}
-      <span class="self-center font-semibold" style="color:#b45309">Dars o‘qildi — amaliyot hali yechilmagan</span>
+      <span class="self-center font-semibold" style="color:#b45309">{{ "Dars o‘qildi — amaliyot hali yechilmagan"|loc }}</span>
     {% else %}
-      <span class="ok self-center font-semibold">Bu dars tugallangan</span>
+      <span class="ok self-center font-semibold">{{ "Bu dars tugallangan"|loc }}</span>
     {% endif %}
   {% else %}
-    <a class="btn btn-ok" href="{% url 'accounts:login' %}?next={% url 'learning:lecture' lecture.pk %}">Darsni saqlash uchun kiring</a>
+    <a class="btn btn-ok" href="{% url 'accounts:login' %}?next={% url 'learning:lecture' lecture.pk %}">{{ "Darsni saqlash uchun kiring"|loc }}</a>
   {% endif %}
   {% if next_item %}
-    <a class="btn btn-primary" href="{% url 'learning:lecture' next_item.pk %}">Keyingi dars</a>
+    <a class="btn btn-primary" href="{% url 'learning:lecture' next_item.pk %}">{{ "Keyingi dars"|loc }}</a>
   {% elif next_locked %}
-    <a class="btn btn-primary" href="{% url 'courses:premium' lecture.module.course.slug %}">🔒 Keyingi modul — Premium ochish</a>
+    <a class="btn btn-primary" href="{% url 'courses:premium' lecture.module.course.slug %}">{{ "🔒 Keyingi modul — Premium ochish"|loc }}</a>
   {% endif %}
 </div>
 {% endblock %}

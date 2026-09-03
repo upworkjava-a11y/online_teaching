@@ -38,7 +38,9 @@ def price_for_course(slug: str, course=None) -> int:
 
 
 def format_sum(amount: int) -> str:
-    return f"{amount:,}".replace(",", " ") + " so‘m"
+    from apps.core.i18n.service import t
+
+    return f"{amount:,}".replace(",", " ") + " " + t("so‘m")
 
 
 def premium_offer_context(course=None) -> dict:

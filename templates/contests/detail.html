@@ -1,59 +1,59 @@
 {% extends "base.html" %}
-{% block title %}{{ contest.title }}{% endblock %}
+{% block title %}{{ contest.title|loc }}{% endblock %}
 {% block content %}
 <div class="space-y-6">
   <div>
-    <p class="muted text-sm">Musobaqa · {{ contest.status_label }}</p>
-    <h1 class="text-3xl font-extrabold">{{ contest.title }}</h1>
+    <p class="muted text-sm">{{ "Musobaqa"|loc }} · {{ contest.status_label|loc }}</p>
+    <h1 class="text-3xl font-extrabold">{{ contest.title|loc }}</h1>
     <p class="muted mt-1">{{ contest.starts_at|date:"d.m.Y H:i" }} — {{ contest.ends_at|date:"d.m.Y H:i" }}</p>
-    {% if contest.description %}<p class="mt-3">{{ contest.description|linebreaks }}</p>{% endif %}
+    {% if contest.description %}<p class="mt-3">{{ contest.description|loc|linebreaks }}</p>{% endif %}
   </div>
 
   {% if my_score %}
     <div class="card leaderboard-me">
-      <p class="muted text-sm">Sizning natijangiz</p>
-      <p class="text-2xl font-extrabold">{{ my_score.points }} ball · {{ my_score.solved_count }} masala</p>
+      <p class="muted text-sm">{{ "Sizning natijangiz"|loc }}</p>
+      <p class="text-2xl font-extrabold">{{ my_score.points }} {{ "ball"|loc }} · {{ my_score.solved_count }} {{ "masala"|loc }}</p>
     </div>
   {% endif %}
 
   <section class="card">
-    <h2 class="text-lg font-bold">Musobaqa masalalari</h2>
+    <h2 class="text-lg font-bold">{{ "Musobaqa masalalari"|loc }}</h2>
     <ul class="mt-3 space-y-3">
       {% for row in links %}
         {% with link=row.link %}
         <li class="lesson-item is-exercise flex flex-wrap justify-between gap-3 items-center {% if not row.allowed %}is-locked{% endif %}">
           <div>
             {% if row.allowed %}
-              <a class="font-semibold" href="{% url 'exercises:detail' link.exercise.pk %}">{{ link.exercise.title }}</a>
+              <a class="font-semibold" href="{% url 'exercises:detail' link.exercise.pk %}">{{ link.exercise.title|loc }}</a>
             {% else %}
-              <span class="font-semibold">🔒 {{ link.exercise.title }}</span>
+              <span class="font-semibold">🔒 {{ link.exercise.title|loc }}</span>
             {% endif %}
             <div class="text-sm muted">
-              <span class="diff-pill diff-{{ link.exercise.difficulty }}">{{ link.exercise.difficulty_label }}</span>
-              · {% if link.points %}{{ link.points }}{% else %}avto{% endif %} ball
+              <span class="diff-pill diff-{{ link.exercise.difficulty }}">{{ link.exercise.difficulty_label|loc }}</span>
+              · {% if link.points %}{{ link.points }}{% else %}{{ "avto"|loc }}{% endif %} {{ "ball"|loc }}
             </div>
           </div>
           {% if not row.allowed %}
-            <span class="lesson-status">Yopiq</span>
+            <span class="lesson-status">{{ "Yopiq"|loc }}</span>
           {% elif link.exercise_id in solved_ids %}
-            <span class="ok font-semibold">Yechilgan</span>
+            <span class="ok font-semibold">{{ "Yechilgan"|loc }}</span>
           {% else %}
-            <a class="btn btn-primary" href="{% url 'exercises:detail' link.exercise.pk %}">Yechish</a>
+            <a class="btn btn-primary" href="{% url 'exercises:detail' link.exercise.pk %}">{{ "Yechish"|loc }}</a>
           {% endif %}
         </li>
         {% endwith %}
       {% empty %}
-        <li class="muted">Masalalar hali biriktirilmagan.</li>
+        <li class="muted">{{ "Masalalar hali biriktirilmagan."|loc }}</li>
       {% endfor %}
     </ul>
   </section>
 
   <section class="card">
-    <h2 class="text-lg font-bold">Musobaqa reytingi</h2>
+    <h2 class="text-lg font-bold">{{ "Musobaqa reytingi"|loc }}</h2>
     <div class="mt-3 overflow-x-auto">
       <table class="table leaderboard-table">
         <thead>
-          <tr><th>#</th><th>Talaba</th><th>Ball</th><th>Masalalar</th><th>So‘nggi yechim</th></tr>
+          <tr><th>#</th><th>{{ "Talaba"|loc }}</th><th>{{ "Ball"|loc }}</th><th>{{ "Masalalar"|loc }}</th><th>{{ "So‘nggi yechim"|loc }}</th></tr>
         </thead>
         <tbody>
           {% for item in board %}
@@ -70,7 +70,7 @@
               <td>{% if item.last_solved_at %}{{ item.last_solved_at|date:"d.m.Y H:i" }}{% else %}—{% endif %}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="5" class="muted">Hali hech kim ball olmadi.</td></tr>
+            <tr><td colspan="5" class="muted">{{ "Hali hech kim ball olmadi."|loc }}</td></tr>
           {% endfor %}
         </tbody>
       </table>

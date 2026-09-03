@@ -7,15 +7,15 @@
     <h1 class="auth-gate-title">{{ gate_title }}</h1>
     <p class="auth-gate-text">{{ gate_message }}</p>
     <ul class="auth-gate-list">
-      <li>Progressingiz saqlanadi</li>
-      <li>Reyting va sertifikatlarga chiqasiz</li>
-      <li>Uy vazifasi va testlarni topshirasiz</li>
+      <li>{{ "Progressingiz saqlanadi"|loc }}</li>
+      <li>{{ "Reyting va sertifikatlarga chiqasiz"|loc }}</li>
+      <li>{{ "Uy vazifasi va testlarni topshirasiz"|loc }}</li>
     </ul>
     <div class="auth-gate-actions">
-      <a class="btn btn-primary" href="{% url 'accounts:login' %}?next={{ next|urlencode }}">Tizimga kirish</a>
-      <a class="btn btn-ok" href="{% url 'accounts:register' %}?next={{ next|urlencode }}">Ro‘yxatdan o‘tish</a>
+      <a class="btn btn-primary" href="{% url 'accounts:login' %}?next={{ next|urlencode }}">{{ "Tizimga kirish"|loc }}</a>
+      <a class="btn btn-ok" href="{% url 'accounts:register' %}?next={{ next|urlencode }}">{{ "Ro‘yxatdan o‘tish"|loc }}</a>
     </div>
-    <a class="auth-gate-back" href="{% url 'courses:list' %}">← Kurslarni ko‘rishda davom etish</a>
+    <a class="auth-gate-back" href="{% url 'courses:list' %}">{{ "← Kurslarni ko‘rishda davom etish"|loc }}</a>
   </div>
 </div>
 {% endblock %}

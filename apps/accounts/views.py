@@ -10,6 +10,8 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import FormView, UpdateView
 
+from apps.core.i18n.service import t
+
 from .forms import EmailAuthenticationForm, ProfileForm, StudentRegistrationForm
 from .google import (
     GoogleOAuthError,
@@ -46,7 +48,7 @@ class RegisterView(FormView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        messages.success(self.request, "Ro‘yxatdan o‘tish muvaffaqiyatli yakunlandi.")
+        messages.success(self.request, t("Ro‘yxatdan o‘tish muvaffaqiyatli yakunlandi."))
         return super().form_valid(form)
 
 
@@ -81,9 +83,9 @@ class ProfileView(LoginRequiredMixin, UpdateView):
             from django.contrib.auth import update_session_auth_hash
 
             update_session_auth_hash(self.request, self.object)
-            messages.success(self.request, "Profil va parol yangilandi.")
+            messages.success(self.request, t("Profil va parol yangilandi."))
         else:
-            messages.success(self.request, "Profil yangilandi.")
+            messages.success(self.request, t("Profil yangilandi."))
         return response
 
 
@@ -106,7 +108,7 @@ class GoogleOAuthCallbackView(View):
         if request.user.is_authenticated:
             return redirect("root")
         if request.GET.get("error"):
-            messages.error(request, "Google orqali kirish bekor qilindi.")
+            messages.error(request, t("Google orqali kirish bekor qilindi."))
             return redirect("accounts:login")
         state = request.GET.get("state")
         code = request.GET.get("code")
@@ -114,10 +116,10 @@ class GoogleOAuthCallbackView(View):
         next_url = request.session.pop(SESSION_NEXT_KEY, None)
         if not code or not state or not expected or state != expected:
             logger.warning("google_oauth_invalid_state")
-            messages.error(request, "Google orqali kirish xavfsizlik tekshiruvidan o‘tmadi. Qayta urinib ko‘ring.")
+            messages.error(request, t("Google orqali kirish xavfsizlik tekshiruvidan o‘tmadi. Qayta urinib ko‘ring."))
             return redirect("accounts:login")
         if not google_oauth_configured():
-            messages.error(request, "Google orqali kirish hozircha sozlanmagan.")
+            messages.error(request, t("Google orqali kirish hozircha sozlanmagan."))
             return redirect("accounts:login")
         try:
             profile = fetch_google_profile(code, build_redirect_uri(request))
@@ -127,10 +129,10 @@ class GoogleOAuthCallbackView(View):
             return redirect("accounts:login")
         except (HTTPError, URLError, TimeoutError, ValueError):
             logger.warning("google_oauth_network_error")
-            messages.error(request, "Google bilan bog‘lanib bo‘lmadi. Keyinroq qayta urinib ko‘ring.")
+            messages.error(request, t("Google bilan bog‘lanib bo‘lmadi. Keyinroq qayta urinib ko‘ring."))
             return redirect("accounts:login")
         if created:
-            messages.success(request, "Google hisobi orqali ro‘yxatdan o‘tdingiz.")
+            messages.success(request, t("Google hisobi orqali ro‘yxatdan o‘tdingiz."))
         target = safe_next_url(request, next_url)
         if target:
             return redirect(target)
@@ -142,7 +144,7 @@ class GoogleIdentityTokenView(View):
         if request.user.is_authenticated:
             return redirect("root")
         if not google_signin_enabled():
-            messages.error(request, "Google orqali kirish hozircha sozlanmagan.")
+            messages.error(request, t("Google orqali kirish hozircha sozlanmagan."))
             return redirect("accounts:login")
         credential = request.POST.get("credential")
         next_url = request.POST.get("next") or request.GET.get("next") or ""
@@ -153,7 +155,7 @@ class GoogleIdentityTokenView(View):
             messages.error(request, exc.message)
             return redirect("accounts:login")
         if created:
-            messages.success(request, "Google hisobi orqali ro‘yxatdan o‘tdingiz.")
+            messages.success(request, t("Google hisobi orqali ro‘yxatdan o‘tdingiz."))
         target = safe_next_url(request, next_url)
         if target:
             return redirect(target)

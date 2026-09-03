@@ -1,60 +1,66 @@
 {% extends "base.html" %}
-{% block title %}Premium — {{ course.title }}{% endblock %}
+{% block title %}Premium — {{ course.title|loc }}{% endblock %}
 {% block content %}
 <div class="premium-offer">
   <div class="premium-offer-hero">
-    <p class="premium-eyebrow">Premium ochish</p>
-    <h1>{{ course.title }}</h1>
+    <p class="premium-eyebrow">{{ "Premium ochish"|loc }}</p>
+    <h1>{{ course.title|loc }}</h1>
     <p class="premium-lead">
-      To‘liq kurs, barcha modullar va mentor yordami — bir marta to‘lov qilib, o‘qishni to‘xtovsiz davom ettiring.
+      {{ "To‘liq kurs, barcha modullar va mentor yordami — bir marta to‘lov qilib, o‘qishni to‘xtovsiz davom ettiring."|loc }}
     </p>
     {% if already_premium %}
-      <p class="ok font-semibold mt-4">Sizda bu kurs uchun to‘liq ruxsat bor.</p>
-      <a class="btn btn-primary mt-4" href="{% url 'courses:detail' course.slug %}">Kursga qaytish</a>
+      <p class="ok font-semibold mt-4">{{ "Sizda bu kurs uchun to‘liq ruxsat bor."|loc }}</p>
+      <a class="btn btn-primary mt-4" href="{% url 'courses:detail' course.slug %}">{{ "Kursga qaytish"|loc }}</a>
     {% else %}
       <p class="premium-price-big">{{ premium_price_label }}</p>
-      <p class="muted text-sm">{{ course.title }} — to‘liq Premium</p>
+      <p class="muted text-sm">{{ course.title|loc }} — {{ "to‘liq Premium"|loc }}</p>
     {% endif %}
   </div>
 
   {% if not already_premium %}
   <section class="card premium-motivation">
-    <h2 class="text-xl font-bold">Nima uchun Premium?</h2>
+    <h2 class="text-xl font-bold">{{ "Nima uchun Premium?"|loc }}</h2>
     <ul class="premium-benefits">
-      <li>Barcha yopiq modullar va bilim testlari ochiladi</li>
-      <li><strong>Uy vazifalari tekshirib boriladi</strong> — o‘qituvchi baho va izoh beradi</li>
-      <li><strong>Qo‘shimcha mentor izohlari</strong> — xatolarni tuzatish va keyingi qadamlar bo‘yicha yo‘l-yo‘riq</li>
-      <li>Amaliyot, musobaqa va sertifikat yo‘liga to‘liq kirish</li>
+      <li>{{ "Barcha yopiq modullar va bilim testlari ochiladi"|loc }}</li>
+      <li><strong>{{ "Uy vazifalari tekshirib boriladi"|loc }}</strong> — {{ "o‘qituvchi baho va izoh beradi"|loc }}</li>
+      <li><strong>{{ "Qo‘shimcha mentor izohlari"|loc }}</strong> — {{ "xatolarni tuzatish va keyingi qadamlar bo‘yicha yo‘l-yo‘riq"|loc }}</li>
+      <li>{{ "Amaliyot, musobaqa va sertifikat yo‘liga to‘liq kirish"|loc }}</li>
     </ul>
   </section>
 
   <section class="card premium-pay">
-    <h2 class="text-xl font-bold">To‘lov yo‘riqnomasi</h2>
+    <h2 class="text-xl font-bold">{{ "To‘lov yo‘riqnomasi"|loc }}</h2>
     <ol class="premium-steps">
-      <li>Quyidagi kartaga <strong>{{ premium_price_label }}</strong> o‘tkazing.</li>
-      <li>To‘lov cheki (screenshot) ni Telegram orqali yuboring.</li>
-      <li>Ism-familiyangiz va qaysi kurs uchun to‘laganingizni yozing — <strong>faqat shu kurs</strong> ochiladi.</li>
+      <li>{{ "Quyidagi kartaga summani o‘tkazing:"|loc }} <strong>{{ premium_price_label }}</strong></li>
+      <li>{{ "To‘lov cheki (screenshot) ni Telegram orqali yuboring."|loc }}</li>
+      <li>{{ "Ism-familiyangiz va qaysi kurs uchun to‘laganingizni yozing — faqat shu kurs ochiladi."|loc }}</li>
     </ol>
 
     <div class="premium-card-box">
-      <p class="muted text-sm">Karta raqami</p>
+      <p class="muted text-sm">{{ "Karta raqami"|loc }}</p>
       <p class="premium-card-number" id="premium-card">{{ premium_card_number }}</p>
       <p class="font-semibold mt-2">{{ premium_card_holder }}</p>
-      <button class="btn btn-ghost mt-3" type="button" id="copy-card-btn">Raqamni nusxalash</button>
+      <button
+        class="btn btn-ghost mt-3"
+        type="button"
+        id="copy-card-btn"
+        data-copy-label="{{ "Raqamni nusxalash"|loc }}"
+        data-copied-label="{{ "Nusxa olindi ✓"|loc }}"
+      >{{ "Raqamni nusxalash"|loc }}</button>
     </div>
 
     <div class="premium-tg-box">
-      <p class="muted text-sm">Chek screenshotini yuboring</p>
+      <p class="muted text-sm">{{ "Chek screenshotini yuboring"|loc }}</p>
       <a class="btn btn-primary premium-tg-btn" href="{{ premium_telegram_url }}" target="_blank" rel="noopener noreferrer">
         Telegram: {{ premium_telegram }}
       </a>
-      <p class="muted text-sm mt-3">Invoice / chek rasmini shu akkauntga yuboring — Premium tez ochiladi.</p>
+      <p class="muted text-sm mt-3">{{ "Invoice / chek rasmini shu akkauntga yuboring — Premium tez ochiladi."|loc }}</p>
     </div>
   </section>
 
   <div class="flex flex-wrap gap-3">
-    <a class="btn btn-ghost" href="{% url 'courses:detail' course.slug %}">← Kursga qaytish</a>
-    <a class="btn btn-ok" href="{{ premium_telegram_url }}" target="_blank" rel="noopener noreferrer">Chek yuborish</a>
+    <a class="btn btn-ghost" href="{% url 'courses:detail' course.slug %}">{{ "← Kursga qaytish"|loc }}</a>
+    <a class="btn btn-ok" href="{{ premium_telegram_url }}" target="_blank" rel="noopener noreferrer">{{ "Chek yuborish"|loc }}</a>
   </div>
   {% endif %}
 </div>
@@ -65,12 +71,14 @@
   var btn = document.getElementById("copy-card-btn");
   var card = document.getElementById("premium-card");
   if (!btn || !card) return;
+  var copyLabel = btn.getAttribute("data-copy-label") || "Raqamni nusxalash";
+  var copiedLabel = btn.getAttribute("data-copied-label") || "Nusxa olindi ✓";
   btn.addEventListener("click", function () {
     var text = card.textContent.replace(/\s+/g, " ").trim();
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text.replace(/ /g, "")).then(function () {
-        btn.textContent = "Nusxa olindi ✓";
-        setTimeout(function () { btn.textContent = "Raqamni nusxalash"; }, 1800);
+        btn.textContent = copiedLabel;
+        setTimeout(function () { btn.textContent = copyLabel; }, 1800);
       });
     }
   });

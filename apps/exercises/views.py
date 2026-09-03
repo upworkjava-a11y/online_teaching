@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
 from apps.access.services import OPEN_COURSE_SLUGS, access_service
+from apps.core.i18n.service import t
 from apps.core.views import GuestBrowseMixin, RoleRequiredMixin
 from apps.courses.models import Course, Module
 from apps.progress.models import CourseProgress
@@ -67,8 +68,14 @@ class PracticeCatalogView(GuestBrowseMixin, View):
         user = request.user
         staff_bypass = user.is_authenticated and (user.is_teacher or user.is_admin)
         for exercise in qs:
-            if staff_bypass or access_service.can_access(user, exercise):
-                visible.append(exercise)
+            if staff_bypass:
+                locked = False
+            else:
+                locked = not access_service.can_access(user, exercise)
+            # Solved/unsolved filter only applies to tasks the user can open
+            if status in ("solved", "unsolved") and locked:
+                continue
+            visible.append({"exercise": exercise, "locked": locked})
 
         paginator = Paginator(visible, 20)
         page = paginator.get_page(request.GET.get("page"))
@@ -89,7 +96,7 @@ class PracticeCatalogView(GuestBrowseMixin, View):
 
 
 class ExerciseDetailView(RoleRequiredMixin, View):
-    allowed_roles = ("student",)
+    allowed_roles = ("student", "teacher", "admin")
     template_name = "exercises/detail.html"
     auth_gate_title = "Masalani yechish uchun hisob kerak"
     auth_gate_message = (
@@ -164,18 +171,24 @@ class ExerciseDetailView(RoleRequiredMixin, View):
     def post(self, request, pk):
         exercise, decision = self.get_exercise(request, pk)
         if exercise is None:
+            if decision and decision.code == "premium":
+                exercise_obj = get_object_or_404(
+                    Exercise.objects.select_related("module", "module__course"),
+                    pk=pk,
+                )
+                return redirect("courses:premium", slug=exercise_obj.module.course.slug)
             return render(request, "core/blocked.html", {"reason": decision.reason}, status=403)
 
         action = request.POST.get("action", "run")
         if action == "comment":
             body = (request.POST.get("body") or "").strip()
             if len(body) < 3:
-                messages.error(request, "Izoh juda qisqa. Kamida 3 ta belgi yozing.")
+                messages.error(request, t("Izoh juda qisqa. Kamida 3 ta belgi yozing."))
             elif len(body) > 2000:
-                messages.error(request, "Izoh juda uzun (maksimum 2000 belgi).")
+                messages.error(request, t("Izoh juda uzun (maksimum 2000 belgi)."))
             else:
                 ExerciseComment.objects.create(exercise=exercise, author=request.user, body=body)
-                messages.success(request, "Izohingiz qo‘shildi.")
+                messages.success(request, t("Izohingiz qo‘shildi."))
             return redirect("exercises:detail", pk=exercise.pk)
 
         if exercise.kind == Exercise.Kind.QUIZ:
@@ -196,7 +209,7 @@ class ExerciseDetailView(RoleRequiredMixin, View):
 
 
 class SkillTestListView(RoleRequiredMixin, View):
-    allowed_roles = ("student",)
+    allowed_roles = ("student", "teacher", "admin")
     auth_gate_title = "Bilim testi uchun hisob kerak"
     auth_gate_message = (
         "Modul bilim testini boshlash va natijani ko‘rish uchun tizimga kiring yoki ro‘yxatdan o‘ting."
@@ -208,7 +221,7 @@ class SkillTestListView(RoleRequiredMixin, View):
             return render(
                 request,
                 "core/blocked.html",
-                {"reason": "Bu modul bilim testi Premium. To‘liq kurs ochilgach yoki dastlabki 5 modulda mavjud."},
+                {"reason": t("Bu modul bilim testi Premium. To‘liq kurs ochilgach yoki dastlabki 5 modulda mavjud.")},
                 status=403,
             )
         tests = list(

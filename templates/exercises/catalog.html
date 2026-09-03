@@ -1,86 +1,101 @@
 {% extends "base.html" %}
-{% block title %}Amaliyot — mashqlar{% endblock %}
+{% block title %}{{ "Amaliyot — mashqlar"|loc }}{% endblock %}
 {% block content %}
 <div class="space-y-6">
   <div>
-    <p class="muted text-sm">Amaliyot</p>
-    <h1 class="text-3xl font-extrabold">Mashqlar katalogi</h1>
-    <p class="muted mt-1">SQL mashqlari — oson, o‘rta va qiyin.</p>
+    <p class="muted text-sm">{{ "Amaliyot"|loc }}</p>
+    <h1 class="text-3xl font-extrabold">{{ "Mashqlar katalogi"|loc }}</h1>
+    <p class="muted mt-1">{{ "SQL mashqlari — oson, o‘rta va qiyin."|loc }}</p>
+    {% if user.is_authenticated and user.is_student %}
+      <p class="mt-2 text-sm font-semibold" style="color:#b45309">
+        {{ "Dastlabki 5 modul mashqlari ochiq. Qolganlari 🔒 Premium."|loc }}
+      </p>
+    {% endif %}
   </div>
 
   <form method="get" class="card flex flex-wrap gap-3 items-end">
     <label class="text-sm">
-      <span class="muted">Kurs</span>
+      <span class="muted">{{ "Kurs"|loc }}</span>
       <select class="input mt-1" name="course">
-        <option value="" {% if not course_slug %}selected{% endif %}>Barchasi</option>
+        <option value="" {% if not course_slug %}selected{% endif %}>{{ "Barchasi"|loc }}</option>
         {% for course in open_courses %}
-          <option value="{{ course.slug }}" {% if course_slug == course.slug %}selected{% endif %}>{{ course.title }}</option>
+          <option value="{{ course.slug }}" {% if course_slug == course.slug %}selected{% endif %}>{{ course.title|loc }}</option>
         {% endfor %}
       </select>
     </label>
     <label class="text-sm">
-      <span class="muted">Qidiruv</span>
-      <input class="input mt-1" type="search" name="q" value="{{ q }}" placeholder="Masala nomi...">
+      <span class="muted">{{ "Qidiruv"|loc }}</span>
+      <input class="input mt-1" type="search" name="q" value="{{ q }}" placeholder="{{ 'Masala nomi...'|loc }}">
     </label>
     <label class="text-sm">
-      <span class="muted">Qiyinlik</span>
+      <span class="muted">{{ "Qiyinlik"|loc }}</span>
       <select class="input mt-1" name="difficulty">
         {% for key, label in difficulty_filters.items %}
-          <option value="{{ key }}" {% if difficulty == key %}selected{% endif %}>{{ label }}</option>
+          <option value="{{ key }}" {% if difficulty == key %}selected{% endif %}>{{ label|loc }}</option>
         {% endfor %}
       </select>
     </label>
     <label class="text-sm">
-      <span class="muted">Holat</span>
+      <span class="muted">{{ "Holat"|loc }}</span>
       <select class="input mt-1" name="status">
-        <option value="" {% if not status %}selected{% endif %}>Barchasi</option>
-        <option value="unsolved" {% if status == "unsolved" %}selected{% endif %}>Yechilmagan</option>
-        <option value="solved" {% if status == "solved" %}selected{% endif %}>Yechilgan</option>
+        <option value="" {% if not status %}selected{% endif %}>{{ "Barchasi"|loc }}</option>
+        <option value="unsolved" {% if status == "unsolved" %}selected{% endif %}>{{ "Yechilmagan"|loc }}</option>
+        <option value="solved" {% if status == "solved" %}selected{% endif %}>{{ "Yechilgan"|loc }}</option>
       </select>
     </label>
-    <button class="btn btn-primary" type="submit">Filtrlash</button>
+    <button class="btn btn-primary" type="submit">{{ "Filtrlash"|loc }}</button>
   </form>
 
   <div class="card overflow-x-auto">
     <table class="table">
       <thead>
         <tr>
-          <th>Masala</th>
-          <th>Kurs</th>
-          <th>Modul</th>
-          <th>Daraja</th>
-          <th>Tur</th>
-          <th>Holat</th>
+          <th>{{ "Masala"|loc }}</th>
+          <th>{{ "Kurs"|loc }}</th>
+          <th>{{ "Modul"|loc }}</th>
+          <th>{{ "Daraja"|loc }}</th>
+          <th>{{ "Tur"|loc }}</th>
+          <th>{{ "Holat"|loc }}</th>
         </tr>
       </thead>
       <tbody>
-        {% for exercise in page %}
-          <tr>
+        {% for row in page %}
+          {% with exercise=row.exercise %}
+          <tr class="{% if row.locked %}is-locked-row{% endif %}">
             <td>
-              <a class="font-semibold text-blue-700" href="{% url 'exercises:detail' exercise.pk %}">{{ exercise.title }}</a>
+              {% if row.locked %}
+                <a class="font-semibold text-amber-700" href="{% url 'courses:premium' exercise.module.course.slug %}">
+                  🔒 {{ exercise.title|loc }}
+                </a>
+              {% else %}
+                <a class="font-semibold text-blue-700" href="{% url 'exercises:detail' exercise.pk %}">{{ exercise.title|loc }}</a>
+              {% endif %}
             </td>
-            <td class="text-sm font-semibold">{{ exercise.module.course.title }}</td>
-            <td class="text-sm">{{ exercise.module.title }}</td>
-            <td><span class="diff-pill diff-{{ exercise.difficulty }}">{{ exercise.difficulty_label }}</span></td>
+            <td class="text-sm font-semibold">{{ exercise.module.course.title|loc }}</td>
+            <td class="text-sm">{{ exercise.module.title|loc }}</td>
+            <td><span class="diff-pill diff-{{ exercise.difficulty }}">{{ exercise.difficulty_label|loc }}</span></td>
             <td>
               {% if exercise.module.course.slug == "python" %}
-                Python {% if exercise.kind == "quiz" %}test{% else %}mashq{% endif %}
+                Python {% if exercise.kind == "quiz" %}{{ "Test"|loc }}{% else %}{{ "Mashq"|loc }}{% endif %}
               {% elif exercise.kind == "quiz" %}
-                Test
+                {{ "Test"|loc }}
               {% else %}
                 SQL
               {% endif %}
             </td>
             <td>
-              {% if exercise.pk in solved_ids %}
-                <span class="ok">Yechilgan</span>
+              {% if row.locked %}
+                <a class="font-semibold" style="color:#b45309" href="{% url 'courses:premium' exercise.module.course.slug %}">Premium</a>
+              {% elif exercise.pk in solved_ids %}
+                <span class="ok">{{ "Yechilgan"|loc }}</span>
               {% else %}
-                <span class="muted">Yechilmagan</span>
+                <span class="muted">{{ "Yechilmagan"|loc }}</span>
               {% endif %}
             </td>
           </tr>
+          {% endwith %}
         {% empty %}
-          <tr><td colspan="6" class="muted">Mos mashq topilmadi.</td></tr>
+          <tr><td colspan="6" class="muted">{{ "Mos mashq topilmadi."|loc }}</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -89,11 +104,11 @@
   {% if page.has_other_pages %}
     <div class="flex gap-2">
       {% if page.has_previous %}
-        <a class="btn btn-ghost" href="?page={{ page.previous_page_number }}&difficulty={{ difficulty }}&q={{ q }}&status={{ status }}&course={{ course_slug }}">Oldingi</a>
+        <a class="btn btn-ghost" href="?page={{ page.previous_page_number }}&difficulty={{ difficulty }}&q={{ q }}&status={{ status }}&course={{ course_slug }}">{{ "Oldingi"|loc }}</a>
       {% endif %}
-      <span class="self-center muted text-sm">Sahifa {{ page.number }} / {{ page.paginator.num_pages }}</span>
+      <span class="self-center muted text-sm">{{ "Sahifa"|loc }} {{ page.number }} / {{ page.paginator.num_pages }}</span>
       {% if page.has_next %}
-        <a class="btn btn-ghost" href="?page={{ page.next_page_number }}&difficulty={{ difficulty }}&q={{ q }}&status={{ status }}&course={{ course_slug }}">Keyingi</a>
+        <a class="btn btn-ghost" href="?page={{ page.next_page_number }}&difficulty={{ difficulty }}&q={{ q }}&status={{ status }}&course={{ course_slug }}">{{ "Keyingi"|loc }}</a>
       {% endif %}
     </div>
   {% endif %}

@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="{{ html_lang|default:'uz' }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,86 +30,118 @@
         </svg>
         <span>{{ telegram_channel_label }}</span>
       </a>
+      <details class="lang-switch" id="lang-switch">
+        {% for lang in UI_LANGUAGES %}
+          {% if lang.code == LANGUAGE_CODE %}
+            <summary class="lang-summary" aria-label="{{ 'Til'|loc }}: {{ lang.name }}">
+              <span class="lang-flag" aria-hidden="true">{% include "core/_lang_flag.html" with flag=lang.flag %}</span>
+              <span class="lang-summary__name">{{ lang.name }}</span>
+              <svg class="lang-caret" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path d="M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4Z"/>
+              </svg>
+            </summary>
+          {% endif %}
+        {% endfor %}
+        <div class="lang-menu" role="listbox" aria-label="{{ 'Til'|loc }}">
+          {% for lang in UI_LANGUAGES %}
+            <form method="post" action="{% url 'set_language' %}">
+              {% csrf_token %}
+              <input type="hidden" name="language" value="{{ lang.code }}">
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button
+                type="submit"
+                role="option"
+                class="lang-btn {% if lang.code == LANGUAGE_CODE %}is-active{% endif %}"
+                aria-selected="{% if lang.code == LANGUAGE_CODE %}true{% else %}false{% endif %}"
+                title="{{ lang.name }}"
+              >
+                <span class="lang-flag" aria-hidden="true">{% include "core/_lang_flag.html" with flag=lang.flag %}</span>
+                <span>{{ lang.name }}</span>
+              </button>
+            </form>
+          {% endfor %}
+        </div>
+      </details>
       {% if user.is_authenticated %}
         <div class="mt-6 rounded-2xl bg-white/10 p-3 text-sm">
           <div class="font-semibold">{{ user.get_full_name }}</div>
-          <div class="opacity-80">{{ user.get_role_display }}</div>
+          <div class="opacity-80">{{ user.get_role_display|loc }}</div>
         </div>
         <nav class="mt-6 space-y-1 text-sm">
           {% if user.is_student %}
             <a class="nav-link {% if request.path == '/dashboard/' %}is-active{% endif %}" href="{% url 'dashboard:home' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5Z"/></svg>
-              <span>Mening panelim</span>
+              <span>{{ "Mening panelim"|loc }}</span>
             </a>
             <a class="nav-link {% if '/courses/' in request.path %}is-active{% endif %}" href="{% url 'courses:list' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path stroke-linecap="round" stroke-linejoin="round" d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
-              <span>Kurslarim</span>
+              <span>{{ "Kurslarim"|loc }}</span>
             </a>
             <a class="nav-link {% if '/exercises/' in request.path %}is-active{% endif %}" href="{% url 'exercises:catalog' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9h8M8 13h5"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 3h10a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2Z"/></svg>
-              <span>Amaliyot</span>
+              <span>{{ "Amaliyot"|loc }}</span>
             </a>
             <a class="nav-link {% if '/musobaqalar/' in request.path %}is-active{% endif %}" href="{% url 'contests:list' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 6H5a2 2 0 0 0 2 4M17 6h2a2 2 0 0 1-2 4"/></svg>
-              <span>Musobaqalar</span>
+              <span>{{ "Musobaqalar"|loc }}</span>
             </a>
             <a class="nav-link {% if '/dashboard/progress/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:progress' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5M4 19h16"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 15v-4M12 15V8M16 15v-7"/></svg>
-              <span>Progressim</span>
+              <span>{{ "Progressim"|loc }}</span>
             </a>
             <a class="nav-link {% if '/dashboard/leaderboard/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:leaderboard' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v3a5 5 0 0 1-10 0V4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 4 1.5 3L12 4l1.5 3L15 4"/></svg>
-              <span>Reyting</span>
+              <span>{{ "Reyting"|loc }}</span>
             </a>
             <a class="nav-link {% if '/progress/sertifikat' in request.path %}is-active{% endif %}" href="{% url 'progress:certificates' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 13.5-1.5 7 5-2.5 5 2.5-1.5-7"/></svg>
-              <span>Sertifikatlar</span>
+              <span>{{ "Sertifikatlar"|loc }}</span>
             </a>
             <a class="nav-link {% if '/homework/' in request.path %}is-active{% endif %}" href="{% url 'homework:list' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M9 16h4"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 3h8l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 3v4h4"/></svg>
-              <span>Uy vazifasi</span>
+              <span>{{ "Uy vazifasi"|loc }}</span>
             </a>
             <a class="nav-link {% if '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'accounts:profile' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg>
-              <span>Profil</span>
+              <span>{{ "Profil"|loc }}</span>
             </a>
           {% elif user.is_teacher or user.is_admin %}
             <a class="nav-link {% if request.path == '/teacher/' %}is-active{% endif %}" href="{% url 'analytics:dashboard' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5M4 19h16"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 15v-4M12 15V8M16 15v-7"/></svg>
-              <span>Natijalar paneli</span>
+              <span>{{ "Natijalar paneli"|loc }}</span>
             </a>
             <a class="nav-link {% if '/dashboard/leaderboard/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:leaderboard' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v3a5 5 0 0 1-10 0V4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 4 1.5 3L12 4l1.5 3L15 4"/></svg>
-              <span>Reyting</span>
+              <span>{{ "Reyting"|loc }}</span>
             </a>
             <a class="nav-link {% if '/musobaqalar/' in request.path %}is-active{% endif %}" href="{% url 'contests:list' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 6H5a2 2 0 0 0 2 4M17 6h2a2 2 0 0 1-2 4"/></svg>
-              <span>Musobaqalar</span>
+              <span>{{ "Musobaqalar"|loc }}</span>
             </a>
             <a class="nav-link {% if '/exercises/' in request.path %}is-active{% endif %}" href="{% url 'exercises:catalog' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9h8M8 13h5"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 3h10a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2Z"/></svg>
-              <span>Amaliyot</span>
+              <span>{{ "Amaliyot"|loc }}</span>
             </a>
             <a class="nav-link {% if '/teacher/bilim-testi/' in request.path %}is-active{% endif %}" href="{% url 'analytics:skill_tests' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 11l2 2 4-4"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 3h10a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2Z"/></svg>
-              <span>Bilim testi</span>
+              <span>{{ "Bilim testi"|loc }}</span>
             </a>
             <a class="nav-link {% if '/teacher/insights/' in request.path %}is-active{% endif %}" href="{% url 'analytics:insights' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"/><path stroke-linecap="round" stroke-linejoin="round" d="m7 14 3-3 3 2 5-6"/></svg>
-              <span>Progress dashboard</span>
+              <span>{{ "Progress dashboard"|loc }}</span>
             </a>
             <a class="nav-link {% if '/teacher/students/' in request.path %}is-active{% endif %}" href="{% url 'analytics:students' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M3.5 19a5.5 5.5 0 0 1 11 0M14 19a4.5 4.5 0 0 1 6.5-4"/></svg>
-              <span>Talabalar</span>
+              <span>{{ "Talabalar"|loc }}</span>
             </a>
             <a class="nav-link {% if '/teacher/homework/' in request.path %}is-active{% endif %}" href="{% url 'analytics:homework' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M9 16h4"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 3h8l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 3v4h4"/></svg>
-              <span>Uy vazifasi</span>
+              <span>{{ "Uy vazifasi"|loc }}</span>
             </a>
             {% if user.is_admin %}
               <a class="nav-link" href="/admin/">
                 <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.2.6.7 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
-                <span>Admin</span>
+                <span>{{ "Admin"|loc }}</span>
               </a>
             {% endif %}
           {% endif %}
@@ -117,39 +149,39 @@
             {% csrf_token %}
             <button class="nav-link mt-4" type="submit">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12H3"/><path stroke-linecap="round" stroke-linejoin="round" d="m11 8 4 4-4 4"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 5h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"/></svg>
-              <span>Chiqish</span>
+              <span>{{ "Chiqish"|loc }}</span>
             </button>
           </form>
         </nav>
       {% else %}
         <div class="mt-6 rounded-2xl bg-white/10 p-3 text-sm">
-          <div class="font-semibold">Mehmon</div>
-          <div class="opacity-80">Ro‘yxatsiz ko‘rish mumkin</div>
+          <div class="font-semibold">{{ "Mehmon"|loc }}</div>
+          <div class="opacity-80">{{ "Ro‘yxatsiz ko‘rish mumkin"|loc }}</div>
         </div>
         <nav class="mt-6 space-y-1 text-sm">
           <a class="nav-link {% if '/courses/' in request.path %}is-active{% endif %}" href="{% url 'courses:list' %}">
             <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path stroke-linecap="round" stroke-linejoin="round" d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
-            <span>Kurslar</span>
+            <span>{{ "Kurslar"|loc }}</span>
           </a>
           <a class="nav-link {% if request.path == '/exercises/' %}is-active{% endif %}" href="{% url 'exercises:catalog' %}">
             <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9h8M8 13h5"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 3h10a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 0 1 2-2Z"/></svg>
-            <span>Amaliyot</span>
+            <span>{{ "Amaliyot"|loc }}</span>
           </a>
           <a class="nav-link {% if '/musobaqalar/' in request.path %}is-active{% endif %}" href="{% url 'contests:list' %}">
             <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 6H5a2 2 0 0 0 2 4M17 6h2a2 2 0 0 1-2 4"/></svg>
-            <span>Musobaqalar</span>
+            <span>{{ "Musobaqalar"|loc }}</span>
           </a>
           <a class="nav-link {% if '/dashboard/leaderboard/' in request.path %}is-active{% endif %}" href="{% url 'dashboard:leaderboard' %}">
             <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v3a5 5 0 0 1-10 0V4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 4 1.5 3L12 4l1.5 3L15 4"/></svg>
-            <span>Reyting</span>
+            <span>{{ "Reyting"|loc }}</span>
           </a>
           <a class="nav-link mt-4" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">
             <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3"/><path stroke-linecap="round" stroke-linejoin="round" d="M10 17l5-5-5-5M15 12H3"/></svg>
-            <span>Kirish</span>
+            <span>{{ "Kirish"|loc }}</span>
           </a>
           <a class="nav-link" href="{% url 'accounts:register' %}?next={{ request.get_full_path|urlencode }}">
             <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5.5 19a6.5 6.5 0 0 1 13 0M19 8v4M21 10h-4"/></svg>
-            <span>Ro‘yxatdan o‘tish</span>
+            <span>{{ "Ro‘yxatdan o‘tish"|loc }}</span>
           </a>
         </nav>
       {% endif %}
@@ -158,19 +190,19 @@
       {% if messages %}
         <div class="mb-4 space-y-2">
           {% for message in messages %}
-            <div class="card">{{ message }}</div>
+            <div class="card">{{ message|loc }}</div>
           {% endfor %}
         </div>
       {% endif %}
       {% if not user.is_authenticated and '/accounts/' not in request.path %}
         <div class="guest-banner">
           <div>
-            <p>Bilim sari birinchi qadam — bugun boshlang</p>
-            <p class="muted text-sm">Mashq, test yoki uy vazifasini boshlashda kirish so‘raladi.</p>
+            <p>{{ "Bilim sari birinchi qadam — bugun boshlang"|loc }}</p>
+            <p class="muted text-sm">{{ "Mashq, test yoki uy vazifasini boshlashda kirish so‘raladi."|loc }}</p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <a class="btn btn-primary" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">Kirish</a>
-            <a class="btn btn-ghost" href="{% url 'accounts:register' %}?next={{ request.get_full_path|urlencode }}">Ro‘yxatdan o‘tish</a>
+            <a class="btn btn-primary" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}">{{ "Kirish"|loc }}</a>
+            <a class="btn btn-ghost" href="{% url 'accounts:register' %}?next={{ request.get_full_path|urlencode }}">{{ "Ro‘yxatdan o‘tish"|loc }}</a>
           </div>
         </div>
       {% endif %}
@@ -178,5 +210,13 @@
     </main>
   </div>
   {% block extra_js %}{% endblock %}
+  <script>
+    document.addEventListener("click", function (event) {
+      var box = document.getElementById("lang-switch");
+      if (box && box.open && !box.contains(event.target)) {
+        box.removeAttribute("open");
+      }
+    });
+  </script>
 </body>
 </html>

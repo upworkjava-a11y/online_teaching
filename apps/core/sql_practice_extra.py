@@ -15,7 +15,7 @@ EXTRA_LECTURE_PRACTICE = {
                 "Biznes: geografik tahlil uchun “yirik bozor” davlatlarini ajrating.\n\n"
                 "Jadval: World (name, continent, area, population, gdp).\n\n"
                 "Davlatni qaytaring, agar BIR VAQTNING O‘ZIDA:\n"
-                "• area >= 3 000 000 VA\n"
+                "• area >= 2 000 000 VA\n"
                 "• population >= 25 000 000.\n\n"
                 "Ustunlar: name, population, area. Tartib ixtiyoriy."
             ),

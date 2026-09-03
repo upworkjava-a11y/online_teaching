@@ -8,6 +8,7 @@ from django.core.cache import cache
 from apps.sandbox.comparison import compare_results
 from apps.sandbox.exceptions import SandboxError
 from apps.sandbox.executor import sql_executor
+from apps.core.i18n.service import t
 
 from .models import Exercise, ExerciseAttempt
 
@@ -49,11 +50,11 @@ class ExerciseService:
             sql_query=answer,
             is_correct=ok,
             score=exercise.max_score if ok else 0,
-            error_message="" if ok else "Noto‘g‘ri javob. Qayta urinib ko‘ring.",
+            error_message="" if ok else t("Noto‘g‘ri javob. Qayta urinib ko‘ring."),
             result_preview={
                 "columns": ["javob"],
                 "rows": [[answer]],
-                "message": "To‘g‘ri!" if ok else "Noto‘g‘ri.",
+                "message": t("To‘g‘ri!") if ok else t("Noto‘g‘ri."),
             },
             execution_ms=int((time.monotonic() - started) * 1000),
         )

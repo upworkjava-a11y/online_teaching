@@ -1,12 +1,39 @@
 """
 Har bir SQL moduli uchun bilim testlari (kamida 10 ta, 4 variant).
 Javoblar A/B/C/D — o‘qitilgan mavzuga mos, o‘zbekcha.
+To‘g‘ri javob har savolda barqaror seed bilan aralashtiriladi (faqat A emas).
 """
+
+from __future__ import annotations
+
+import hashlib
+import random
+import re
+
+_OPT_PREFIX = re.compile(r"^[A-D]\)\s*")
+_EDITORIAL_LETTER = re.compile(r"^(To‘g‘ri javob:\s*)([A-D])(\.\s*)", re.S)
+
+
+def _shuffle_quiz(num: int, title: str, options: list[str], answer: str, editorial: str) -> tuple[list[str], str, str]:
+    """Stable shuffle so the correct letter is not always A."""
+    bodies = [_OPT_PREFIX.sub("", item) for item in options]
+    correct_text = bodies["ABCD".index(answer)]
+    rng = random.Random(hashlib.md5(f"{num}|{title}".encode("utf-8")).hexdigest())
+    order = list(range(4))
+    rng.shuffle(order)
+    shuffled = [bodies[i] for i in order]
+    labeled = [f"{letter}) {text}" for letter, text in zip("ABCD", shuffled)]
+    new_answer = "ABCD"[shuffled.index(correct_text)]
+    new_editorial, n = _EDITORIAL_LETTER.subn(rf"\g<1>{new_answer}\g<3>", editorial, count=1)
+    if n == 0:
+        new_editorial = editorial
+    return labeled, new_answer, new_editorial
 
 
 def _q(num: int, title: str, task: str, options: list[str], answer: str, editorial: str, difficulty: str = "easy"):
     assert answer in "ABCD"
     assert len(options) == 4
+    options, answer, editorial = _shuffle_quiz(num, title, options, answer, editorial)
     return {
         "num": num,
         "title": title,
@@ -84,8 +111,8 @@ MODULE_SKILL_TESTS: dict[str, list[dict]] = {
             [
                 "A) Natija to‘plami (result set)",
                 "B) Indeks",
-                "C) Trig ger",
-                "D) Tran zaksiya jurnal",
+                "C) Trigger",
+                "D) Tranzaksiya jurnali",
             ],
             "A",
             "To‘g‘ri javob: A. SELECT natijasi — qatorlar to‘plami.",
@@ -834,14 +861,14 @@ MODULE_SKILL_TESTS: dict[str, list[dict]] = {
                 "A) Qavs ichida: (SELECT ...)",
                 "B) Faqat {} ichida",
                 "C) Faqat [] ichida",
-                "D) Qavssiz mumkin emas",
+                "D) Qavssiz yozib bo‘lmaydi",
             ],
             "A",
             "To‘g‘ri javob: A. Subquery odatda ( ) ichida.",
         ),
         _q(
             7,
-            "Skal yar subquery",
+            "Skalyar subquery",
             "WHERE da bitta qiymat qaytaradigan subquery nima deb ataladi?",
             [
                 "A) Scalar subquery",

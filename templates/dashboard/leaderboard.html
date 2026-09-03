@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Reyting{% endblock %}
+{% block title %}{{ "Reyting"|loc }}{% endblock %}
 {% block content %}
 <div class="space-y-6">
   <div>
-    <p class="muted text-sm">Reyting</p>
-    <h1 class="text-3xl font-extrabold">Reyting jadvali</h1>
+    <p class="muted text-sm">{{ "Reyting"|loc }}</p>
+    <h1 class="text-3xl font-extrabold">{{ "Reyting jadvali"|loc }}</h1>
     <p class="muted mt-1">
-      Ko‘proq masala yechganlar yuqorida. Ball:
-      Oson +{{ difficulty_points.easy }} ·
-      O‘rta +{{ difficulty_points.medium }} ·
-      Qiyin +{{ difficulty_points.hard }}.
-      Har bir mashq bir marta hisoblanadi.
+      {{ "Ko‘proq masala yechganlar yuqorida. Ball:"|loc }}
+      {{ "Oson"|loc }} +{{ difficulty_points.easy }} ·
+      {{ "O‘rta"|loc }} +{{ difficulty_points.medium }} ·
+      {{ "Qiyin"|loc }} +{{ difficulty_points.hard }}.
+      {{ "Har bir mashq bir marta hisoblanadi."|loc }}
     </p>
   </div>
 
@@ -18,14 +18,14 @@
     <div class="card leaderboard-me">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p class="muted text-sm">Sizning o‘rningiz</p>
-          <p class="text-2xl font-extrabold">#{{ me.rank }} · {{ me.points }} ball</p>
+          <p class="muted text-sm">{{ "Sizning o‘rningiz"|loc }}</p>
+          <p class="text-2xl font-extrabold">#{{ me.rank }} · {{ me.points }} {{ "ball"|loc }}</p>
         </div>
         <div class="text-sm muted">
-          Yechilgan: {{ me.solved_count }} ·
-          Oson {{ me.easy_count }} · O‘rta {{ me.medium_count }} · Qiyin {{ me.hard_count }}
+          {{ "Yechilgan:"|loc }} {{ me.solved_count }} ·
+          {{ "Oson"|loc }} {{ me.easy_count }} · {{ "O‘rta"|loc }} {{ me.medium_count }} · {{ "Qiyin"|loc }} {{ me.hard_count }}
           {% if me.last_solved_at %}
-            <div>So‘nggi yechim: {{ me.last_solved_at|date:"d.m.Y H:i" }}</div>
+            <div>{{ "So‘nggi yechim:"|loc }} {{ me.last_solved_at|date:"d.m.Y H:i" }}</div>
           {% endif %}
         </div>
       </div>
@@ -38,36 +38,36 @@
         <div class="cup cup-{{ item.rank }}" aria-hidden="true">
           {% if item.rank == 1 %}🥇{% elif item.rank == 2 %}🥈{% else %}🥉{% endif %}
         </div>
-        <p class="podium-rank">{{ item.rank }}-o‘rin</p>
+        <p class="podium-rank">{{ item.rank }}-{{ "o‘rin"|loc }}</p>
         <h2 class="podium-name">{{ item.name }}</h2>
-        <p class="podium-points">{{ item.points }} ball</p>
+        <p class="podium-points">{{ item.points }} {{ "ball"|loc }}</p>
         <p class="podium-meta">
-          {{ item.solved_count }} masala ·
-          O {{ item.easy_count }} / O‘ {{ item.medium_count }} / Q {{ item.hard_count }}
+          {{ item.solved_count }} {{ "masala"|loc }} ·
+          {{ "Oson"|loc }} {{ item.easy_count }} / {{ "O‘rta"|loc }} {{ item.medium_count }} / {{ "Qiyin"|loc }} {{ item.hard_count }}
         </p>
         {% if item.last_solved_at %}
-          <p class="podium-last">So‘nggi: {{ item.last_solved_at|date:"d.m.Y H:i" }}</p>
+          <p class="podium-last">{{ "So‘nggi:"|loc }} {{ item.last_solved_at|date:"d.m.Y H:i" }}</p>
         {% endif %}
       </article>
     {% empty %}
-      <div class="card muted">Hali hech kim masala yechmagan. Birinchilardan bo‘ling!</div>
+      <div class="card muted">{{ "Hali hech kim masala yechmagan. Birinchilardan bo‘ling!"|loc }}</div>
     {% endfor %}
   </section>
 
   <section class="card">
-    <h2 class="text-lg font-bold">To‘liq jadval</h2>
+    <h2 class="text-lg font-bold">{{ "To‘liq jadval"|loc }}</h2>
     <div class="mt-4 overflow-x-auto">
       <table class="table leaderboard-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Talaba</th>
-            <th>Ball</th>
-            <th>Masalalar</th>
-            <th>Oson</th>
-            <th>O‘rta</th>
-            <th>Qiyin</th>
-            <th>So‘nggi yechim</th>
+            <th>{{ "Talaba"|loc }}</th>
+            <th>{{ "Ball"|loc }}</th>
+            <th>{{ "Masalalar"|loc }}</th>
+            <th>{{ "Oson"|loc }}</th>
+            <th>{{ "O‘rta"|loc }}</th>
+            <th>{{ "Qiyin"|loc }}</th>
+            <th>{{ "So‘nggi yechim"|loc }}</th>
           </tr>
         </thead>
         <tbody>
@@ -88,7 +88,7 @@
               <td>{% if item.last_solved_at %}{{ item.last_solved_at|date:"d.m.Y H:i" }}{% else %}—{% endif %}</td>
             </tr>
           {% empty %}
-            <tr><td colspan="8" class="muted">Reyting hali bo‘sh.</td></tr>
+            <tr><td colspan="8" class="muted">{{ "Reyting hali bo‘sh."|loc }}</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -96,21 +96,21 @@
   </section>
 
   <section class="card">
-    <h2 class="text-lg font-bold">So‘nggi yechilgan masalalar</h2>
+    <h2 class="text-lg font-bold">{{ "So‘nggi yechilgan masalalar"|loc }}</h2>
     <ul class="mt-3 space-y-2 text-sm">
       {% for attempt in recent %}
         <li class="recent-solve">
           <span class="font-semibold">{{ attempt.student.get_full_name|default:attempt.student.email }}</span>
-          · {{ attempt.exercise.title }}
+          · {{ attempt.exercise.title|loc }}
           <span class="diff-pill diff-{{ attempt.exercise.difficulty }}">
-            {% if attempt.exercise.difficulty == "easy" %}Oson · +{{ difficulty_points.easy }}
-            {% elif attempt.exercise.difficulty == "medium" %}O‘rta · +{{ difficulty_points.medium }}
-            {% else %}Qiyin · +{{ difficulty_points.hard }}{% endif %}
+            {% if attempt.exercise.difficulty == "easy" %}{{ "Oson"|loc }} · +{{ difficulty_points.easy }}
+            {% elif attempt.exercise.difficulty == "medium" %}{{ "O‘rta"|loc }} · +{{ difficulty_points.medium }}
+            {% else %}{{ "Qiyin"|loc }} · +{{ difficulty_points.hard }}{% endif %}
           </span>
           <span class="muted">{{ attempt.created_at|date:"d.m.Y H:i" }}</span>
         </li>
       {% empty %}
-        <li class="muted">Hali yechimlar yo‘q.</li>
+        <li class="muted">{{ "Hali yechimlar yo‘q."|loc }}</li>
       {% endfor %}
     </ul>
   </section>

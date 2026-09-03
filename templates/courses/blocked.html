@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %}{% if decision.code == "coming_soon" %}Hozir jarayonda{% else %}Yopiq bo‘lim{% endif %}{% endblock %}
+{% block title %}{% if decision.code == "coming_soon" %}{{ "Hozir jarayonda"|loc }}{% else %}{{ "Yopiq bo‘lim"|loc }}{% endif %}{% endblock %}
 {% block content %}
 {% if decision.code == "coming_soon" %}
 <div class="card course-card-locked max-w-2xl mx-auto" style="min-height: 280px;">
   <div class="course-card-body p-8">
-    <h1 class="text-3xl font-extrabold">{{ course.title }}</h1>
-    <p class="muted mt-4 text-lg">{{ course.description|truncatewords:40 }}</p>
+    <h1 class="text-3xl font-extrabold">{{ course.title|loc }}</h1>
+    <p class="muted mt-4 text-lg">{{ course.description|loc|truncatewords:40 }}</p>
   </div>
   <div class="course-card-overlay">
-    <span>Hozir jarayonda</span>
+    <span>{{ "Hozir jarayonda"|loc }}</span>
   </div>
 </div>
 <div class="mt-6 text-center">
-  <a class="btn btn-ghost" href="{% url 'courses:list' %}">Kurslarga qaytish</a>
+  <a class="btn btn-ghost" href="{% url 'courses:list' %}">{{ "Kurslarga qaytish"|loc }}</a>
 </div>
 {% else %}
 <div class="card max-w-xl">
-  <h1 class="text-2xl font-semibold">{{ course.title }}</h1>
-  <p class="bad mt-4">{{ decision.reason }}</p>
-  <a class="btn btn-ghost mt-6" href="{% url 'courses:list' %}">Kurslarga qaytish</a>
+  <h1 class="text-2xl font-semibold">{{ course.title|loc }}</h1>
+  <p class="bad mt-4">{{ decision.reason|loc }}</p>
+  <a class="btn btn-ghost mt-6" href="{% url 'courses:list' %}">{{ "Kurslarga qaytish"|loc }}</a>
 </div>
 {% endif %}
 {% endblock %}

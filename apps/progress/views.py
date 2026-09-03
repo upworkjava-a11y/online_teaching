@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
+from apps.core.i18n.service import t
 from apps.core.views import RoleRequiredMixin
 from apps.courses.models import Course, Module
 from apps.progress.certificates import issue_course_certificate, issue_module_certificate, module_completion
@@ -45,11 +46,11 @@ class ClaimModuleCertificateView(RoleRequiredMixin, View):
         if not status["ready"]:
             messages.error(
                 request,
-                "Modul hali tugallanmagan. Barcha darslar, mashqlar va bilim testini yakunlang.",
+                t("Modul hali tugallanmagan. Barcha darslar, mashqlar va bilim testini yakunlang."),
             )
             return redirect("courses:detail", slug=module.course.slug)
         cert = issue_module_certificate(request.user, module)
-        messages.success(request, "Sertifikat tayyor!")
+        messages.success(request, t("Sertifikat tayyor!"))
         return redirect("progress:certificate_detail", code=cert.code)
 
 
@@ -60,7 +61,7 @@ class ClaimCourseCertificateView(RoleRequiredMixin, View):
         course = get_object_or_404(Course, pk=course_id)
         cert = issue_course_certificate(request.user, course)
         if not cert:
-            messages.error(request, "Kurs hali to‘liq tugallanmagan.")
+            messages.error(request, t("Kurs hali to‘liq tugallanmagan."))
             return redirect("courses:detail", slug=course.slug)
-        messages.success(request, "Kurs sertifikati tayyor!")
+        messages.success(request, t("Kurs sertifikati tayyor!"))
         return redirect("progress:certificate_detail", code=cert.code)
