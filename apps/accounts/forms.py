@@ -12,11 +12,12 @@ from .utils import unique_username_from_email
 
 
 _PASSWORD_ERROR_MAP = {
-    "This password is too common.": "Bu parol juda oddiy (ko‘p ishlatiladi).",
-    "This password is too short. It must contain at least 10 characters.": (
-        "Parol juda qisqa. Kamida 10 belgi bo‘lishi kerak."
+    "This password is too short. It must contain at least 6 characters.": (
+        "Parol juda qisqa. Kamida 6 belgi bo‘lishi kerak."
     ),
-    "This password is entirely numeric.": "Parol faqat raqamlardan iborat bo‘lmasligi kerak.",
+    "This password is too short. It must contain at least 10 characters.": (
+        "Parol juda qisqa. Kamida 6 belgi bo‘lishi kerak."
+    ),
     "The two password fields didn’t match.": "Parollar mos kelmadi.",
     "The two password fields didn't match.": "Parollar mos kelmadi.",
 }
@@ -48,16 +49,37 @@ class StudentRegistrationForm(UserCreationForm):
         self.fields["email"].label = t("Email")
         self.fields["password1"].label = t("Parol")
         self.fields["password2"].label = t("Parolni tasdiqlang")
-        self.fields["password1"].help_text = t("Kamida 10 belgi.")
+        self.fields["password1"].help_text = t("Kamida 6 belgi.")
         self.fields["password2"].help_text = ""
+        self.fields["password1"].strip = True
+        self.fields["password2"].strip = True
+        required_msg = t("Bu maydon majburiy.")
         for field in self.fields.values():
             field.widget.attrs["class"] = "input"
+            field.error_messages["required"] = required_msg
+        self.fields["email"].error_messages["invalid"] = t("To‘g‘ri email manzilini kiriting.")
 
     def clean_email(self):
-        email = self.cleaned_data["email"].lower()
+        email = self.cleaned_data["email"].lower().strip()
         if User.objects.filter(email__iexact=email).exists():
             raise ValidationError(t("Bu email allaqachon ro‘yxatdan o‘tgan."))
         return email
+
+    def clean_password1(self):
+        password1 = self.cleaned_data.get("password1")
+        if isinstance(password1, str):
+            password1 = password1.strip()
+        if not password1:
+            raise ValidationError(t("Bu maydon majburiy."), code="required")
+        return password1
+
+    def clean_password2(self):
+        password2 = self.cleaned_data.get("password2")
+        if isinstance(password2, str):
+            password2 = password2.strip()
+        if not password2:
+            raise ValidationError(t("Bu maydon majburiy."), code="required")
+        return password2
 
     def validate_passwords(
         self,
@@ -99,6 +121,10 @@ class EmailAuthenticationForm(AuthenticationForm):
         self.fields["username"].label = t("Email")
         self.fields["password"].label = t("Parol")
         self.fields["password"].widget.attrs["class"] = "input"
+        required_msg = t("Bu maydon majburiy.")
+        for field in self.fields.values():
+            field.error_messages["required"] = required_msg
+        self.fields["username"].error_messages["invalid"] = t("To‘g‘ri email manzilini kiriting.")
 
     error_messages = {
         "invalid_login": "Email yoki parol noto‘g‘ri.",
@@ -130,7 +156,7 @@ class ProfileForm(forms.ModelForm):
         label="Yangi parol",
         required=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
-        help_text="Kamida 10 belgi. Bo‘sh qoldirsangiz — parol o‘zgarmaydi.",
+        help_text="Kamida 6 belgi. Bo‘sh qoldirsangiz — parol o‘zgarmaydi.",
     )
     new_password2 = forms.CharField(
         label="Yangi parolni tasdiqlang",
@@ -157,9 +183,12 @@ class ProfileForm(forms.ModelForm):
         self.fields["current_password"].label = t("Joriy parol")
         self.fields["new_password1"].label = t("Yangi parol")
         self.fields["new_password2"].label = t("Yangi parolni tasdiqlang")
-        self.fields["new_password1"].help_text = t("Kamida 10 belgi. Bo‘sh qoldirsangiz — parol o‘zgarmaydi.")
+        self.fields["new_password1"].help_text = t("Kamida 6 belgi. Bo‘sh qoldirsangiz — parol o‘zgarmaydi.")
+        required_msg = t("Bu maydon majburiy.")
         for field in self.fields.values():
             field.widget.attrs["class"] = "input"
+            field.error_messages["required"] = required_msg
+        self.fields["email"].error_messages["invalid"] = t("To‘g‘ri email manzilini kiriting.")
 
     def clean_username(self):
         username = (self.cleaned_data.get("username") or "").strip()
@@ -191,6 +220,10 @@ class ProfileForm(forms.ModelForm):
         if p1 or p2:
             if not p1 or not p2:
                 raise ValidationError(t("Yangi parolni ikkala maydonga ham yozing."))
+            p1 = p1.strip()
+            p2 = p2.strip()
+            cleaned["new_password1"] = p1
+            cleaned["new_password2"] = p2
             if p1 != p2:
                 raise ValidationError(t("Yangi parollar mos kelmadi."))
             if self.instance.has_usable_password():

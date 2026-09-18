@@ -6,6 +6,8 @@ from django.conf import settings
 COURSE_PREMIUM_PRICES: dict[str, int] = {
     "sql": 50_000,
     "english-banking": 50_000,
+    "english-it": 50_000,
+    "russian-it": 50_000,
     "python": 50_000,
     "excel": 50_000,
     "statistics": 50_000,

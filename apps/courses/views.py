@@ -35,6 +35,7 @@ class CourseListView(GuestBrowseMixin, View):
                     "full_access": access_service.has_full_course_access(request.user, course)
                     if decision.allowed and not coming_soon
                     else False,
+                    "preview_hint_short": access_service.free_preview_hint_short(course),
                 }
             )
         return render(request, "courses/list.html", {"courses": visible})
@@ -157,5 +158,7 @@ class CourseDetailView(GuestBrowseMixin, View):
                 "modules": modules,
                 "stats": progress_service.course_stats(request.user, course),
                 "full_access": full_access,
+                "preview_hint": access_service.free_preview_hint(course),
+                "preview_count": access_service.free_preview_count(course),
             },
         )

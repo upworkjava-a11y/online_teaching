@@ -9,7 +9,7 @@
   <div class="progress-track mt-2 max-w-xl"><div class="progress-fill" style="width: {{ stats.percent }}%"></div></div>
   {% if not full_access %}
     <p class="mt-4 text-sm font-semibold" style="color:#b45309">
-      {{ "Dastlabki 5 modul ochiq. Qolganlari 🔒 Premium."|loc }}
+      {{ preview_hint|loc }}
     </p>
     <a class="premium-cta" href="{% url 'courses:premium' course.slug %}">
       {{ "Premium ochish — narx va to‘lov →"|loc }}

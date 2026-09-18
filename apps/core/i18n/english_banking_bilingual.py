@@ -98,6 +98,24 @@ HEADINGS = {
         LANG_RU: "Частые ошибки",
         LANG_EN: "Common mistakes",
     },
+    "Collocations & useful chunks": {
+        LANG_UZ: "Kollokatsiyalar va foydali iboralar",
+        LANG_CYRL: "Коллокациялар ва фойдали иборалар",
+        LANG_RU: "Коллокации и полезные выражения",
+        LANG_EN: "Collocations & useful chunks",
+    },
+    "Academic / study tip": {
+        LANG_UZ: "Akademik / o‘qish maslahati",
+        LANG_CYRL: "Академик / ўқиш маслаҳати",
+        LANG_RU: "Академический / учебный совет",
+        LANG_EN: "Academic / study tip",
+    },
+    "Mini writing task": {
+        LANG_UZ: "Mini yozuv topshirig‘i",
+        LANG_CYRL: "Мини ёзув топшириғи",
+        LANG_RU: "Мини-задание на письмо",
+        LANG_EN: "Mini writing task",
+    },
     "Example sentences": {
         LANG_UZ: "Namuna gaplar",
         LANG_CYRL: "Намуна гаплар",

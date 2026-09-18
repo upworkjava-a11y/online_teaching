@@ -7,9 +7,14 @@ from apps.courses.models import Course, Lecture, Module
 from .models import UserContentAccess
 
 FREE_PREVIEW_MODULES = 5
+# Per-course override (English for IT: faqat 1-modul bepul)
+FREE_PREVIEW_BY_COURSE: dict[str, int] = {
+    "english-it": 1,
+    "russian-it": 1,
+}
 PREMIUM_GROUP_NAME = "Premium"
 # Talabalar uchun hozircha ochiq kurs(lar). Qolganlari “Hozir jarayonda”.
-OPEN_COURSE_SLUGS = frozenset({"sql", "english-banking"})
+OPEN_COURSE_SLUGS = frozenset({"sql", "english-banking", "english-it", "russian-it"})
 COMING_SOON_REASON = "Hozir jarayonda"
 
 
@@ -67,11 +72,29 @@ class AccessService:
             return lecture_rule or self._rule(user, obj.module) or self._rule(user, obj.module.course)
         return None
 
+    def free_preview_count(self, course: Course) -> int:
+        """How many leading published modules are free for this course."""
+        return int(FREE_PREVIEW_BY_COURSE.get(course.slug, FREE_PREVIEW_MODULES))
+
+    def free_preview_hint(self, course: Course) -> str:
+        """UI copy for free vs premium modules on this course."""
+        n = self.free_preview_count(course)
+        if n <= 1:
+            return "Dastlabki 1 modul ochiq. Qolganlari 🔒 Premium."
+        return f"Dastlabki {n} modul ochiq. Qolganlari 🔒 Premium."
+
+    def free_preview_hint_short(self, course: Course) -> str:
+        n = self.free_preview_count(course)
+        if n <= 1:
+            return "Dastlabki 1 modul ochiq · qolgani 🔒"
+        return f"Dastlabki {n} modul ochiq · qolgani 🔒"
+
     def preview_module_ids(self, course: Course) -> set[int]:
+        limit = self.free_preview_count(course)
         return set(
             Module.objects.filter(course=course, is_published=True)
             .order_by("order", "id")
-            .values_list("id", flat=True)[:FREE_PREVIEW_MODULES]
+            .values_list("id", flat=True)[:limit]
         )
 
     def is_preview_module(self, module: Module) -> bool:

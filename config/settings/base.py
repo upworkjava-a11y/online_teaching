@@ -95,10 +95,9 @@ LOGIN_REDIRECT_URL = "root"
 LOGOUT_REDIRECT_URL = "courses:list"
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 10}},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    # Easy signup: only length (>= 6). No complexity / common / numeric checks.
+    # Existing users keep their current password hashes and can still log in.
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 6}},
 ]
 
 PASSWORD_HASHERS = [

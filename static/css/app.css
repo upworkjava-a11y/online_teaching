@@ -389,6 +389,342 @@ body.app-body {
   color: #0f766e;
 }
 
+/* English for IT — bilingual lesson chrome (blue/slate accent) */
+.eit-lesson {
+  --eit-accent: #0369a1;
+  --eit-soft: #f0f9ff;
+  --eit-line: #7dd3fc;
+}
+.eit-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #eff6ff, #f0f9ff);
+  border: 1px solid var(--eit-line);
+  color: #0c4a6e;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.eit-explain {
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: var(--eit-soft);
+  border: 1px solid var(--eit-line);
+  border-left: 4px solid var(--eit-accent);
+}
+.eit-explain-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--eit-accent);
+  margin-bottom: 0.35rem;
+}
+.eit-explain p {
+  margin: 0;
+  color: #0c4a6e;
+  line-height: 1.55;
+}
+.eit-h {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+.eit-h-loc {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #0369a1;
+}
+.eit-th-loc {
+  font-weight: 600;
+  color: #0369a1;
+  font-size: 0.9em;
+}
+.eit-meaning .eit-loc-mean {
+  display: block;
+  font-weight: 600;
+  color: #0f172a;
+}
+.eit-meaning .eit-en-mean {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.86em;
+  color: #64748b;
+}
+.eit-dialogue-tr {
+  margin: 0.75rem 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px dashed #94a3b8;
+  border-left: 4px solid #0369a1;
+}
+.eit-dialogue-tr .eit-explain-label {
+  margin-bottom: 0.55rem;
+}
+.eit-dialogue-tr p {
+  margin: 0.35rem 0;
+  color: #334155;
+  line-height: 1.5;
+}
+.eit-dialogue-tr strong {
+  color: #0369a1;
+}
+.eit-lesson table {
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid #bae6fd;
+}
+.eit-lesson th {
+  background: #e0f2fe;
+  color: #0c4a6e;
+}
+.eit-lesson tr:nth-child(even) td {
+  background: #f8fbff;
+}
+.eit-lesson strong {
+  color: #0369a1;
+}
+
+/* Русский для IT — bilingual lesson chrome */
+.rit-lesson {
+  --rit-accent: #b91c1c;
+  --rit-soft: #fef2f2;
+  --rit-line: #fecaca;
+}
+.rit-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fff1f2, #fef2f2);
+  border: 1px solid var(--rit-line);
+  color: #7f1d1d;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.rit-explain {
+  margin: 0 0 1.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: var(--rit-soft);
+  border: 1px solid var(--rit-line);
+  border-left: 4px solid var(--rit-accent);
+}
+.rit-explain-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rit-accent);
+  margin-bottom: 0.35rem;
+}
+.rit-explain p {
+  margin: 0;
+  color: #7f1d1d;
+  line-height: 1.55;
+}
+.rit-h {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+.rit-h-loc {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: #b91c1c;
+}
+.rit-th-loc {
+  font-weight: 600;
+  color: #b91c1c;
+  font-size: 0.9em;
+}
+.rit-meaning .rit-loc-mean {
+  display: block;
+  font-weight: 600;
+  color: #0f172a;
+}
+.rit-meaning .rit-en-mean {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.86em;
+  color: #64748b;
+}
+.rit-dialogue-tr {
+  margin: 0.75rem 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px dashed #94a3b8;
+  border-left: 4px solid #b91c1c;
+}
+.rit-dialogue-tr .rit-explain-label {
+  margin-bottom: 0.55rem;
+}
+.rit-dialogue-tr p {
+  margin: 0.35rem 0;
+  color: #334155;
+  line-height: 1.5;
+}
+.rit-dialogue-tr strong {
+  color: #b91c1c;
+}
+.rit-lesson table {
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+}
+.rit-lesson th {
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+.rit-lesson tr:nth-child(even) td {
+  background: #fffbfb;
+}
+.rit-lesson strong {
+  color: #b91c1c;
+}
+
+/* Language ESP — figures + interactive-style blocks (module 1+) */
+.lang-fig {
+  margin: 1.1rem 0 1.35rem;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+.lang-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: cover;
+  object-position: center;
+}
+.lang-fig figcaption {
+  margin: 0;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  color: #475569;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+}
+.esp-visual,
+.esp-try,
+.esp-scenario {
+  margin: 1.15rem 0 1.35rem;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+}
+.esp-visual-label,
+.esp-try-label {
+  margin: 0 0 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0369a1;
+}
+.rit-lesson .esp-visual-label,
+.rit-lesson .esp-try-label {
+  color: #b91c1c;
+}
+.esp-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.esp-timeline li {
+  display: grid;
+  grid-template-columns: 4.2rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.55rem 0.65rem;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+}
+.esp-time {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+.esp-step {
+  color: #334155;
+  line-height: 1.45;
+}
+.esp-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.65rem;
+}
+.esp-cards-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 720px) {
+  .esp-cards-3 {
+    grid-template-columns: 1fr;
+  }
+  .esp-timeline li {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+}
+.esp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 0.8rem;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #bae6fd;
+  border-top: 3px solid #0ea5e9;
+  min-height: 5.2rem;
+}
+.rit-lesson .esp-card {
+  border-color: #fecaca;
+  border-top-color: #ef4444;
+}
+.esp-card strong {
+  font-size: 0.95rem;
+}
+.esp-card span {
+  font-size: 0.86rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+.esp-checklist {
+  margin: 0;
+  padding-left: 1.15rem;
+}
+.esp-checklist li {
+  margin: 0.35rem 0;
+  color: #334155;
+}
+.esp-scenario p:last-child {
+  margin: 0;
+  color: #334155;
+  line-height: 1.5;
+}
+
 .lesson-list {
   margin-top: 1rem;
   display: flex;

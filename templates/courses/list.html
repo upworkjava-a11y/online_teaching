@@ -24,7 +24,7 @@
         {% if item.full_access %}
           <p class="ok mt-1 text-sm">{{ "To‘liq kurs ochiq"|loc }}</p>
         {% else %}
-          <p class="mt-1 text-sm" style="color:#b45309">{{ "Dastlabki 5 modul ochiq · qolgani 🔒"|loc }}</p>
+          <p class="mt-1 text-sm" style="color:#b45309">{{ item.preview_hint_short|loc }}</p>
         {% endif %}
         <a class="btn btn-primary mt-4" href="{% url 'courses:detail' item.course.slug %}">{{ "Kursni ochish"|loc }}</a>
       </div>

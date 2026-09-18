@@ -211,11 +211,19 @@ def localize_html(html: str | None, lang: str | None = None, slug: str | None = 
         return ""
     lang = normalize_language(lang or get_language())
 
-    # English for Banking: bilingual chrome for every UI language, including Uzbek Latin.
+    # English ESP courses: bilingual chrome for every UI language, including Uzbek Latin.
     if slug and str(slug).startswith("eb-"):
         from .english_banking_bilingual import enhance_eb_lesson
 
         return enhance_eb_lesson(html, lang, slug)
+    if slug and str(slug).startswith("eit-"):
+        from .english_it_bilingual import enhance_eit_lesson
+
+        return enhance_eit_lesson(html, lang, slug)
+    if slug and str(slug).startswith("rit-"):
+        from .russian_it_bilingual import enhance_rit_lesson
+
+        return enhance_rit_lesson(html, lang, slug)
 
     if lang == LANG_UZ:
         return html

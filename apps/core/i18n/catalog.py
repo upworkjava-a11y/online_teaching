@@ -75,6 +75,11 @@ STRINGS: dict[str, dict[str, str]] = {
         "Пароль слишком короткий. Минимум 10 символов.",
         "This password is too short. It must contain at least 10 characters.",
     ),
+    "This password is too short. It must contain at least 6 characters.": S(
+        "Парол жуда қисқа. Камида 6 белги бўлиши керак.",
+        "Пароль слишком короткий. Минимум 6 символов.",
+        "This password is too short. It must contain at least 6 characters.",
+    ),
     "This password is entirely numeric.": S(
         "Парол фақат рақамлардан иборат бўлмаслиги керак.",
         "Пароль не должен состоять только из цифр.",
@@ -84,6 +89,26 @@ STRINGS: dict[str, dict[str, str]] = {
         "Bu maydon majburiy.",
         "Обязательное поле.",
         "This field is required.",
+    ),
+    "Bu maydon majburiy.": S(
+        "Бу майдон мажбурий.",
+        "Обязательное поле.",
+        "This field is required.",
+    ),
+    "Ushbu maydon to'ldirilishi shart.": S(
+        "Бу майдон мажбурий.",
+        "Обязательное поле.",
+        "This field is required.",
+    ),
+    "To‘g‘ri email manzilini kiriting.": S(
+        "Тўғри email манзилини киритинг.",
+        "Введите корректный email.",
+        "Enter a valid email address.",
+    ),
+    "Enter a valid email address.": S(
+        "Тўғри email манзилини киритинг.",
+        "Введите корректный email.",
+        "Enter a valid email address.",
     ),
     "To‘g‘ri!": S("Тўғри!", "Верно!", "Correct!"),
     "Noto‘g‘ri.": S("Нотўғри.", "Неверно.", "Incorrect."),
@@ -167,6 +192,16 @@ STRINGS: dict[str, dict[str, str]] = {
         "Первые 5 модулей открыты. Остальные 🔒 Premium.",
         "First 5 modules are open. The rest are 🔒 Premium.",
     ),
+    "Dastlabki 1 modul ochiq. Qolganlari 🔒 Premium.": S(
+        "Дастлабки 1 модул очиқ. Қолганлари 🔒 Premium.",
+        "Первый 1 модуль открыт. Остальные 🔒 Premium.",
+        "The first 1 module is open. The rest are 🔒 Premium.",
+    ),
+    "Dastlabki 1 modul ochiq · qolgani 🔒": S(
+        "Дастлабки 1 модул очиқ · қолгани 🔒",
+        "Первый 1 модуль открыт · остальное 🔒",
+        "First 1 module open · rest 🔒",
+    ),
     "Dastlabki 5 modul mashqlari ochiq. Qolganlari 🔒 Premium.": S(
         "Дастлабки 5 модул машқлари очиқ. Қолганлари 🔒 Premium.",
         "Задачи первых 5 модулей открыты. Остальные 🔒 Premium.",
@@ -201,6 +236,21 @@ STRINGS: dict[str, dict[str, str]] = {
         "SQL ва English for Banking машқлари — осон, ўрта ва қийин.",
         "Задачи SQL и English for Banking — лёгкие, средние и сложные.",
         "SQL and English for Banking exercises — easy, medium, and hard.",
+    ),
+    "SQL, English for Banking va English for IT mashqlari — oson, o‘rta va qiyin.": S(
+        "SQL, English for Banking ва English for IT машқлари — осон, ўрта ва қийин.",
+        "Задачи SQL, English for Banking и English for IT — лёгкие, средние и сложные.",
+        "SQL, English for Banking, and English for IT exercises — easy, medium, and hard.",
+    ),
+    "SQL, English for Banking, DevEnglish va DevRussian mashqlari — oson, o‘rta va qiyin.": S(
+        "SQL, English for Banking, DevEnglish ва DevRussian машқлари — осон, ўрта ва қийин.",
+        "Задачи SQL, English for Banking, DevEnglish и DevRussian — лёгкие, средние и сложные.",
+        "SQL, English for Banking, DevEnglish, and DevRussian exercises — easy, medium, and hard.",
+    ),
+    "SQL, English for Banking, English for IT va Русский для IT mashqlari — oson, o‘rta va qiyin.": S(
+        "SQL, English for Banking, DevEnglish ва DevRussian машқлари — осон, ўрта ва қийин.",
+        "Задачи SQL, English for Banking, DevEnglish и DevRussian — лёгкие, средние и сложные.",
+        "SQL, English for Banking, DevEnglish, and DevRussian exercises — easy, medium, and hard.",
     ),
     "Qidiruv": S("Қидирув", "Поиск", "Search"),
     "Qiyinlik": S("Қийинлик", "Сложность", "Difficulty"),
@@ -900,15 +950,30 @@ STRINGS.update(
             "Не менее 10 символов. Если оставить пустым — пароль не изменится.",
             "At least 10 characters. Leave blank to keep the current password.",
         ),
+        "Kamida 6 belgi. Bo‘sh qoldirsangiz — parol o‘zgarmaydi.": S(
+            "Камида 6 белги. Бўш қолдирсангиз — парол ўзгармайди.",
+            "Не менее 6 символов. Если оставить пустым — пароль не изменится.",
+            "At least 6 characters. Leave blank to keep the current password.",
+        ),
         "Kamida 10 belgi.": S(
             "Камида 10 белги.",
             "Не менее 10 символов.",
             "At least 10 characters.",
         ),
+        "Kamida 6 belgi.": S(
+            "Камида 6 белги.",
+            "Не менее 6 символов.",
+            "At least 6 characters.",
+        ),
         "Parol juda qisqa. Kamida 10 belgi bo‘lishi kerak.": S(
             "Парол жуда қисқа. Камида 10 белги бўлиши керак.",
             "Пароль слишком короткий. Минимум 10 символов.",
             "Password is too short. It must contain at least 10 characters.",
+        ),
+        "Parol juda qisqa. Kamida 6 belgi bo‘lishi kerak.": S(
+            "Парол жуда қисқа. Камида 6 белги бўлиши керак.",
+            "Пароль слишком короткий. Минимум 6 символов.",
+            "Password is too short. It must contain at least 6 characters.",
         ),
         "Bu parol juda oddiy (ko‘p ishlatiladi).": S(
             "Бу парол жуда оддий (кўп ишлатилади).",

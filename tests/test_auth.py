@@ -36,9 +36,8 @@ class AuthenticationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'class="form-error')
         self.assertContains(response, "Parol juda qisqa")
-        self.assertContains(response, "Bu parol juda oddiy")
+        self.assertContains(response, "Kamida 6")
         self.assertNotContains(response, "This password is too short")
-        self.assertNotContains(response, "This password is too common")
 
     def test_register_password_errors_follow_language(self):
         self.client.post(reverse("set_language"), {"language": "ru", "next": "/"})
@@ -54,9 +53,8 @@ class AuthenticationTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Пароль слишком короткий")
-        self.assertContains(response, "Этот пароль слишком простой")
+        self.assertContains(response, "6")
         self.assertNotContains(response, "This password is too short")
-        self.assertNotContains(response, "This password is too common")
 
         self.client.post(reverse("set_language"), {"language": "en", "next": "/"})
         response = self.client.post(
@@ -70,8 +68,71 @@ class AuthenticationTests(TestCase):
             },
         )
         self.assertContains(response, "Password is too short")
-        self.assertContains(response, "This password is too common")
+        self.assertContains(response, "6")
         self.assertNotContains(response, "Parol juda qisqa")
+
+    def test_register_accepts_simple_six_char_password(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            {
+                "first_name": "Ali",
+                "last_name": "Valiyev",
+                "email": "easy6@example.com",
+                "password1": "123456",
+                "password2": "123456",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        user = User.objects.get(email="easy6@example.com")
+        self.assertTrue(user.check_password("123456"))
+
+    def test_register_rejects_spaces_only_password(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            {
+                "first_name": "Ali",
+                "last_name": "Valiyev",
+                "email": "spaces@example.com",
+                "password1": "      ",
+                "password2": "      ",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(email="spaces@example.com").exists())
+        self.assertTrue(
+            ("Parol juda qisqa" in response.content.decode("utf-8"))
+            or ("majburiy" in response.content.decode("utf-8").lower())
+            or ("required" in response.content.decode("utf-8").lower())
+            or ("Bu maydon" in response.content.decode("utf-8"))
+        )
+
+    def test_register_duplicate_email(self):
+        User.objects.create_user(email="taken@example.com", password="abcdef", username="taken")
+        response = self.client.post(
+            reverse("accounts:register"),
+            {
+                "first_name": "Ali",
+                "last_name": "Valiyev",
+                "email": "TAKEN@example.com",
+                "password1": "abcdef",
+                "password2": "abcdef",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "allaqachon")
+
+    def test_existing_user_keeps_old_password_login(self):
+        user = User.objects.create_user(
+            email="legacy@example.com",
+            password="StrongPass123!",
+            username="legacy",
+        )
+        self.assertTrue(user.check_password("StrongPass123!"))
+        response = self.client.post(
+            reverse("accounts:login"),
+            {"username": "legacy@example.com", "password": "StrongPass123!"},
+        )
+        self.assertEqual(response.status_code, 302)
 
     def test_login_success(self):
         User.objects.create_user(email="ali@example.com", password="StrongPass123!", username="ali")

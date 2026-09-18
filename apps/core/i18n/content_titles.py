@@ -660,6 +660,454 @@ TITLE_STRINGS: dict[str, dict[str, str]] = {
         "Цифровой банкинг и мошенничество (Digital & fraud)",
         "Digital banking & fraud",
     ),
+    # DevEnglish — UI titles (brand stays; subtitle lives in course description)
+    "DevEnglish": S(
+        "DevEnglish",
+        "DevEnglish",
+        "DevEnglish",
+    ),
+    "DevRussian": S(
+        "DevRussian",
+        "DevRussian",
+        "DevRussian",
+    ),
+    "English for IT": S(
+        "DevEnglish",
+        "DevEnglish",
+        "DevEnglish",
+    ),
+    "Русский для IT": S(
+        "DevRussian",
+        "DevRussian",
+        "DevRussian",
+    ),
+    (
+        "IT uchun ingliz tili — workplace, intervyu va akademik darslar (17 modul). "
+        "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+        "cybersecurity, QA, Agile, tech support, documentation, team communication, email/career. "
+        "Grammatika, so‘z boyligi, dialoglar, puzzle va bilim testlari bilan."
+    ): S(
+        (
+            "IT учун инглиз тили — workplace, интервью ва академик дарслар (17 модул). "
+            "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+            "cybersecurity, QA, Agile, tech support, documentation, team communication, email/career. "
+            "Грамматика, сўз бойлиги, диалоглар, puzzle ва билим тестлари билан."
+        ),
+        (
+            "Английский для IT — workplace, собеседование и академические уроки (17 модулей). "
+            "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+            "кибербезопасность, QA, Agile, техподдержка, документация, командная коммуникация, email/карьера. "
+            "Грамматика, лексика, диалоги, задания и тесты знаний."
+        ),
+        (
+            "English for IT — workplace, interviews, and academic lessons (17 modules). "
+            "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+            "cybersecurity, QA, Agile, tech support, documentation, team communication, email/career. "
+            "Grammar, vocabulary, dialogues, puzzles, and skill tests."
+        ),
+    ),
+    (
+        "IT uchun ingliz tili. Pre-intermediate–intermediate (17 modul): workplace, hardware, "
+        "software/OS, networking, programming, databases, web, cloud/DevOps, cybersecurity, "
+        "QA/testing, Agile/Scrum, tech support, documentation, team communication, email/career, "
+        "akademik ingliz tili, intervyu. Grammatika, so‘z boyligi, dialoglar, puzzle va bilim testlari bilan."
+    ): S(
+        "IT учун инглиз тили — workplace, интервью ва академик дарслар (17 модул).",
+        "Английский для IT — workplace, собеседование и академические уроки (17 модулей).",
+        "English for IT — workplace, interviews, and academic lessons (17 modules).",
+    ),
+    (
+        "IT sohasi uchun pre-intermediate–intermediate ingliz tili (17 modul): IT workplace, "
+        "hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+        "cybersecurity, QA/testing, Agile/Scrum, tech support, documentation, team communication, "
+        "email/career, akademik ingliz tili, intervyu. "
+        "Grammatika, so‘z boyligi, dialoglar, puzzle va bilim testlari bilan."
+    ): S(
+        "IT учун инглиз тили — workplace, интервью ва академик дарслар (17 модул).",
+        "Английский для IT — workplace, собеседование и академические уроки (17 модулей).",
+        "English for IT — workplace, interviews, and academic lessons (17 modules).",
+    ),
+    (
+        "IT uchun rus tili. 17 modul: workplace, hardware, software/OS, networking, programming, "
+        "databases, web, cloud/DevOps, cybersecurity, QA, Agile, tech support, documentation, "
+        "team communication, email/career, akademik rus tili, intervyu. "
+        "Grammatika, so‘z boyligi, dialoglar, puzzle va bilim testlari bilan."
+    ): S(
+        "IT учун рус тили — workplace, интервью ва академик дарслар (17 модул).",
+        "Русский для IT — workplace, собеседование и академические уроки (17 модулей).",
+        "Russian for IT — workplace, interviews, and academic lessons (17 modules).",
+    ),
+    (
+        "IT sohasi uchun rus tili (17 modul): workplace, hardware, software/OS, networking, "
+        "programming, databases, web, cloud/DevOps, cybersecurity, QA, Agile, tech support, "
+        "documentation, team communication, email/career, akademik rus tili, intervyu. "
+        "Grammatika, so‘z boyligi, dialoglar, puzzle va bilim testlari bilan."
+    ): S(
+        "IT учун рус тили — workplace, интервью ва академик дарслар (17 модул).",
+        "Русский для IT — workplace, собеседование и академические уроки (17 модулей).",
+        "Russian for IT — workplace, interviews, and academic lessons (17 modules).",
+    ),
+    "Akademik ingliz tili (Academic English for IT)": S(
+        "Академик инглиз тили (Academic English for IT)",
+        "Академический английский (Academic English for IT)",
+        "Academic English for IT",
+    ),
+    "CS/IT talabalari uchun: abstract, paper o‘qish, iqtibos, hisobot va taqdimot.": S(
+        "CS/IT талабалари учун: abstract, paper ўқиш, иқтибос, ҳисобот ва тақдимот.",
+        "Для студентов CS/IT: abstract, чтение статей, цитирование, отчёт и презентация.",
+        "For CS/IT students: abstracts, reading papers, citations, reports, and presentations.",
+    ),
+    "IT intervyu (Interview prep)": S(
+        "IT интервью (Interview prep)",
+        "IT-собеседование (Interview prep)",
+        "IT interview prep",
+    ),
+    "IT suhbatiga tayyorgarlik: STAR, texnik savollar, salary va follow-up.": S(
+        "IT суҳбатига тайёргарлик: STAR, техник саволлар, salary ва follow-up.",
+        "Подготовка к IT-собеседованию: STAR, технические вопросы, salary и follow-up.",
+        "Prep for IT interviews: STAR, technical questions, salary, and follow-up.",
+    ),
+    "IT asoslari (IT workplace basics)": S(
+        "IT асослари (IT workplace basics)",
+        "Основы IT (IT workplace basics)",
+        "IT workplace basics",
+    ),
+    "Qurilmalar (Hardware & devices)": S(
+        "Қурилмалар (Hardware & devices)",
+        "Оборудование (Hardware & devices)",
+        "Hardware & devices",
+    ),
+    "Dasturiy ta’minot va OS (Software & OS)": S(
+        "Дастурий таъминот ва OS (Software & OS)",
+        "ПО и ОС (Software & OS)",
+        "Software & OS",
+    ),
+    "Tarmoq va Internet (Networking)": S(
+        "Тармоқ ва Интернет (Networking)",
+        "Сети и Интернет (Networking)",
+        "Networking",
+    ),
+    "Dasturlash inglizchasi (Programming English)": S(
+        "Дастурлаш инглизчаси (Programming English)",
+        "Английский для программирования",
+        "Programming English",
+    ),
+    "Ma’lumotlar bazasi (Databases)": S(
+        "Маълумотлар базаси (Databases)",
+        "Базы данных (Databases)",
+        "Databases",
+    ),
+    "Veb dasturlash (Web development)": S(
+        "Веб дастурлаш (Web development)",
+        "Веб-разработка (Web development)",
+        "Web development",
+    ),
+    "Cloud va DevOps": S(
+        "Cloud ва DevOps",
+        "Cloud и DevOps",
+        "Cloud & DevOps",
+    ),
+    "Kiberxavfsizlik (Cybersecurity)": S(
+        "Киберхавфсизлик (Cybersecurity)",
+        "Кибербезопасность (Cybersecurity)",
+        "Cybersecurity",
+    ),
+    "QA va testlash (QA & testing)": S(
+        "QA ва тестлаш (QA & testing)",
+        "QA и тестирование (QA & testing)",
+        "QA & testing",
+    ),
+    "Agile va Scrum": S(
+        "Agile ва Scrum",
+        "Agile и Scrum",
+        "Agile & Scrum",
+    ),
+    "Texnik yordam (Tech support)": S(
+        "Техник ёрдам (Tech support)",
+        "Техподдержка (Tech support)",
+        "Tech support",
+    ),
+    "Hujjatlar (Documentation)": S(
+        "Ҳужжатлар (Documentation)",
+        "Документация (Documentation)",
+        "Documentation",
+    ),
+    "Jamoa aloqasi (Team communication)": S(
+        "Жамоа алоқаси (Team communication)",
+        "Командная коммуникация (Team communication)",
+        "Team communication",
+    ),
+    "Email va karyera (Emails & career)": S(
+        "Email ва карьера (Emails & career)",
+        "Email и карьера (Emails & career)",
+        "Emails & career",
+    ),
+    # English for IT — module descriptions
+    "IT workplace, rollar, ofis va remote ish uchun asosiy so‘zlar.": S(
+        "IT workplace, роллар, офис ва remote иш учун асосий сўзлар.",
+        "Базовая лексика IT workplace, роли, офис и удалёнка.",
+        "Core vocabulary for IT workplace, roles, office, and remote work.",
+    ),
+    "Kompyuter qismlari, periferiya va texnik xususiyatlar.": S(
+        "Компьютер қисмлари, периферия ва техник хусусиятлар.",
+        "Комплектующие, периферия и технические характеристики.",
+        "Computer parts, peripherals, and specs.",
+    ),
+    "Operatsion tizim, ilovalar, litsenziya, o‘rnatish va yangilash.": S(
+        "Операцион тизим, иловалар, лицензия, ўрнатиш ва янгилаш.",
+        "ОС, приложения, лицензии, установка и обновление.",
+        "OS, apps, licenses, install, and updates.",
+    ),
+    "Tarmoq asoslari, protokollar va Wi-Fi muammolarini hal qilish.": S(
+        "Тармоқ асослари, протоколлар ва Wi-Fi муаммоларини ҳал қилиш.",
+        "Основы сетей, протоколы и решение проблем Wi‑Fi.",
+        "Networking basics, protocols, and Wi‑Fi troubleshooting.",
+    ),
+    "Kod so‘z boyligi, algoritmlar haqida gapirish va Git asoslari.": S(
+        "Код сўз бойлиги, алгоритмлар ҳақида гапириш ва Git асослари.",
+        "Лексика кода, разговор об алгоритмах и основы Git.",
+        "Coding vocabulary, talking about algorithms, and Git basics.",
+    ),
+    "DB tushunchalari, SQL haqida gapirish va ma’lumot maxfiyligi.": S(
+        "DB тушунчалари, SQL ҳақида гапириш ва маълумот махфийлиги.",
+        "Понятия БД, разговор о SQL и конфиденциальность данных.",
+        "DB concepts, talking about SQL, and data privacy.",
+    ),
+    "Frontend/backend, API/HTTP va veb deploy haqida inglizcha.": S(
+        "Frontend/backend, API/HTTP ва веб deploy ҳақида инглизча.",
+        "Frontend/backend, API/HTTP и веб-deploy на английском.",
+        "English for frontend/backend, API/HTTP, and web deploy.",
+    ),
+    "Cloud asoslari, konteynerlar/CI va monitoring.": S(
+        "Cloud асослари, контейнерлар/CI ва мониторинг.",
+        "Основы cloud, контейнеры/CI и мониторинг.",
+        "Cloud basics, containers/CI, and monitoring.",
+    ),
+    "Xavfsizlik asoslari, parol/MFA va phishingdan himoya.": S(
+        "Хавфсизлик асослари, парол/MFA ва phishingдан ҳимоя.",
+        "Основы безопасности, пароль/MFA и защита от phishing.",
+        "Security basics, password/MFA, and phishing defense.",
+    ),
+    "QA rollari, bug report va test turlari.": S(
+        "QA роллари, bug report ва тест турлари.",
+        "Роли QA, bug report и виды тестов.",
+        "QA roles, bug reports, and test types.",
+    ),
+    "Agile qiymatlari, Scrum voqealari va user story’lar.": S(
+        "Agile қийматлари, Scrum воқеалари ва user story’лар.",
+        "Ценности Agile, события Scrum и user story.",
+        "Agile values, Scrum events, and user stories.",
+    ),
+    "Ticket tili, troubleshooting qadamlari va escalate qilish.": S(
+        "Ticket тили, troubleshooting қадамлари ва escalate қилиш.",
+        "Язык тикетов, шаги troubleshooting и escalate.",
+        "Ticket language, troubleshooting steps, and escalation.",
+    ),
+    "README/spec, user guide va change log yozish inglizchasi.": S(
+        "README/spec, user guide ва change log ёзиш инглизчаси.",
+        "Английский для README/spec, user guide и changelog.",
+        "English for README/spec, user guides, and changelogs.",
+    ),
+    "Standup inglizchasi, Slack/Teams va muloyim feedback.": S(
+        "Standup инглизчаси, Slack/Teams ва мулойим feedback.",
+        "Английский для standup, Slack/Teams и мягкий feedback.",
+        "Standup English, Slack/Teams, and polite feedback.",
+    ),
+    "Email shablonlari, IT intervyu va LinkedIn/CV inglizchasi.": S(
+        "Email шаблонлари, IT интервью ва LinkedIn/CV инглизчаси.",
+        "Шаблоны email, IT-интервью и LinkedIn/CV на английском.",
+        "Email templates, IT interviews, and LinkedIn/CV English.",
+    ),
+    (
+        "IT uchun rus tili — workplace, intervyu va akademik darslar (17 modul). "
+        "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+        "cybersecurity, QA, Agile, tech support, documentation, team communication, email/career. "
+        "Grammatika, so‘z boyligi, dialoglar, puzzle va bilim testlari bilan."
+    ): S(
+        (
+            "IT учун рус тили — workplace, интервью ва академик дарслар (17 модул). "
+            "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+            "cybersecurity, QA, Agile, tech support, documentation, team communication, email/career. "
+            "Грамматика, сўз бойлиги, диалоглар, puzzle ва билим тестлари билан."
+        ),
+        (
+            "Русский для IT — workplace, собеседование и академические уроки (17 модулей). "
+            "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+            "кибербезопасность, QA, Agile, техподдержка, документация, командная коммуникация, email/карьера. "
+            "Грамматика, лексика, диалоги, задания и тесты знаний."
+        ),
+        (
+            "Russian for IT — workplace, interviews, and academic lessons (17 modules). "
+            "Hardware, software/OS, networking, programming, databases, web, cloud/DevOps, "
+            "cybersecurity, QA, Agile, tech support, documentation, team communication, email/career. "
+            "Grammar, vocabulary, dialogues, puzzles, and skill tests."
+        ),
+    ),
+    "IT asoslari (Основы IT)": S(
+        "IT асослари (Основы IT)",
+        "Основы IT",
+        "IT basics (Russian)",
+    ),
+    "Qurilmalar (Оборудование)": S(
+        "Қурилмалар (Оборудование)",
+        "Оборудование",
+        "Hardware (Russian)",
+    ),
+    "ПО и ОС (Программное обеспечение и ОС)": S(
+        "ПО и ОС (Программное обеспечение и ОС)",
+        "ПО и ОС",
+        "Software & OS (Russian)",
+    ),
+    "Сети (Networking)": S(
+        "Сети (Networking)",
+        "Сети (Networking)",
+        "Networking (Russian)",
+    ),
+    "Язык программиста (Programming)": S(
+        "Язык программиста (Programming)",
+        "Язык программиста",
+        "Programming language (Russian)",
+    ),
+    "Базы данных (Databases)": S(
+        "Базы данных (Databases)",
+        "Базы данных",
+        "Databases (Russian)",
+    ),
+    "Веб (Web)": S(
+        "Веб (Web)",
+        "Веб",
+        "Web (Russian)",
+    ),
+    "Cloud и DevOps": S(
+        "Cloud и DevOps",
+        "Cloud и DevOps",
+        "Cloud & DevOps (Russian)",
+    ),
+    "Kiberxavfsizlik (Кибербезопасность)": S(
+        "Киберхавфсизлик (Кибербезопасность)",
+        "Кибербезопасность",
+        "Cybersecurity (Russian)",
+    ),
+    "QA ва тестлаш (QA и тестирование)": S(
+        "QA ва тестлаш (QA и тестирование)",
+        "QA и тестирование",
+        "QA & testing (Russian)",
+    ),
+    "Texnik yordam (Техподдержка)": S(
+        "Техник ёрдам (Техподдержка)",
+        "Техподдержка",
+        "Tech support (Russian)",
+    ),
+    "Hujjatlar (Документация)": S(
+        "Ҳужжатлар (Документация)",
+        "Документация",
+        "Documentation (Russian)",
+    ),
+    "Jamoa aloqasi (Командная коммуникация)": S(
+        "Жамоа алоқаси (Командная коммуникация)",
+        "Командная коммуникация",
+        "Team communication (Russian)",
+    ),
+    "Email va karyera (Email и карьера)": S(
+        "Email ва карьера (Email и карьера)",
+        "Email и карьера",
+        "Email & career (Russian)",
+    ),
+    "Akademik rus tili (Академический русский для IT)": S(
+        "Академик рус тили (Академический русский для IT)",
+        "Академический русский для IT",
+        "Academic Russian for IT",
+    ),
+    "IT intervyu (Подготовка к собеседованию)": S(
+        "IT интервью (Подготовка к собеседованию)",
+        "Подготовка к собеседованию",
+        "Interview prep (Russian)",
+    ),
+    "IT workplace, rollar, ofis va remote ish uchun asosiy ruscha so‘zlar.": S(
+        "IT workplace, роллар, офис ва remote иш учун асосий русча сўзлар.",
+        "Базовая русская лексика IT workplace, роли, офис и удалёнка.",
+        "Core Russian vocabulary for IT workplace, roles, office, and remote work.",
+    ),
+    "Компьютер қисмлари, периферия ва техник хусусиятлар — русча.": S(
+        "Компьютер қисмлари, периферия ва техник хусусиятлар — русча.",
+        "Комплектующие, периферия и характеристики — на русском.",
+        "Computer parts, peripherals, and specs — in Russian.",
+    ),
+    "Operatsion tizim, ilovalar, litsenziya, o‘rnatish va yangilash — ruscha.": S(
+        "Операцион тизим, иловалар, лицензия, ўрнатиш ва янгилаш — русча.",
+        "ОС, приложения, лицензии, установка и обновление — на русском.",
+        "OS, apps, licenses, install, and updates — in Russian.",
+    ),
+    "Tarmoq asoslari, protokollar va Wi‑Fi muammolari — ruscha.": S(
+        "Тармоқ асослари, протоколлар ва Wi‑Fi муаммолари — русча.",
+        "Основы сетей, протоколы и проблемы Wi‑Fi — на русском.",
+        "Networking basics, protocols, and Wi‑Fi issues — in Russian.",
+    ),
+    "Kod so‘z boyligi, algoritmlar va Git asoslari — ruscha.": S(
+        "Код сўз бойлиги, алгоритмлар ва Git асослари — русча.",
+        "Лексика кода, алгоритмы и основы Git — на русском.",
+        "Coding vocabulary, algorithms, and Git basics — in Russian.",
+    ),
+    "DB tushunchalari, SQL haqida gapirish va maxfiylik — ruscha.": S(
+        "DB тушунчалари, SQL ҳақида гапириш ва махфийлик — русча.",
+        "Понятия БД, разговор о SQL и конфиденциальность — на русском.",
+        "DB concepts, talking about SQL, and privacy — in Russian.",
+    ),
+    "Frontend/backend, API/HTTP va deploy — ruscha.": S(
+        "Frontend/backend, API/HTTP ва deploy — русча.",
+        "Frontend/backend, API/HTTP и deploy — на русском.",
+        "Frontend/backend, API/HTTP, and deploy — in Russian.",
+    ),
+    "Cloud asoslari, konteynerlar/CI va monitoring — ruscha.": S(
+        "Cloud асослари, контейнерлар/CI ва мониторинг — русча.",
+        "Основы cloud, контейнеры/CI и мониторинг — на русском.",
+        "Cloud basics, containers/CI, and monitoring — in Russian.",
+    ),
+    "Xavfsizlik asoslari, parol/MFA va phishing — ruscha.": S(
+        "Хавфсизлик асослари, парол/MFA ва phishing — русча.",
+        "Основы безопасности, пароль/MFA и phishing — на русском.",
+        "Security basics, password/MFA, and phishing — in Russian.",
+    ),
+    "QA rollari, bug report va test turlari — ruscha.": S(
+        "QA роллари, bug report ва тест турлари — русча.",
+        "Роли QA, bug report и виды тестов — на русском.",
+        "QA roles, bug reports, and test types — in Russian.",
+    ),
+    "Agile qiymatlari, Scrum voqealari va user story — ruscha.": S(
+        "Agile қийматлари, Scrum воқеалари ва user story — русча.",
+        "Ценности Agile, события Scrum и user story — на русском.",
+        "Agile values, Scrum events, and user stories — in Russian.",
+    ),
+    "Ticket tili, troubleshooting va escalate — ruscha.": S(
+        "Ticket тили, troubleshooting ва escalate — русча.",
+        "Язык тикетов, troubleshooting и escalate — на русском.",
+        "Ticket language, troubleshooting, and escalate — in Russian.",
+    ),
+    "README/spec, user guide va changelog — ruscha.": S(
+        "README/spec, user guide ва changelog — русча.",
+        "README/spec, user guide и changelog — на русском.",
+        "README/spec, user guides, and changelogs — in Russian.",
+    ),
+    "Standup, Slack/Teams va muloyim feedback — ruscha.": S(
+        "Standup, Slack/Teams ва мулойим feedback — русча.",
+        "Standup, Slack/Teams и мягкий feedback — на русском.",
+        "Standup, Slack/Teams, and polite feedback — in Russian.",
+    ),
+    "Email shablonlari, intervyu asoslari va LinkedIn/CV — ruscha.": S(
+        "Email шаблонлари, интервью асослари ва LinkedIn/CV — русча.",
+        "Шаблоны email, основы интервью и LinkedIn/CV — на русском.",
+        "Email templates, interview basics, and LinkedIn/CV — in Russian.",
+    ),
+    "CS/IT talabalari uchun: abstract, iqtibos, hisobot va taqdimot — ruscha.": S(
+        "CS/IT талабалари учун: abstract, иқтибос, ҳисобот ва тақдимот — русча.",
+        "Для студентов CS/IT: abstract, цитирование, отчёт и презентация — на русском.",
+        "For CS/IT students: abstracts, citations, reports, and presentations — in Russian.",
+    ),
+    "IT suhbatiga tayyorgarlik: STAR, texnik savollar, salary va follow-up — ruscha.": S(
+        "IT суҳбатига тайёргарлик: STAR, техник саволлар, salary ва follow-up — русча.",
+        "Подготовка к IT-собеседованию: STAR, технические вопросы, salary и follow-up — на русском.",
+        "Prep for IT interviews: STAR, technical questions, salary, and follow-up — in Russian.",
+    ),
     # Module descriptions
     "Bankda ishlash, rollar, salomlashish va asosiy so‘zlar.": S(
         "Банкда ишлаш, роллар, саломлашиш ва асосий сўзлар.",
