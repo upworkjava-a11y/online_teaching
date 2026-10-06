@@ -96,8 +96,10 @@
             <a class="nav-link {% if '/messages/' in request.path %}is-active{% endif %}" href="{% url 'social:inbox' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4z"/><path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6"/></svg>
               <span>{{ "Xabarlar"|loc }}</span>
-              {% unread_messages_count as nav_unread %}
-              {% if nav_unread %}<span class="social-badge nav-msg-badge" aria-label="{{ nav_unread }}">{{ nav_unread }}</span>{% endif %}
+              <span id="nav-unread-badge">
+                {% unread_messages_count as nav_unread %}
+                {% if nav_unread %}<span class="social-badge nav-msg-badge" aria-label="{{ nav_unread }}">{{ nav_unread }}</span>{% endif %}
+              </span>
             </a>
             <a class="nav-link {% if '/progress/sertifikat' in request.path %}is-active{% endif %}" href="{% url 'progress:certificates' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 13.5-1.5 7 5-2.5 5 2.5-1.5-7"/></svg>
@@ -147,8 +149,10 @@
             <a class="nav-link {% if '/messages/' in request.path %}is-active{% endif %}" href="{% url 'social:inbox' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4z"/><path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6"/></svg>
               <span>{{ "Xabarlar"|loc }}</span>
-              {% unread_messages_count as nav_unread %}
-              {% if nav_unread %}<span class="social-badge nav-msg-badge" aria-label="{{ nav_unread }}">{{ nav_unread }}</span>{% endif %}
+              <span id="nav-unread-badge">
+                {% unread_messages_count as nav_unread %}
+                {% if nav_unread %}<span class="social-badge nav-msg-badge" aria-label="{{ nav_unread }}">{{ nav_unread }}</span>{% endif %}
+              </span>
             </a>
             <a class="nav-link {% if '/profile/' in request.path or '/users/' in request.path or '/me/social/' in request.path or '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'social:own_profile' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg>
@@ -297,6 +301,18 @@
         .catch(function () {});
     })();
   </script>
+  {% endif %}
+  {% if user.is_authenticated %}
+  {# Live unread badge — same HTMX polling approach as chat (no WebSockets). #}
+  <div
+    id="nav-unread-poll"
+    hx-get="{% url 'social:unread_badge' %}"
+    hx-trigger="load, every 4s [document.visibilityState=='visible']"
+    hx-target="#nav-unread-badge"
+    hx-swap="innerHTML"
+    hidden
+    aria-hidden="true"
+  ></div>
   {% endif %}
 </body>
 </html>

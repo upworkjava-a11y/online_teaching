@@ -92,6 +92,25 @@ class ChatTests(TestCase):
         again = client.get(reverse("social:chat_updates", args=[conv.pk]), {"after": second.pk})
         self.assertEqual(again.content, b"")
 
+    @override_settings(SOCIAL_MESSAGE_MIN_INTERVAL_SECONDS=0)
+    def test_unread_badge_poll(self):
+        conv = chat_svc.get_or_create_conversation(self.a, self.b)
+        chat_svc.send_message(self.a, conv, "badge me")
+        client = Client()
+        client.force_login(self.b)
+        resp = client.get(reverse("social:unread_badge"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "social-badge")
+        self.assertContains(resp, "1")
+        chat_svc.mark_conversation_read(conv, self.b)
+        empty = client.get(reverse("social:unread_badge"))
+        self.assertEqual(empty.status_code, 200)
+        self.assertNotContains(empty, "social-badge")
+        # Navbar includes live poller
+        home = client.get(reverse("dashboard:home"))
+        self.assertContains(home, "nav-unread-poll")
+        self.assertContains(home, 'id="nav-unread-badge"')
+
     def test_message_length_validation(self):
         conv = chat_svc.get_or_create_conversation(self.a, self.b)
         with self.assertRaises(chat_svc.ChatError):

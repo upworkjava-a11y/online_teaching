@@ -27,6 +27,7 @@ urlpatterns = [
     path("profile/<str:username>/presence/", views.PresenceStatusView.as_view(), name="presence"),
     # Chat (unchanged)
     path("messages/", views.ConversationListView.as_view(), name="inbox"),
+    path("messages/unread-badge/", views.UnreadBadgeView.as_view(), name="unread_badge"),
     path("messages/<int:pk>/", views.ConversationDetailView.as_view(), name="chat_detail"),
     path("messages/<int:pk>/history/", views.ChatHistoryView.as_view(), name="chat_history"),
     path("messages/<int:pk>/updates/", views.ChatUpdatesView.as_view(), name="chat_updates"),

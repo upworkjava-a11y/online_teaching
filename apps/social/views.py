@@ -433,6 +433,20 @@ class ChatUpdatesView(RoleRequiredMixin, View):
         return response
 
 
+class UnreadBadgeView(RoleRequiredMixin, View):
+    """Lightweight unread count fragment for navbar HTMX polling."""
+
+    allowed_roles = ("student", "teacher", "admin")
+
+    def get(self, request):
+        total = chat_svc.unread_total(request.user)
+        return render(
+            request,
+            "social/partials/nav_unread_badge.html",
+            {"unread_total": total},
+        )
+
+
 class HeartbeatView(RoleRequiredMixin, View):
     allowed_roles = ("student", "teacher", "admin")
 
