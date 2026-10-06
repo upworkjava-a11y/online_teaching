@@ -85,7 +85,7 @@ if not REDIS_URL:
 
 # Manifest storage is brittle while you iterate on CSS/JS; CompressedStaticFilesStorage is safer on PA
 STORAGES = {
-    "default": {"BACKEND": "django.contrib.files.storage.FileSystemStorage"},
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
