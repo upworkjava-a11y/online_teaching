@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ "Suhbat yopiq"|loc }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1 class="text-xl font-bold">{{ "Suhbat mavjud emas"|loc }}</h1>
+  <p class="muted mt-2">{{ "Bu foydalanuvchi bilan yozishish bloklangan."|loc }}</p>
+  <a class="btn btn-primary mt-4" href="{% url 'social:inbox' %}">{{ "Xabarlarga qaytish"|loc }}</a>
+</div>
+{% endblock %}

@@ -71,12 +71,29 @@ class SQLExecutor:
         return QueryResult(columns=columns, rows=[list(row) for row in rows], truncated=truncated)
 
     def _execute_sqlite(self, sql: str) -> QueryResult:
+        import time
+
         db_path = settings.SANDBOX_DATABASE["NAME"]
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
         max_rows = settings.SANDBOX_MAX_ROWS
+        timeout_s = float(settings.SANDBOX_QUERY_TIMEOUT_SECONDS)
         try:
-            conn = sqlite3.connect(db_path, timeout=settings.SANDBOX_QUERY_TIMEOUT_SECONDS)
+            conn = sqlite3.connect(db_path, timeout=timeout_s)
             conn.execute("PRAGMA query_only = ON")
+            # Defense in depth: deny loadable extensions even if validator misses a call.
+            try:
+                conn.enable_load_extension(False)
+            except AttributeError:
+                pass
+            started = time.monotonic()
+
+            def _progress(_):
+                if time.monotonic() - started > timeout_s:
+                    return 1  # abort
+                return 0
+
+            # Interrupt long-running student SQL (busy timeout alone is not enough).
+            conn.set_progress_handler(_progress, 10_000)
             conn.row_factory = sqlite3.Row
             cursor = conn.execute(sql)
             if cursor.description is None:
@@ -86,7 +103,7 @@ class SQLExecutor:
             conn.close()
         except sqlite3.OperationalError as exc:
             message = str(exc).lower()
-            if "timeout" in message or "locked" in message:
+            if "interrupted" in message or "timeout" in message or "locked" in message:
                 raise QueryTimeoutError() from exc
             logger.warning("sql_execution_error", extra={"error": type(exc).__name__})
             raise SandboxError(f"SQL xatosi: {exc}") from exc

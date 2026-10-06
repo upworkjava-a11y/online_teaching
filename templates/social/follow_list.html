@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load social_tags %}
+{% block title %}{{ title }} · @{{ profile_user.username }}{% endblock %}
+{% block content %}
+<div class="space-y-4">
+  <div>
+    <a class="muted text-sm" href="{% url 'social:profile' profile_user.username %}">← @{{ profile_user.username }}</a>
+    <h1 class="text-2xl font-extrabold mt-1">{{ title|loc }}</h1>
+  </div>
+  <div class="space-y-2">
+    {% for card in cards %}
+      <a class="social-user-card card" href="{% url 'social:profile' card.user.username %}">
+        <img class="social-avatar" src="{{ card.avatar_url }}" alt="" width="44" height="44">
+        <div>
+          <div class="font-semibold">{{ card.user.get_full_name }}</div>
+          <div class="muted text-sm">@{{ card.user.username }} · {% presence_dot card.presence %}
+            {% if card.presence == "online" %}{{ "Onlayn"|loc }}{% else %}{{ "Oflayn"|loc }}{% endif %}
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <p class="muted">{{ "Hali hech kim yo‘q."|loc }}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.get_full_name }} · @{{ profile_user.username }}{% endblock %}
+{% block content %}
+<article class="social-profile">
+  <header class="social-profile__hero card">
+    <img class="social-avatar social-avatar--xl" src="{{ avatar_url }}" alt="" width="112" height="112">
+    <div class="social-profile__meta">
+      <h1 class="social-profile__name">{{ profile_user.get_full_name }}</h1>
+      <p class="muted">@{{ profile_user.username }}</p>
+      <p class="muted mt-3">{{ "Bu profil bilan aloqa yopilgan."|loc }}</p>
+      <div class="social-actions mt-4 flex flex-wrap gap-2">
+        {% if i_block %}
+          <form method="post" action="{% url 'social:block' profile_user.username %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="unblock">
+            <button class="btn btn-primary" type="submit">{{ "Blokdan olish"|loc }}</button>
+          </form>
+        {% endif %}
+        <a class="btn btn-ghost" href="{% url 'social:own_profile' %}">{{ "Profil"|loc }}</a>
+      </div>
+    </div>
+  </header>
+</article>
+{% endblock %}

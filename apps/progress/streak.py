@@ -5,8 +5,8 @@ from django.utils import timezone
 from .models import StudentStreak
 
 
-def record_correct_solve(student) -> StudentStreak:
-    """To‘g‘ri yechimdan keyin kunlik zanjirni yangilaydi."""
+def record_learning_day(student) -> StudentStreak:
+    """Meaningful learning day (solve or lesson) — updates streak."""
     today = timezone.localdate()
     streak, _ = StudentStreak.objects.get_or_create(student=student)
     if streak.last_solved_date == today:
@@ -19,6 +19,11 @@ def record_correct_solve(student) -> StudentStreak:
     streak.last_solved_date = today
     streak.save(update_fields=["current_streak", "longest_streak", "last_solved_date", "updated_at"])
     return streak
+
+
+def record_correct_solve(student) -> StudentStreak:
+    """To‘g‘ri yechimdan keyin kunlik zanjirni yangilaydi."""
+    return record_learning_day(student)
 
 
 def get_streak(student) -> StudentStreak | None:

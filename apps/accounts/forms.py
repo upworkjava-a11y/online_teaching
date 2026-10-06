@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+import re
 
 from apps.core.i18n.service import t
 
@@ -194,6 +195,12 @@ class ProfileForm(forms.ModelForm):
         username = (self.cleaned_data.get("username") or "").strip()
         if not username:
             raise ValidationError(t("Foydalanuvchi nomi majburiy."))
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", username):
+            raise ValidationError(
+                t("Foydalanuvchi nomida faqat harf, raqam, nuqta, _ va - bo‘lishi mumkin.")
+            )
+        if len(username) < 3:
+            raise ValidationError(t("Foydalanuvchi nomi kamida 3 belgi bo‘lsin."))
         qs = User.objects.filter(username__iexact=username)
         if self.instance.pk:
             qs = qs.exclude(pk=self.instance.pk)

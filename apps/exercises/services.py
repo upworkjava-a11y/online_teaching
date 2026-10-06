@@ -127,6 +127,24 @@ class ExerciseService:
         sync_student_contests_on_solve(student, exercise)
         issue_module_certificate(student, exercise.module)
         issue_course_certificate(student, exercise.module.course)
+        try:
+            from apps.social.services.activity import record_exercise
+
+            record_exercise(student, is_quiz=bool(getattr(exercise, "is_skill_test", False)))
+        except Exception:
+            pass
+        try:
+            from apps.badges.services import service as badge_service
+            from apps.dashboard.leaderboard import build_leaderboard
+
+            badge_service.check_after_solve(student, exercise)
+            board = build_leaderboard(limit=100)
+            for item in board:
+                if item["student_id"] == student.pk:
+                    badge_service.check_after_rank_update(student, item["rank"])
+                    break
+        except Exception:
+            pass
 
 
 exercise_service = ExerciseService()

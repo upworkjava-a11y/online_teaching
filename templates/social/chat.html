@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load social_tags %}
+{% block title %}{{ other.get_full_name|default:other.username }} · {{ "Chat"|loc }}{% endblock %}
+{% block content %}
+<section class="social-chat card">
+  <header class="social-chat__head">
+    <a class="muted text-sm" href="{% url 'social:inbox' %}">← {{ "Xabarlar"|loc }}</a>
+    <div class="flex items-center gap-3 mt-2">
+      <a href="{% url 'social:profile' other.username %}">
+        <img class="social-avatar" src="{{ avatar_url }}" alt="" width="44" height="44">
+      </a>
+      <div>
+        <a class="font-bold" href="{% url 'social:profile' other.username %}">{{ other.get_full_name }}</a>
+        <div class="text-sm muted">{% presence_dot presence %}
+          {% if presence == "online" %}{{ "Onlayn"|loc }}{% else %}{{ "Oflayn"|loc }}{% endif %}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="social-chat__body" id="chat-body">
+    {% if has_more and oldest_id %}
+    <div
+      class="chat-load-sentinel"
+      hx-get="{% url 'social:chat_history' conversation.pk %}?before={{ oldest_id }}"
+      hx-trigger="intersect once"
+      hx-target="#chat-messages"
+      hx-swap="afterbegin"
+    ></div>
+    {% endif %}
+    <div id="chat-messages">
+      {% for message in messages %}
+        {% include "social/partials/message_bubble.html" with user=request.user %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <form class="social-chat__composer" method="post"
+        hx-post="{% url 'social:chat_detail' conversation.pk %}"
+        hx-target="#chat-messages"
+        hx-swap="beforeend"
+        hx-on::after-request="if(event.detail.successful){ this.reset(); const b=document.getElementById('chat-body'); if(b) b.scrollTop=b.scrollHeight; }">
+    {% csrf_token %}
+    {{ form.text }}
+    <button class="btn btn-primary" type="submit">{{ "Yuborish"|loc }}</button>
+  </form>
+</section>
+<script>
+  (function(){ const b=document.getElementById('chat-body'); if(b) b.scrollTop=b.scrollHeight; })();
+</script>
+{% endblock %}

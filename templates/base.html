@@ -93,6 +93,10 @@
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8M12 17v4M7 4h10v3a5 5 0 0 1-10 0V4Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 4 1.5 3L12 4l1.5 3L15 4"/></svg>
               <span>{{ "Reyting"|loc }}</span>
             </a>
+            <a class="nav-link {% if '/messages/' in request.path %}is-active{% endif %}" href="{% url 'social:inbox' %}">
+              <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4z"/><path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6"/></svg>
+              <span>{{ "Xabarlar"|loc }}</span>
+            </a>
             <a class="nav-link {% if '/progress/sertifikat' in request.path %}is-active{% endif %}" href="{% url 'progress:certificates' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 13.5-1.5 7 5-2.5 5 2.5-1.5-7"/></svg>
               <span>{{ "Sertifikatlar"|loc }}</span>
@@ -101,7 +105,7 @@
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M9 16h4"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 3h8l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 3v4h4"/></svg>
               <span>{{ "Uy vazifasi"|loc }}</span>
             </a>
-            <a class="nav-link {% if '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'accounts:profile' %}">
+            <a class="nav-link {% if '/profile/' in request.path or '/users/' in request.path or '/me/social/' in request.path or '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'social:own_profile' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg>
               <span>{{ "Profil"|loc }}</span>
             </a>
@@ -137,6 +141,10 @@
             <a class="nav-link {% if '/teacher/homework/' in request.path %}is-active{% endif %}" href="{% url 'analytics:homework' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M9 16h4"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 3h8l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 3v4h4"/></svg>
               <span>{{ "Uy vazifasi"|loc }}</span>
+            </a>
+            <a class="nav-link {% if '/profile/' in request.path or '/users/' in request.path or '/me/social/' in request.path or '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'social:own_profile' %}">
+              <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg>
+              <span>{{ "Profil"|loc }}</span>
             </a>
             {% if user.is_admin %}
               <a class="nav-link" href="/admin/">
@@ -218,5 +226,69 @@
       }
     });
   </script>
+  {% if user.is_authenticated %}
+  <div id="badge-toast-root" class="badge-toast-root" aria-live="polite"></div>
+  <script>
+    (function () {
+      function beat() {
+        fetch("{% url 'social:heartbeat' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "X-Requested-With": "XMLHttpRequest"
+          },
+          credentials: "same-origin"
+        }).catch(function () {});
+      }
+      beat();
+      setInterval(beat, 20000);
+
+      function showBadgeToasts(items) {
+        var root = document.getElementById("badge-toast-root");
+        if (!root || !items || !items.length) return;
+        items.forEach(function (b, i) {
+          var el = document.createElement("div");
+          el.className = "badge-toast";
+
+          var art = document.createElement("div");
+          art.className = "badge-toast__art";
+          var img = document.createElement("img");
+          img.src = b.icon_url || "";
+          img.alt = "";
+          img.width = 56;
+          img.height = 56;
+          art.appendChild(img);
+
+          var body = document.createElement("div");
+          var eyebrow = document.createElement("p");
+          eyebrow.className = "badge-toast__eyebrow";
+          eyebrow.textContent = "Achievement Unlocked";
+          var title = document.createElement("p");
+          title.className = "badge-toast__title";
+          title.textContent = b.name || "";
+          var desc = document.createElement("p");
+          desc.className = "badge-toast__desc";
+          desc.textContent = b.description || "";
+          body.appendChild(eyebrow);
+          body.appendChild(title);
+          body.appendChild(desc);
+
+          el.appendChild(art);
+          el.appendChild(body);
+          root.appendChild(el);
+          setTimeout(function () { el.classList.add("is-visible"); }, 40 + i * 120);
+          setTimeout(function () {
+            el.classList.remove("is-visible");
+            setTimeout(function () { el.remove(); }, 400);
+          }, 5200 + i * 600);
+        });
+      }
+      fetch("{% url 'badges:toasts' %}", { credentials: "same-origin" })
+        .then(function (r) { return r.json(); })
+        .then(function (data) { showBadgeToasts(data.badges || []); })
+        .catch(function () {});
+    })();
+  </script>
+  {% endif %}
 </body>
 </html>

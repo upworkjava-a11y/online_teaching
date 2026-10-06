@@ -1,0 +1,23 @@
+<div class="activity-month-panel">
+  <h3 class="font-bold">{{ month_data.name }} {{ month_data.year }}</h3>
+  <div class="activity-month-grid mt-3">
+    <div class="activity-dow">Mon</div><div class="activity-dow">Tue</div><div class="activity-dow">Wed</div>
+    <div class="activity-dow">Thu</div><div class="activity-dow">Fri</div><div class="activity-dow">Sat</div>
+    <div class="activity-dow">Sun</div>
+    {% for week in month_data.weeks %}
+      {% for day in week %}
+        {% if day.date %}
+          <button
+            type="button"
+            class="activity-month-day level-{{ day.level }}"
+            hx-get="{% url 'social:activity_day' profile_user.username %}?date={{ day.date }}"
+            hx-target="#activity-detail"
+            hx-swap="innerHTML"
+          >{{ day.day }}</button>
+        {% else %}
+          <span class="activity-month-day is-empty"></span>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>

@@ -24,6 +24,8 @@ urlpatterns = [
     path("teacher/", include("apps.analytics.urls")),
     path("musobaqalar/", include("apps.contests.urls")),
     path("progress/", include("apps.progress.urls")),
+    path("", include("apps.social.urls")),
+    path("", include("apps.badges.urls")),
 ]
 
 if settings.DEBUG:

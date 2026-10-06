@@ -1,0 +1,24 @@
+<section class="card mt-6 badge-profile-card">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-lg font-bold">{{ "Yutuqlar"|loc }}</h2>
+      <p class="muted text-sm mt-1">{{ badge_earned }} / {{ badge_total }}</p>
+    </div>
+    <a class="btn btn-ghost" href="{% url 'badges:achievements' profile_user.username %}">{{ "Barcha yutuqlar"|loc }} →</a>
+  </div>
+  <div class="badge-showcase mt-4">
+    {% for row in badge_showcase %}
+      {% url 'badges:badge_detail' profile_user.username row.badge.slug as detail_url %}
+      {% include "badges/partials/badge_art.html" with badge=row.badge earned=row.earned show_label=False size=64 hx_get=detail_url %}
+    {% empty %}
+      <p class="muted text-sm">{{ "Hali yutuqlar yo‘q — masala yeching!"|loc }}</p>
+    {% endfor %}
+  </div>
+</section>
+
+<dialog id="badge-modal" class="badge-modal">
+  <form method="dialog" class="badge-modal__close">
+    <button class="btn btn-ghost" value="cancel">{{ "Yopish"|loc }}</button>
+  </form>
+  <div id="badge-modal-body"></div>
+</dialog>

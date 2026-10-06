@@ -33,6 +33,7 @@ def build_leaderboard(limit: int = 50) -> list[dict]:
         )
         .values(
             "student_id",
+            "student__username",
             "student__first_name",
             "student__last_name",
             "student__email",
@@ -74,6 +75,7 @@ def build_leaderboard(limit: int = 50) -> list[dict]:
         board.append(
             {
                 "student_id": row["student_id"],
+                "username": row["student__username"],
                 "name": name,
                 "points": points,
                 "solved_count": row["solved_count"] or 0,

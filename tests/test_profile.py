@@ -11,11 +11,18 @@ class ProfileUpdateTests(TestCase):
         self.user.username = "ali_old"
         self.user.save(update_fields=["username"])
 
+    def test_accounts_profile_redirects_to_unified_edit(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("accounts:profile"))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("social:settings"))
+
     def test_can_change_username_and_email(self):
         self.client.force_login(self.user)
         response = self.client.post(
-            reverse("accounts:profile"),
+            reverse("social:settings"),
             {
+                "action": "account",
                 "first_name": "Ali",
                 "last_name": "Valiyev",
                 "username": "ali_new",
@@ -33,8 +40,9 @@ class ProfileUpdateTests(TestCase):
     def test_can_change_password(self):
         self.client.force_login(self.user)
         response = self.client.post(
-            reverse("accounts:profile"),
+            reverse("social:settings"),
             {
+                "action": "account",
                 "first_name": "Ali",
                 "last_name": "Valiyev",
                 "username": self.user.username,
@@ -51,8 +59,9 @@ class ProfileUpdateTests(TestCase):
     def test_wrong_current_password_rejected(self):
         self.client.force_login(self.user)
         response = self.client.post(
-            reverse("accounts:profile"),
+            reverse("social:settings"),
             {
+                "action": "account",
                 "first_name": "Ali",
                 "last_name": "Valiyev",
                 "username": self.user.username,
@@ -65,3 +74,22 @@ class ProfileUpdateTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("StrongPass123!"))
+
+    def test_rejects_xss_username(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("social:settings"),
+            {
+                "action": "account",
+                "first_name": "Ali",
+                "last_name": "Valiyev",
+                "username": "<script>x</script>",
+                "email": self.user.email,
+                "current_password": "",
+                "new_password1": "",
+                "new_password2": "",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, "ali_old")

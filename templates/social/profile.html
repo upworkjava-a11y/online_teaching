@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% load social_tags %}
+{% block title %}{{ profile_user.get_full_name }} · @{{ profile_user.username }}{% endblock %}
+{% block content %}
+<article class="social-profile">
+  <header class="social-profile__hero card">
+    <img class="social-avatar social-avatar--xl" src="{{ avatar_url }}" alt="" width="112" height="112">
+    <div class="social-profile__meta">
+      <h1 class="social-profile__name">{{ profile_user.get_full_name }}</h1>
+      <p class="muted">@{{ profile_user.username }}</p>
+      <p class="social-presence social-presence--{{ presence_status }}">
+        {% presence_dot presence_status %}
+        {% if presence_status == "online" %}{{ "Onlayn"|loc }}
+        {% elif presence_status == "blocked" %}{{ "Bloklangan"|loc }}
+        {% else %}{{ "Oflayn"|loc }}{% endif %}
+      </p>
+      <div class="social-stats mt-4">
+        <a href="{% url 'social:followers' profile_user.username %}?kind=followers"><strong>{{ followers }}</strong> {{ "kuzatuvchi"|loc }}</a>
+        <a href="{% url 'social:followers' profile_user.username %}?kind=following"><strong>{{ following }}</strong> {{ "kuzatmoqda"|loc }}</a>
+      </div>
+      <div class="social-actions mt-4 flex flex-wrap gap-2">
+        {% if is_self %}
+          <a class="btn btn-primary" href="{% url 'social:settings' %}">{{ "Profilni tahrirlash"|loc }}</a>
+        {% else %}
+          {% if user.is_authenticated %}
+            {% include "social/partials/follow_button.html" %}
+            {% if can_message %}
+              <form method="post" action="{% url 'social:start_chat' profile_user.username %}">
+                {% csrf_token %}
+                <button class="btn btn-primary" type="submit">{{ "Xabar"|loc }}</button>
+              </form>
+            {% endif %}
+            <form method="post" action="{% url 'social:block' profile_user.username %}">
+              {% csrf_token %}
+              {% if i_block %}
+                <input type="hidden" name="action" value="unblock">
+                <button class="btn btn-ghost" type="submit">{{ "Blokdan olish"|loc }}</button>
+              {% else %}
+                <input type="hidden" name="action" value="block">
+                <button class="btn btn-ghost" type="submit">{{ "Bloklash"|loc }}</button>
+              {% endif %}
+            </form>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'accounts:login' %}?next={{ request.path }}">{{ "Kirish"|loc }}</a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if bio %}
+  <section class="card mt-6">
+    <h2 class="text-lg font-bold">{{ "Haqida"|loc }}</h2>
+    <p class="social-bio mt-2">{{ bio }}</p>
+  </section>
+  {% endif %}
+
+  <section class="card mt-6">
+    <h2 class="text-lg font-bold">{{ "O‘qish statistikasi"|loc }}</h2>
+    {% if course_rows %}
+    <ul class="profile-course-list mt-4">
+      {% for row in course_rows %}
+        <li class="profile-course-row">
+          <div class="profile-course-row__head">
+            <span class="font-semibold">{{ row.course.title }}</span>
+            <span class="muted">{{ row.percent }}%</span>
+          </div>
+          <div class="profile-progress" role="progressbar" aria-valuenow="{{ row.percent }}" aria-valuemin="0" aria-valuemax="100">
+            <span class="profile-progress__bar" style="width: {{ row.percent }}%"></span>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+      <p class="muted text-sm mt-2">{{ "Hali kurs progressi yo‘q."|loc }}</p>
+    {% endif %}
+  </section>
+
+  {% include "badges/partials/profile_section.html" %}
+
+  <section class="card mt-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h2 class="text-lg font-bold">{{ "Faoliyat"|loc }}</h2>
+        {% if streak and streak.current_streak %}
+          <p class="muted text-sm mt-1">{{ streak.current_streak }} {{ "kunlik zanjir"|loc }}
+            · {{ "rekord"|loc }} {{ streak.longest_streak }}</p>
+        {% endif %}
+      </div>
+      <p class="font-semibold">{{ calendar.year }}</p>
+    </div>
+    <div class="activity-months mt-3">
+      {% for m in calendar.months %}
+        <button
+          type="button"
+          class="activity-month-btn"
+          hx-get="{% url 'social:activity_month' profile_user.username %}?year={{ calendar.year }}&month={{ m.num }}"
+          hx-target="#activity-detail"
+          hx-swap="innerHTML"
+        >{{ m.name }}</button>
+      {% endfor %}
+    </div>
+    <div class="activity-year mt-4" role="img" aria-label="{{ 'Yillik faoliyat'|loc }}">
+      {% for week in calendar.weeks %}
+        <div class="activity-week">
+          {% for day in week %}
+            {% if day %}
+              <button
+                type="button"
+                class="activity-cell level-{{ day.level }}"
+                title="{{ day.label }}: {{ day.count }}"
+                hx-get="{% url 'social:activity_day' profile_user.username %}?date={{ day.date }}"
+                hx-target="#activity-detail"
+                hx-swap="innerHTML"
+              ></button>
+            {% else %}
+              <span class="activity-cell is-empty"></span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="activity-legend mt-3 text-xs muted">
+      <span>{{ "Kam"|loc }}</span>
+      <span class="activity-cell level-0"></span>
+      <span class="activity-cell level-1"></span>
+      <span class="activity-cell level-2"></span>
+      <span class="activity-cell level-3"></span>
+      <span class="activity-cell level-4"></span>
+      <span>{{ "Ko‘p"|loc }}</span>
+    </div>
+    <div id="activity-detail" class="mt-4"></div>
+  </section>
+
+  {% if recent_items %}
+  <section class="card mt-6">
+    <h2 class="text-lg font-bold">{{ "So‘nggi faoliyat"|loc }}</h2>
+    <ul class="profile-recent-list mt-4">
+      {% for item in recent_items %}
+        <li class="profile-recent-item">
+          <span class="profile-recent-item__check" aria-hidden="true">✓</span>
+          <div>
+            <p>{{ item.label }}</p>
+            <p class="muted text-sm">{{ item.course }} · {{ item.at|date:"d M Y, H:i" }}</p>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}

@@ -44,7 +44,13 @@ class PythonExecutor:
         if len(text) > max_chars:
             raise QueryLimitError("Kod juda uzun. Qisqartiring.")
 
-        timeout = int(getattr(settings, "SANDBOX_QUERY_TIMEOUT_SECONDS", 5))
+        timeout = int(
+            getattr(
+                settings,
+                "PYTHON_SANDBOX_TIMEOUT_SECONDS",
+                getattr(settings, "SANDBOX_QUERY_TIMEOUT_SECONDS", 5),
+            )
+        )
         max_output = int(getattr(settings, "PYTHON_SANDBOX_MAX_OUTPUT_CHARS", 20000))
         root = Path(settings.BASE_DIR)
         env = os.environ.copy()
@@ -53,16 +59,18 @@ class PythonExecutor:
         # Block network-ish libs from picking up proxies accidentally — still rely on import allowlist.
         env.pop("HTTP_PROXY", None)
         env.pop("HTTPS_PROXY", None)
+        # Keep worker lean: avoid inheriting Django settings that force heavy imports.
+        env.pop("DJANGO_SETTINGS_MODULE", None)
 
         started = __import__("time").monotonic()
         try:
             proc = subprocess.run(  # noqa: S603
-                [sys.executable, "-B", "-c", _WORKER],
+                [sys.executable, "-B", "-m", "apps.sandbox.python_worker"],
                 input=text,
                 capture_output=True,
                 text=True,
                 timeout=timeout,
-                cwd=tempfile.gettempdir(),
+                cwd=str(root),
                 env=env,
             )
         except subprocess.TimeoutExpired as exc:

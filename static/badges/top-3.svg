@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img">
+  <polygon points="64,8 112,34 112,94 64,120 16,94 16,34" fill="#eab308" stroke="#a16207" stroke-width="6"/>
+  <polygon points="64,18 102,40 102,88 64,110 26,88 26,40" fill="#fef9c3" opacity="0.35"/>
+
+  <path d="M34 98 L28 122 L44 112 Z" fill="#a16207"/>
+  <path d="M94 98 L100 122 L84 112 Z" fill="#a16207"/>
+  <path d="M44 100 H84 V110 H44 Z" fill="#fde047"/>
+
+  <rect x="28" y="68" width="22" height="26" fill="#cd7f32"/>
+  <rect x="53" y="48" width="22" height="46" fill="#fbbf24"/>
+  <rect x="78" y="58" width="22" height="36" fill="#94a3b8"/>
+  <text x="64" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#fff">TOP 3</text>
+</svg>

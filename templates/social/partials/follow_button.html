@@ -1,0 +1,15 @@
+{% if is_following %}
+<form method="post" action="{% url 'social:follow' profile_user.username %}"
+      {% if request.htmx %}hx-post="{% url 'social:follow' profile_user.username %}" hx-swap="outerHTML"{% endif %}>
+  {% csrf_token %}
+  <input type="hidden" name="action" value="unfollow">
+  <button class="btn btn-ghost" type="submit">{{ "Kuzatyapman"|loc }}</button>
+</form>
+{% else %}
+<form method="post" action="{% url 'social:follow' profile_user.username %}"
+      {% if request.htmx %}hx-post="{% url 'social:follow' profile_user.username %}" hx-swap="outerHTML"{% endif %}>
+  {% csrf_token %}
+  <input type="hidden" name="action" value="follow">
+  <button class="btn btn-primary" type="submit">{{ "Kuzatish"|loc }}</button>
+</form>
+{% endif %}

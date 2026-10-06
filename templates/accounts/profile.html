@@ -5,6 +5,11 @@
   <div class="card">
     <h1 class="text-2xl font-semibold">{{ "Profil"|loc }}</h1>
     <p class="muted mt-1">{{ "Ism, foydalanuvchi nomi, email va parolni yangilashingiz mumkin."|loc }}</p>
+    <div class="mt-3 flex flex-wrap gap-2">
+      <a class="btn btn-ghost" href="{% url 'social:profile' user.username %}">{{ "Ijtimoiy profil"|loc }}</a>
+      <a class="btn btn-ghost" href="{% url 'social:settings' %}">{{ "Avatar va bio"|loc }}</a>
+      <a class="btn btn-ghost" href="{% url 'social:inbox' %}">{{ "Xabarlar"|loc }}</a>
+    </div>
     <form method="post" class="mt-6 space-y-4">
       {% csrf_token %}
       {% if form.non_field_errors %}

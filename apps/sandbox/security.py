@@ -64,6 +64,11 @@ FORBIDDEN_FUNCTIONS = {
     "pg_sleep",
     "pg_terminate_backend",
     "pg_reload_conf",
+    # SQLite / extension escape hatches
+    "load_extension",
+    "sqlite_load_extension",
+    "readfile",
+    "writefile",
 }
 
 ALLOWED_START = {"SELECT", "WITH"}
@@ -103,8 +108,14 @@ def validate_student_sql(sql: str, max_chars: int) -> str:
                 raise ForbiddenSQLError("Bu so‘rov ruxsat etilmagan.")
 
     lowered = cleaned.lower()
+    # Schema / path introspection (SQLite table-valued pragma_* + catalog)
+    if re.search(r"\bpragma_", lowered) or re.search(
+        r"\bsqlite_(?:master|temp_master|schema)\b", lowered
+    ):
+        raise ForbiddenSQLError("Bu so‘rov ruxsat etilmagan.")
+
     for func in FORBIDDEN_FUNCTIONS:
-        if f"{func}(" in lowered:
+        if re.search(rf"\b{re.escape(func)}\s*\(", lowered):
             raise ForbiddenSQLError("Xavfli funksiya ishlatilgan.")
 
     if ";" in cleaned.rstrip(";"):

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ "Profilni tahrirlash"|loc }}{% endblock %}
+{% block content %}
+<div class="space-y-6 max-w-xl">
+  <div>
+    <a class="muted text-sm" href="{% url 'social:profile' user.username %}">← {{ "Profil"|loc }}</a>
+    <h1 class="text-2xl font-extrabold mt-1">{{ "Profilni tahrirlash"|loc }}</h1>
+    <p class="muted mt-1">{{ "Ism, foydalanuvchi nomi, email, avatar va bio."|loc }}</p>
+  </div>
+
+  <section class="card">
+    <h2 class="font-bold">{{ "Shaxsiy ma’lumotlar"|loc }}</h2>
+    <form method="post" class="mt-4 space-y-4">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="account">
+      {% if account_form.non_field_errors %}
+        <div class="form-error">{{ account_form.non_field_errors|striptags }}</div>
+      {% endif %}
+      {% for field in account_form %}
+        <label class="block">
+          <span class="mb-1 block text-sm font-medium">{{ field.label }}</span>
+          {{ field }}
+          {% if field.help_text %}<p class="muted mt-1 text-xs">{{ field.help_text }}</p>{% endif %}
+          {% if field.errors %}<p class="form-error mt-1">{{ field.errors|striptags }}</p>{% endif %}
+        </label>
+      {% endfor %}
+      <button class="btn btn-primary" type="submit">{{ "Saqlash"|loc }}</button>
+    </form>
+    <p class="muted mt-4 text-sm">
+      Telegram:
+      {% if user.telegram_account %}
+        {{ "bog‘langan"|loc }} (@{{ user.telegram_account.telegram_username|default:user.telegram_account.telegram_id }})
+      {% else %}
+        {{ "hali bog‘lanmagan. Botda email/parol bilan kiring — web va Telegram bir xil akkaunt bo‘ladi."|loc }}
+      {% endif %}
+    </p>
+  </section>
+
+  <section class="card">
+    <img class="social-avatar social-avatar--xl" src="{{ avatar_url }}" alt="" width="96" height="96">
+    <h2 class="font-bold mt-4">{{ "Tayyor avatarlar"|loc }}</h2>
+    <form method="post" class="mt-3">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="preset">
+      <div class="avatar-preset-grid">
+        {% for value, label in preset_form.fields.avatar_preset.choices %}
+          <label class="avatar-preset-option">
+            <input type="radio" name="avatar_preset" value="{{ value }}" {% if profile.avatar_preset == value and not profile.avatar_image %}checked{% endif %}>
+            <img src="{% static 'avatars/' %}{{ value }}.svg" alt="{{ label }}" width="56" height="56">
+          </label>
+        {% endfor %}
+      </div>
+      <button class="btn btn-primary mt-4" type="submit">{{ "Tanlash"|loc }}</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2 class="font-bold">{{ "O‘z rasmingiz"|loc }}</h2>
+    <p class="muted text-sm mt-1">JPEG / PNG / WebP · max 2 MB · kvadrat qilib kesiladi</p>
+    <form method="post" enctype="multipart/form-data" class="mt-3 space-y-3">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="upload">
+      {{ upload_form.avatar }}
+      <button class="btn btn-primary" type="submit">{{ "Yuklash"|loc }}</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2 class="font-bold">{{ "Qisqa bio"|loc }}</h2>
+    <form method="post" class="mt-3 space-y-3">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="bio">
+      {{ bio_form.bio }}
+      <button class="btn btn-primary" type="submit">{{ "Saqlash"|loc }}</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

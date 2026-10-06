@@ -8,11 +8,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import FormView, UpdateView
+from django.views.generic import FormView
 
 from apps.core.i18n.service import t
 
-from .forms import EmailAuthenticationForm, ProfileForm, StudentRegistrationForm
+from .forms import EmailAuthenticationForm, StudentRegistrationForm
 from .google import (
     GoogleOAuthError,
     SESSION_NEXT_KEY,
@@ -66,27 +66,14 @@ class StudentLogoutView(LogoutView):
     next_page = reverse_lazy("courses:list")
 
 
-class ProfileView(LoginRequiredMixin, UpdateView):
-    model = User
-    form_class = ProfileForm
-    template_name = "accounts/profile.html"
-    success_url = reverse_lazy("accounts:profile")
+class ProfileView(LoginRequiredMixin, View):
+    """Legacy account profile editor — redirects to unified /profile/edit/."""
 
-    def get_object(self, queryset=None):
-        return self.request.user
+    def get(self, request, *args, **kwargs):
+        return redirect("social:settings")
 
-    def form_valid(self, form):
-        password_changed = bool(form.cleaned_data.get("new_password1"))
-        response = super().form_valid(form)
-        if password_changed:
-            # Parol o‘zgaganda sessiya uzilmasin
-            from django.contrib.auth import update_session_auth_hash
-
-            update_session_auth_hash(self.request, self.object)
-            messages.success(self.request, t("Profil va parol yangilandi."))
-        else:
-            messages.success(self.request, t("Profil yangilandi."))
-        return response
+    def post(self, request, *args, **kwargs):
+        return redirect("social:settings")
 
 
 class GoogleOAuthStartView(View):

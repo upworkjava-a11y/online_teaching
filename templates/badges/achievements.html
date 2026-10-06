@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ "Yutuqlar"|loc }} · @{{ profile_user.username }}{% endblock %}
+{% block content %}
+<div class="badge-page">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <a class="muted text-sm" href="{% url 'social:profile' profile_user.username %}">← @{{ profile_user.username }}</a>
+      <h1 class="text-3xl font-extrabold mt-1">{{ "Yutuqlar"|loc }}</h1>
+      <p class="muted mt-1">{{ earned_count }} / {{ total_count }}</p>
+    </div>
+  </div>
+
+  <div class="badge-grid mt-6">
+    {% for row in rows %}
+      <div class="badge-tile-wrap">
+        {% url 'badges:badge_detail' profile_user.username row.badge.slug as detail_url %}
+        {% include "badges/partials/badge_art.html" with badge=row.badge earned=row.earned show_label=True size=88 hx_get=detail_url %}
+        {% if not row.earned %}
+          <div class="badge-tile__progline"><span style="width:{{ row.percent }}%"></span></div>
+          <p class="badge-tile__prog">{{ row.current }}/{{ row.target }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<dialog id="badge-modal" class="badge-modal">
+  <form method="dialog" class="badge-modal__close">
+    <button class="btn btn-ghost" value="cancel">{{ "Yopish"|loc }}</button>
+  </form>
+  <div id="badge-modal-body"></div>
+</dialog>
+{% endblock %}

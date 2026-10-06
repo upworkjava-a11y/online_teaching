@@ -20,7 +20,8 @@ class ProgressService:
 
     def complete_lecture(self, student, lecture: Lecture) -> LectureProgress:
         progress, _ = LectureProgress.objects.get_or_create(student=student, lecture=lecture)
-        if not progress.completed:
+        newly = not progress.completed
+        if newly:
             progress.completed = True
             progress.completed_at = timezone.now()
         progress.last_viewed_at = timezone.now()
@@ -29,6 +30,25 @@ class ProgressService:
         course_progress.last_lecture = lecture
         course_progress.last_activity_at = timezone.now()
         course_progress.save(update_fields=["last_lecture", "last_activity_at", "updated_at"])
+        if newly:
+            try:
+                from apps.social.services.activity import record_lesson
+
+                record_lesson(student)
+            except Exception:
+                pass
+            try:
+                from apps.progress.streak import record_learning_day
+
+                record_learning_day(student)
+            except Exception:
+                pass
+            try:
+                from apps.badges.services import service as badge_service
+
+                badge_service.check_after_lesson(student)
+            except Exception:
+                pass
         return progress
 
     def last_position(self, student, course: Course | None = None):

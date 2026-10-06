@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img">
+  <polygon points="64,8 112,34 112,94 64,120 16,94 16,34" fill="#4338ca" stroke="#1e3a8a" stroke-width="6"/>
+  <polygon points="64,18 102,40 102,88 64,110 26,88 26,40" fill="#e0e7ff" opacity="0.35"/>
+
+  <path d="M34 98 L28 122 L44 112 Z" fill="#1e3a8a"/>
+  <path d="M94 98 L100 122 L84 112 Z" fill="#1e3a8a"/>
+  <path d="M44 100 H84 V110 H44 Z" fill="#a5b4fc"/>
+
+  <path d="M72 34 C58 36 48 48 50 62 C52 78 68 88 84 84 C72 90 56 84 50 70 C44 54 52 38 72 34 Z" fill="#fff"/>
+  <rect x="40" y="78" width="48" height="22" rx="3" fill="#fff" opacity="0.9"/>
+  <rect x="46" y="84" width="36" height="8" fill="#1e3a8a" opacity="0.35"/>
+</svg>

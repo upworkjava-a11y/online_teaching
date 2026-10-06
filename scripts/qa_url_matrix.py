@@ -129,6 +129,8 @@ def build_cases(fx):
         ("accounts:login", "GET", None, "accounts:login", {}),
         ("accounts:logout", "POST", None, "accounts:logout", {}),
         ("accounts:profile", "GET", None, "accounts:profile", {}),
+        ("social:own_profile", "GET", None, "social:own_profile", {}),
+        ("social:settings", "GET", None, "social:settings", {}),
         ("accounts:google_login", "GET", None, "accounts:google_login", {}),
         ("dashboard:home", "GET", None, "dashboard:home", {}),
         ("dashboard:progress", "GET", None, "dashboard:progress", {}),
@@ -242,6 +244,8 @@ GUEST_OK = {
 # Guest should be gated (redirect/login/auth_gate/403)
 GUEST_GATED = {
     "accounts:profile",
+    "social:own_profile",
+    "social:settings",
     "accounts:logout",
     "dashboard:home",
     "dashboard:progress",

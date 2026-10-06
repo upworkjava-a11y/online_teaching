@@ -1,0 +1,24 @@
+{% load static %}
+<button
+  type="button"
+  class="badge-art {% if earned %}is-earned rarity-{{ badge.rarity|default:'common' }}{% else %}is-locked{% endif %}"
+  {% if hx_get %}
+    hx-get="{{ hx_get }}"
+    hx-target="#badge-modal-body"
+    hx-swap="innerHTML"
+    onclick="document.getElementById('badge-modal').showModal()"
+  {% endif %}
+  aria-label="{{ badge.name }}"
+>
+  <span class="badge-art__frame">
+    <img class="badge-art__img" src="{{ badge.icon_url }}" alt="" width="{{ size|default:72 }}" height="{{ size|default:72 }}" loading="lazy">
+    {% if not earned %}
+      <span class="badge-art__lock" aria-hidden="true">
+        <img src="{% static 'badges/_lock.svg' %}" alt="" width="22" height="22">
+      </span>
+    {% endif %}
+  </span>
+  {% if show_label %}
+    <span class="badge-art__label">{{ badge.name }}</span>
+  {% endif %}
+</button>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load social_tags %}
+{% block title %}{{ "Xabarlar"|loc }}{% endblock %}
+{% block content %}
+<div class="social-inbox">
+  <div class="flex items-center justify-between gap-3">
+    <h1 class="text-2xl font-extrabold">{{ "Xabarlar"|loc }}</h1>
+    {% if unread_total %}<span class="social-badge">{{ unread_total }}</span>{% endif %}
+  </div>
+  <div class="mt-4 space-y-2">
+    {% for row in rows %}
+      <a class="social-inbox-row card" href="{% url 'social:chat_detail' row.conversation.pk %}">
+        <img class="social-avatar" src="{{ row.avatar_url }}" alt="" width="48" height="48">
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2">
+            <strong class="truncate">{{ row.other.get_full_name|default:row.other.username }}</strong>
+            {% presence_dot row.presence %}
+            {% if row.unread %}<span class="social-badge">{{ row.unread }}</span>{% endif %}
+          </div>
+          <p class="muted text-sm truncate">{{ row.last_text|default:"—" }}</p>
+        </div>
+      </a>
+    {% empty %}
+      <p class="muted card">{{ "Hali suhbatlar yo‘q. Profil orqali xabar yozing."|loc }}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

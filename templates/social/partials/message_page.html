@@ -1,0 +1,11 @@
+{% if has_more and oldest_id %}
+<div
+  class="chat-load-sentinel"
+  hx-get="{% url 'social:chat_history' conversation.pk %}?before={{ oldest_id }}"
+  hx-trigger="intersect once"
+  hx-swap="outerHTML"
+></div>
+{% endif %}
+{% for message in messages %}
+  {% include "social/partials/message_bubble.html" %}
+{% endfor %}

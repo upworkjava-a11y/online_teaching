@@ -112,6 +112,15 @@ class StudentLeaderboardView(GuestBrowseMixin, View):
 
     def get(self, request):
         board = build_leaderboard(limit=50)
+        try:
+            from apps.badges.services import service as badge_service
+
+            counts = badge_service.badge_counts([row["student_id"] for row in board])
+            for row in board:
+                row["badge_count"] = counts.get(row["student_id"], 0)
+        except Exception:
+            for row in board:
+                row["badge_count"] = 0
         podium = board[:3]
         me = None
         if request.user.is_authenticated and getattr(request.user, "is_student", False):

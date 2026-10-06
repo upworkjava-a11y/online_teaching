@@ -82,6 +82,7 @@ class Command(BaseCommand):
         self._seed_structured_course(courses["statistics"], build_statistics_modules())
         self._seed_structured_course(courses["python"], build_python_modules())
         self._seed_python_skill_tests(courses["python"])
+        self._seed_badges()
         self._seed_structured_course(courses["power-bi"], build_powerbi_modules())
         self._seed_structured_course(courses["real-projects"], build_projects_modules())
         for course in courses.values():
@@ -727,6 +728,12 @@ class Command(BaseCommand):
                 f"Python bilim testlari: {total} ta savol ({len(MODULE_SKILL_TESTS)} modul)."
             )
         )
+
+    def _seed_badges(self):
+        from apps.badges.catalog import ensure_badges
+
+        n = ensure_badges()
+        self.stdout.write(self.style.SUCCESS(f"Badge katalogi: {n} ta yutuq."))
 
     def _hide_python_for_release(self, course: Course):
         """Legacy helper — kept for emergency rollback only (not called in normal bootstrap)."""
