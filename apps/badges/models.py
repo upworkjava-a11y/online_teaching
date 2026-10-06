@@ -64,9 +64,13 @@ class Badge(TimeStampedModel):
 
     @property
     def icon_url(self) -> str:
-        if self.icon_path:
-            return f"/static/{self.icon_path.lstrip('/')}"
-        return "/static/badges/first-step.svg"
+        from django.templatetags.static import static
+
+        path = (self.icon_path or "badges/first-step.svg").lstrip("/")
+        try:
+            return static(path)
+        except Exception:
+            return f"/static/{path}"
 
 
 class UserBadge(models.Model):

@@ -99,6 +99,8 @@ class PublicProfileView(GuestBrowseMixin, View):
         try:
             from apps.badges.services import service as badge_service
 
+            if viewer is not None and viewer.pk == profile_user.pk:
+                badge_service.evaluate(profile_user, trigger="all")
             badge_rows = badge_service.all_progress(profile_user)
             badge_earned = sum(1 for r in badge_rows if r.earned)
             badge_total = len(badge_rows)

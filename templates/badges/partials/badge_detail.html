@@ -1,7 +1,12 @@
 {% load static %}
 <div class="badge-detail">
   <div class="badge-detail__art {% if progress.earned %}is-earned rarity-{{ progress.badge.rarity }}{% else %}is-locked{% endif %}">
-    <img src="{{ progress.badge.icon_url }}" alt="{{ progress.badge.name }}" width="112" height="112">
+    <img
+      src="{% if progress.badge.icon_path %}{% static progress.badge.icon_path %}{% else %}{% static 'badges/first-step.svg' %}{% endif %}"
+      alt="{{ progress.badge.name }}"
+      width="112"
+      height="112"
+    >
     {% if not progress.earned %}
       <span class="badge-art__lock" aria-hidden="true">
         <img src="{% static 'badges/_lock.svg' %}" alt="" width="28" height="28">

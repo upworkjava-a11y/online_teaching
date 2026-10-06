@@ -221,8 +221,22 @@ class DataDrivenBadgeTests(BadgeBase):
             self._solve(ex)
         badge_service.evaluate(self.user, trigger="solve")
         self.assertTrue(UserBadge.objects.filter(user=self.user, badge__slug="banking-starter").exists())
+
+
+class IntegrityTests(BadgeBase):
     def test_catalog_size(self):
         self.assertEqual(Badge.objects.filter(is_active=True).count(), len(BADGE_DEFINITIONS))
+
+    def test_achievements_page_awards_eligible_on_view(self):
+        """Progress can be complete before UserBadge exists (e.g. after data import)."""
+        self._solve(self._ex(self.mod_select, "import-solve", 1))
+        self.assertEqual(UserBadge.objects.filter(user=self.user).count(), 0)
+        client = Client()
+        client.force_login(self.user)
+        resp = client.get(reverse("badges:achievements", args=[self.user.username]))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(UserBadge.objects.filter(user=self.user, badge__slug="first-step").exists())
+        self.assertContains(resp, "is-earned")
 
     def test_no_manual_award_endpoint(self):
         client = Client()

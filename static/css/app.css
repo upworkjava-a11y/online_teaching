@@ -1615,12 +1615,21 @@ a.lesson-item:hover {
   cursor: pointer;
   padding: 0.25rem;
 }
+.badge-art__img {
+  display: block;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(15, 23, 42, 0.15));
+}
 .badge-art__frame {
   position: relative;
   display: grid;
   place-items: center;
   border-radius: 1.1rem;
   padding: 0.35rem;
+  min-width: 80px;
+  min-height: 80px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .badge-art.is-earned .badge-art__frame {
@@ -1631,13 +1640,6 @@ a.lesson-item:hover {
 .badge-art.rarity-epic .badge-art__frame { box-shadow: 0 10px 28px rgba(139, 92, 246, 0.28); }
 .badge-art.rarity-legendary .badge-art__frame {
   box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.55), 0 12px 30px rgba(180, 83, 9, 0.28);
-}
-.badge-art__img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  filter: drop-shadow(0 4px 8px rgba(15, 23, 42, 0.15));
 }
 .badge-art.is-locked .badge-art__img {
   filter: grayscale(1) brightness(0.82) contrast(0.9);

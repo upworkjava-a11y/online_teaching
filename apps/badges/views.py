@@ -26,6 +26,10 @@ class AchievementsView(GuestBrowseMixin, View):
             and is_blocked_either(request.user.pk, profile_user.pk)
         ):
             raise Http404()
+        # Historical solves (imports) create progress but not UserBadge rows.
+        # Re-evaluate for the profile owner so 1/1 is never stuck locked.
+        if request.user.is_authenticated and request.user.pk == profile_user.pk:
+            badge_service.evaluate(profile_user, trigger="all")
         rows = badge_service.all_progress(profile_user)
         earned = sum(1 for r in rows if r.earned)
         return render(

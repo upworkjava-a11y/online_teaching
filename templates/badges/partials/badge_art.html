@@ -11,7 +11,14 @@
   aria-label="{{ badge.name }}"
 >
   <span class="badge-art__frame">
-    <img class="badge-art__img" src="{{ badge.icon_url }}" alt="" width="{{ size|default:72 }}" height="{{ size|default:72 }}" loading="lazy">
+    <img
+      class="badge-art__img"
+      src="{% if badge.icon_path %}{% static badge.icon_path %}{% else %}{% static 'badges/first-step.svg' %}{% endif %}"
+      alt=""
+      width="{{ size|default:72 }}"
+      height="{{ size|default:72 }}"
+      loading="lazy"
+    >
     {% if not earned %}
       <span class="badge-art__lock" aria-hidden="true">
         <img src="{% static 'badges/_lock.svg' %}" alt="" width="22" height="22">
