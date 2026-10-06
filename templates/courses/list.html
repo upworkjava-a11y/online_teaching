@@ -2,7 +2,7 @@
 {% block title %}{% if user.is_authenticated %}{{ "Mening kurslarim"|loc }}{% else %}{{ "Kurslar"|loc }}{% endif %}{% endblock %}
 {% block content %}
 <h1 class="text-3xl font-semibold">{% if user.is_authenticated %}{{ "Mening kurslarim"|loc }}{% else %}{{ "Kurslar"|loc }}{% endif %}</h1>
-<p class="muted mt-2">{{ "Hozircha SQL ochiq. Boshqa kurslar — Hozir jarayonda."|loc }}</p>
+<p class="muted mt-2">{{ "Ochiq kurslar: SQL, English for Banking, DevEnglish, DevRussian va Python. Qolganlari — Hozir jarayonda."|loc }}</p>
 <div class="mt-6 grid gap-4 md:grid-cols-2">
   {% for item in courses %}
     {% if item.coming_soon %}

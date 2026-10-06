@@ -66,11 +66,18 @@ class CourseAccessTests(TestCase):
         self.assertContains(courses_list, "Hozir jarayonda")
         self.assertContains(courses_list, "course-card-locked")
 
-    def test_python_course_is_hidden_for_release(self):
+    def test_python_course_visible_when_open(self):
+        make_course("python", published=True, visible=True, title="Python")
+        self.client.force_login(self.student)
+        detail = self.client.get(reverse("courses:detail", args=["python"]))
+        self.assertEqual(detail.status_code, 200)
+        courses_list = self.client.get(reverse("courses:list"))
+        self.assertContains(courses_list, 'href="/courses/python/"')
+
+    def test_python_course_hidden_when_not_visible(self):
         make_course("python", published=True, visible=False, title="Python")
         self.client.force_login(self.student)
         detail = self.client.get(reverse("courses:detail", args=["python"]))
-        # Yashirin / ochiq emas — 403 yoki coming_soon
         self.assertIn(detail.status_code, (403, 404))
         courses_list = self.client.get(reverse("courses:list"))
         self.assertNotContains(courses_list, 'href="/courses/python/"')

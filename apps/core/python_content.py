@@ -1,11 +1,14 @@
 """
-Python for Data Analytics — chuqur o‘zbekcha ma’ruzalar, kod namuna va testlar.
+Python — noldan boshlab data analytics gacha (tahlilchi yo‘nalishi).
+
+Birinchi modullar: o‘rnatish, birinchi kod, xatolar, keyin o‘zgaruvchi, mantiq, Pandas.
+Har darsda mashq + puzzle; modul oxirida bilim testi.
 """
 
 COURSE_DESCRIPTION = (
-    "Python data analytics — boshlang‘ichdan o‘rtagacha: o‘zgaruvchi, mantiq, NumPy, Pandas, "
-    "tozalash, groupby/merge, EDA va mini-loyiha. Har darsda mashq + puzzle, modul oxirida bilim testi "
-    "(W3Schools/CodeChef ruhida, lekin tahlilchiga mos)."
+    "Python noldan — tahlilchi va yangi boshlovchi uchun. 10 modul: birinchi qator kod, "
+    "o‘zgaruvchi va turlar, if/tsikl/funksiya, tuzilmalar, NumPy, Pandas, tozalash, EDA va mini-loyiha. "
+    "Har darsda aniq maqsad, kod namuna, mashq va puzzle."
 )
 
 
@@ -98,7 +101,7 @@ MODULES = [
 <p><code>True + 1</code> Python da 2 beradi. Hisobotda boolean ni songa aralashtirmang — avval aniq flag yarating.</p>
 """,
                 examples=[
-                    'revenue = 12_500_000\norders = 250\naov = revenue / orders\nprint(type(aov), round(aov, 2))',
+                    'revenue = 12500000\norders = 250\naov = revenue / orders\nprint(type(aov), round(aov, 2))',
                 ],
             ),
             _lec(
@@ -186,9 +189,10 @@ MODULES = [
 <p>Mijozni segmentga ajratish va flag yaratishni shartlar bilan yozasiz.</p>
 
 <h2>Biznes qoida</h2>
-<pre>agar revenue &gt;= 10 mln → "VIP"
-aks holda agar revenue &gt;= 2 mln → "Regular"
-aks holda → "New"</pre>
+<pre># qoida (pseudocode, Python emas):
+# agar revenue &gt;= 10 mln -&gt; "VIP"
+# aks holda agar revenue &gt;= 2 mln -&gt; "Regular"
+# aks holda -&gt; "New"</pre>
 <p>Bu Excel IF ga o‘xshaydi, lekin o‘qish osonroq va test qilish mumkin.</p>
 
 <h2>and / or / not</h2>
@@ -198,7 +202,7 @@ aks holda → "New"</pre>
 <p><code>if amount = 0</code> — bu tayinlash, taqqoslash emas. Taqqoslash: <code>==</code>.</p>
 """,
                 examples=[
-                    'def segment(revenue):\n    if revenue >= 10_000_000:\n        return "VIP"\n    if revenue >= 2_000_000:\n        return "Regular"\n    return "New"\nprint(segment(3_500_000))',
+                    'def segment(revenue):\n    if revenue >= 10000000:\n        return "VIP"\n    if revenue >= 2000000:\n        return "Regular"\n    return "New"\nprint(segment(3500000))',
                 ],
             ),
             _lec(
@@ -239,7 +243,7 @@ aks holda → "New"</pre>
 </ul>
 """,
                 examples=[
-                    'def aov(revenue, orders):\n    """Average order value. orders=0 bo‘lsa None."""\n    if orders == 0:\n        return None\n    return revenue / orders\nprint(aov(1_200_000, 40))',
+                    'def aov(revenue, orders):\n    """Average order value. orders=0 bo‘lsa None."""\n    if orders == 0:\n        return None\n    return revenue / orders\nprint(aov(1200000, 40))',
                 ],
             ),
         ],
@@ -247,7 +251,7 @@ aks holda → "New"</pre>
             "py-if": _quiz(
                 "py-q-if",
                 "Segment",
-                "revenue = 2_000_000, qoida: >=10mln VIP, >=2mln Regular.",
+                "revenue = 2000000, qoida: >=10mln VIP, >=2mln Regular.",
                 "Natija?",
                 ["A) VIP", "B) Regular", "C) New", "D) Xato"],
                 "B",
@@ -305,10 +309,10 @@ aks holda → "New"</pre>
   <li><strong>dict</strong> — kalit→qiymat (region: jami savdo)</li>
 </ul>
 <h2>Biznes</h2>
-<p><code>{"Toshkent": 12.5e6, "Samarqand": 4.1e6}</code> — kichik agregat. Katta hajmda Pandas DataFrame ishlating.</p>
+<p><code>{"Toshkent": 12500000, "Samarqand": 4100000}</code> — kichik agregat. Katta hajmda Pandas DataFrame ishlating.</p>
 """,
                 examples=[
-                    'cities = ["Toshkent", "Samarqand", "Toshkent"]\nprint(set(cities))\nrevenue = {"Toshkent": 12_500_000}\nprint(revenue.get("Buxoro", 0))',
+                    'cities = ["Toshkent", "Samarqand", "Toshkent"]\nprint(set(cities))\nrevenue = {"Toshkent": 12500000}\nprint(revenue.get("Buxoro", 0))',
                 ],
             ),
             _lec(
@@ -929,21 +933,33 @@ recency = (as_of - last).dt.days</pre>
 
 
 def build_python_modules():
+    from apps.core.python_beginner_module import BEGINNER_MODULE
+    from apps.core.python_lesson_format import extract_goal_paragraph, format_python_lesson
     from apps.core.python_puzzles import merge_python_exercises, merge_python_practice
     from apps.core.python_teacher_lessons import LECTURES
+    from apps.core.python_visuals import append_visuals
 
     modules = []
-    for module in MODULES:
+    for order, module in enumerate([BEGINNER_MODULE] + list(MODULES), start=1):
         data = {
             **module,
+            "order": order,
             "lectures": [dict(lec) for lec in module["lectures"]],
             "practice": dict(module.get("practice") or {}),
             "exercises": list(module.get("exercises") or []),
         }
         for lecture in data["lectures"]:
-            html = LECTURES.get(lecture["slug"])
-            if html:
-                lecture["content"] = html.strip()
+            structured = lecture["content"]
+            goal_p = extract_goal_paragraph(structured)
+            teacher = LECTURES.get(lecture["slug"])
+            if teacher:
+                lecture["content"] = teacher.strip()
+                # Teacher HTML already has runnable <pre> — avoid duplicate bottom examples
+                if "<pre" in lecture["content"].lower():
+                    lecture["sql_examples"] = []
+            lecture["content"] = append_visuals(lecture["slug"], lecture["content"])
+            lecture["content"] = format_python_lesson(lecture["content"], goal_p=goal_p)
+            # Bottom examples (MODULES) also get editor chrome via template class
         merge_python_practice(data)
         merge_python_exercises(data)
         modules.append(data)

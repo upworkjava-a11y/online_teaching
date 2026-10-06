@@ -245,6 +245,23 @@ class I18nServiceTests(TestCase):
         self.assertIn(f"Correct answer: {answer}.", localize(quiz["editorial"]))
         self.assertIn("FROM", localize(quiz["editorial"]))
 
+    def test_python_puzzle_question_russian_and_english(self):
+        """Quiz title/description/task must follow UI language (not stay Uzbek)."""
+        title = "Puzzle: turlar aralashuvi"
+        desc = "Hisobotda amount ba’zan matn, ba’zan son."
+        task = "Birinchi tuzatish?"
+
+        set_language(LANG_RU)
+        self.assertEqual(localize(title), "Puzzle: смешение типов")
+        self.assertIn("отчёте", localize(desc))
+        self.assertNotIn("ba’zan", localize(desc))
+        self.assertEqual(localize(task), "Первое исправление?")
+
+        set_language(LANG_EN)
+        self.assertEqual(localize(title), "Puzzle: mixed types")
+        self.assertIn("sometimes text", localize(desc))
+        self.assertEqual(localize(task), "First fix?")
+
 
 class LanguageSwitcherTests(TestCase):
     def setUp(self):

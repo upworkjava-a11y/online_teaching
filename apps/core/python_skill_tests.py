@@ -1,12 +1,42 @@
 """
 Python (Data Analytics) — har modul uchun bilim testlari (11 ta, 4 variant).
 Daraja: boshlang‘ich → o‘rta. O‘zbekcha.
+To‘g‘ri javob har savolda barqaror seed bilan aralashtiriladi (faqat A/B emas).
 """
+
+from __future__ import annotations
+
+import hashlib
+import random
+import re
+
+_OPT_PREFIX = re.compile(r"^[A-D]\)\s*")
+_EDITORIAL_LETTER = re.compile(r"^(To‘g‘ri javob:\s*)([A-D])(\.\s*)", re.S)
+
+
+def _shuffle_quiz(num: int, title: str, options: list[str], answer: str, editorial: str) -> tuple[list[str], str, str]:
+    """Stable shuffle so the correct letter is not always A/B."""
+    bodies = [_OPT_PREFIX.sub("", item) for item in options]
+    correct_text = bodies["ABCD".index(answer)]
+    rng = random.Random(hashlib.md5(f"py|{num}|{title}".encode("utf-8")).hexdigest())
+    order = list(range(4))
+    rng.shuffle(order)
+    shuffled = [bodies[i] for i in order]
+    labeled = [f"{letter}) {text}" for letter, text in zip("ABCD", shuffled)]
+    new_answer = "ABCD"[shuffled.index(correct_text)]
+    new_editorial, n = _EDITORIAL_LETTER.subn(rf"\g<1>{new_answer}\g<3>", editorial, count=1)
+    if n == 0:
+        new_editorial = editorial
+    return labeled, new_answer, new_editorial
 
 
 def _q(num: int, title: str, task: str, options: list[str], answer: str, editorial: str, difficulty: str = "easy"):
     assert answer in "ABCD"
     assert len(options) == 4
+    editorial = editorial.strip()
+    if not editorial.lower().startswith("to‘g‘ri javob:"):
+        editorial = f"To‘g‘ri javob: {answer}. {editorial}"
+    options, answer, editorial = _shuffle_quiz(num, title, options, answer, editorial)
     return {
         "num": num,
         "title": title,
@@ -24,6 +54,42 @@ def _q(num: int, title: str, task: str, options: list[str], answer: str, editori
 
 
 MODULE_SKILL_TESTS: dict[str, list[dict]] = {
+    "py-noldan": [
+        _q(1, "print", "print('Hi') nima qiladi?", [
+            "A) Hi ni ekranga chiqaradi", "B) Faylni o‘chiradi", "C) Internet", "D) SQL",
+        ], "A", "print — chiqish."),
+        _q(2, "Versiya", "Python o‘rnatilganini tekshirish?", [
+            "A) python --version", "B) excel --open", "C) git push", "D) pip uninstall",
+        ], "A", "Terminal buyrug‘i."),
+        _q(3, "Izoh", "# qator nima?", [
+            "A) Izoh — Python o‘tkazib yuboradi", "B) Xato", "C) Loop", "D) Import majburiy",
+        ], "A", "Hash — comment."),
+        _q(4, "Skript", ".py faylni ishga tushirish?", [
+            "A) python fayl.py", "B) fayl.py double-click doim", "C) Faqat Jupyter", "D) Hech qachon",
+        ], "A", "python fayl.py."),
+        _q(5, "SyntaxError", "Qavs yopilmasa?", [
+            "A) SyntaxError", "B) Faqat ogohlantirish", "C) Avtomatik tuzatadi", "D) None",
+        ], "A", "Sintaksis xato."),
+        _q(6, "NameError", "Nom topilmasa?", [
+            "A) NameError", "B) KeyboardError", "C) WiFiError", "D) TableError",
+        ], "A", "NameError."),
+        _q(7, "Traceback", "Traceback nima beradi?", [
+            "A) Xato turi va qator", "B) Parol", "C) Excel litsenziya", "D) Random son",
+        ], "A", "Traceback — xato xaritasi."),
+        _q(8, "REPL", "REPL nima uchun?", [
+            "A) Tez sinov, bir qator", "B) Faqat video", "C) Email yuborish", "D) DB backup",
+        ], "A", "Read-Eval-Print Loop."),
+        _q(9, "VS Code", "VS Code + Python nima uchun?", [
+            "A) .py fayl yozish va ishga tushirish", "B) Faqat rasm", "C) Faqat SQL", "D) Bank terminal",
+        ], "A", "Muhit."),
+        _q(10, "ZeroDivision", "0 ga bo‘lish?", [
+            "A) ZeroDivisionError", "B) SyntaxError", "C) ImportError", "D) HappyError",
+        ], "A", "Bo‘lish xavfi."),
+        _q(11, "Odat", "Birinchi modul odat?", [
+            "A) Kichik kod, tez sinash, xatodan qo‘rqmaslik", "B) 5000 qator bir kunda",
+            "C) Parolni kodga yozish", "D) Xom faylni o‘chirish",
+        ], "A", "Boshlang‘ich odat.", "medium"),
+    ],
     "py-asoslari": [
         _q(1, "Nima uchun Python?", "Tahlilchiga Python asosan nima uchun kerak?", [
             "A) Faqat o‘yin yozish", "B) Takrorlanadigan tozalash va hisobotni avtomatlashtirish",

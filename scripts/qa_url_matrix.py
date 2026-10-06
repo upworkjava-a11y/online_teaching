@@ -346,11 +346,11 @@ def check_role(report: Report, role: str, client: Client, cases, fx):
         if label.endswith("-missing") or label.endswith("-if-hidden"):
             # 404 expected for missing; python may 404 or 200 if visible
             if label == "courses:python-if-hidden":
-                # SQL-only release: python should not be openly usable
-                if status == 404:
-                    ok, note = True, "hidden/missing ok"
-                elif status == 200:
-                    ok, note = False, "python course still publicly reachable"
+                # Python is an open course when visible; hidden DB rows may 403
+                if status in (200, 404):
+                    ok, note = True, "open or missing ok"
+                elif status == 403:
+                    ok, note = True, "hidden/coming_soon ok"
                 elif status in (301, 302):
                     ok, note = True, f"redirect {resp.get('Location', '')}"
                 else:

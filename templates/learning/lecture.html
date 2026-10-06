@@ -1,14 +1,59 @@
 {% extends "base.html" %}
 {% block title %}{{ lecture.title|loc }}{% endblock %}
+{% block extra_head %}
+{% if is_python_course %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
+{% endif %}
+{% endblock %}
 {% block content %}
 <div class="mb-2 text-sm muted">{{ lecture.course.title|loc }} · {{ lecture.module.title|loc }}</div>
 <h1 class="text-3xl font-extrabold">{{ lecture.title|loc }}</h1>
-<article class="prose card mt-6">
+<article class="prose card mt-6 {% if is_python_course %}py-lesson{% endif %}">
   {{ lecture.content|loc_html:lecture.slug }}
   {% for example in lecture.sql_examples %}
-    <pre class="sql-block mt-4"><code>{{ example }}</code></pre>
+    {% if is_python_course %}
+      <div class="py-editor mt-4">
+        <div class="py-editor__bar">
+          <span class="py-editor__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="py-editor__title">example.py</span>
+          <span class="py-editor__lang">Python</span>
+        </div>
+        <pre class="py-editor__code"><code>{{ example }}</code></pre>
+      </div>
+    {% else %}
+      <pre class="sql-block mt-4"><code>{{ example }}</code></pre>
+    {% endif %}
   {% endfor %}
 </article>
+
+{% if is_python_course %}
+  <section class="card mt-6 py-playground" id="python-playground">
+    <p class="text-sm font-semibold text-emerald-700">{{ "Python sandbox"|loc }}</p>
+    <h2 class="text-lg font-bold mt-1">{{ "Kod yozing va ishga tushiring"|loc }}</h2>
+    <p class="muted mt-2">
+      {{ "SQL darsidagi kabi — bu yerda Python yozib, natijani darhol ko‘rasiz. print, hisob, list/dict, va ruxsat etilgan kutubxonalar (math, pandas, numpy…)."|loc }}
+    </p>
+    {% if user.is_authenticated %}
+      <form id="py-run-form" class="mt-4" data-url="{% url 'learning:run_python' lecture.pk %}">
+        {% csrf_token %}
+        <textarea class="hidden" name="code" id="py-code-input">{{ python_starter }}</textarea>
+        <div id="py-monaco" class="py-monaco"></div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <button class="btn btn-primary" type="submit" id="py-run-btn">{{ "Python ni ishga tushirish"|loc }}</button>
+          <button class="btn btn-ghost" type="button" id="py-reset-btn">{{ "Namunaga qaytish"|loc }}</button>
+        </div>
+      </form>
+      <div id="py-output" class="py-output mt-4" hidden>
+        <p class="text-sm font-semibold" id="py-output-label">{{ "Natija"|loc }}</p>
+        <pre class="py-output__pre" id="py-output-body"></pre>
+      </div>
+    {% else %}
+      <a class="btn btn-primary mt-4" href="{% url 'accounts:login' %}?next={% url 'learning:lecture' lecture.pk %}#python-playground">
+        {{ "Kod yozish uchun kiring"|loc }}
+      </a>
+    {% endif %}
+  </section>
+{% endif %}
 
 {% if practices %}
   <section class="card mt-6" id="practice">
@@ -86,4 +131,76 @@
     <a class="btn btn-primary" href="{% url 'courses:premium' lecture.module.course.slug %}">{{ "🔒 Keyingi modul — Premium ochish"|loc }}</a>
   {% endif %}
 </div>
+
+{% if is_python_course and user.is_authenticated %}
+<script>
+(function () {
+  const form = document.getElementById("py-run-form");
+  if (!form || typeof require === "undefined") return;
+  const input = document.getElementById("py-code-input");
+  const starter = input.value || "print(\"Salom!\")";
+  const outWrap = document.getElementById("py-output");
+  const outBody = document.getElementById("py-output-body");
+  const outLabel = document.getElementById("py-output-label");
+  const runBtn = document.getElementById("py-run-btn");
+  const MSG_RUNNING = "{{ 'Ishga tushirilmoqda…'|loc|escapejs }}";
+  const MSG_RESULT = "{{ 'Natija'|loc|escapejs }}";
+  const MSG_ERROR = "{{ 'Xato'|loc|escapejs }}";
+  const MSG_EMPTY = "{{ '(chiqish yo‘q)'|loc|escapejs }}";
+  let editor = null;
+
+  require.config({ paths: { vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs" }});
+  require(["vs/editor/editor.main"], function () {
+    editor = monaco.editor.create(document.getElementById("py-monaco"), {
+      value: starter,
+      language: "python",
+      theme: "vs-dark",
+      minimap: { enabled: false },
+      fontSize: 14,
+      automaticLayout: true,
+      scrollBeyondLastLine: false,
+    });
+  });
+
+  document.getElementById("py-reset-btn").addEventListener("click", function () {
+    if (editor) editor.setValue(starter);
+    input.value = starter;
+    outWrap.hidden = true;
+  });
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    if (editor) input.value = editor.getValue();
+    runBtn.disabled = true;
+    outWrap.hidden = false;
+    outLabel.textContent = MSG_RUNNING;
+    outBody.textContent = "";
+    try {
+      const data = new FormData(form);
+      const res = await fetch(form.dataset.url, {
+        method: "POST",
+        body: data,
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      });
+      const json = await res.json();
+      const parts = [];
+      if (json.stdout) parts.push(json.stdout);
+      if (json.stderr) parts.push(json.stderr);
+      if (!json.ok && json.error && !json.stderr) parts.push(json.error);
+      outLabel.textContent = json.ok
+        ? (MSG_RESULT + (json.execution_ms ? " · " + json.execution_ms + " ms" : ""))
+        : MSG_ERROR;
+      outBody.textContent = parts.join("\n").trim() || (json.ok ? MSG_EMPTY : (json.error || MSG_ERROR));
+      outWrap.classList.toggle("is-error", !json.ok);
+    } catch (err) {
+      outLabel.textContent = MSG_ERROR;
+      outBody.textContent = String(err);
+      outWrap.classList.add("is-error");
+    } finally {
+      runBtn.disabled = false;
+    }
+  });
+})();
+</script>
+{% endif %}
 {% endblock %}

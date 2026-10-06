@@ -96,8 +96,17 @@ class Command(BaseCommand):
             ),
             seed_skill_tests=True,
         )
-        # Production release: faqat SQL — Python musobaqasini yashirish
-        self._hide_python_for_release(courses["python"])
+        self._seed_weekly_contest(
+            courses["python"],
+            slug="haftalik-python",
+            title="Haftalik Python musobaqasi",
+            description=(
+                "Shu hafta ichida Python mashq va puzzlelarini yeching. "
+                "Ball: Oson +1, O‘rta +2, Qiyin +3. Musobaqa reytingi umumiy reytingdan alohida."
+            ),
+            seed_skill_tests=False,
+            limit=8,
+        )
         try:
             seed_sandbox_database()
             self.stdout.write(self.style.SUCCESS("Sandbox datasetlari yuklandi."))
@@ -185,6 +194,8 @@ class Command(BaseCommand):
         )
 
     def _create_courses(self):
+        from apps.access.services import OPEN_COURSE_SLUGS
+
         specs = [
             ("sql", "SQL", COURSE_DESCRIPTION, 1),
             ("english-banking", "English for Banking", EB_COURSE_DESCRIPTION, 2),
@@ -198,8 +209,9 @@ class Command(BaseCommand):
         ]
         courses = {}
         for slug, title, description, order in specs:
-            # Release: Python yashirin; SQL + English courses ochiq; qolganlar “Hozir jarayonda”
-            is_visible = slug != "python"
+            # Talabalar ro‘yxatida: SQL, Python, English/Russian IT + Banking.
+            # Excel / Statistika / Power BI / Amaliy loyihalar — hali yashirin.
+            is_visible = slug in OPEN_COURSE_SLUGS
             course, _ = Course.objects.get_or_create(
                 slug=slug,
                 defaults={
@@ -220,6 +232,7 @@ class Command(BaseCommand):
         return courses
 
     def _seed_structured_course(self, course: Course, modules_data):
+        known_exercise_slugs: set[str] = set()
         for module_data in modules_data:
             module, _ = Module.objects.update_or_create(
                 course=course,
@@ -249,6 +262,8 @@ class Command(BaseCommand):
                     if isinstance(practices, dict):
                         practices = [practices]
                     for p_i, practice in enumerate(practices):
+                        if practice.get("slug"):
+                            known_exercise_slugs.add(practice["slug"])
                         self._upsert_exercise(
                             module,
                             practice,
@@ -267,7 +282,15 @@ class Command(BaseCommand):
                         },
                     )
             for index, exercise_data in enumerate(module_data.get("exercises") or [], start=1):
+                if exercise_data.get("slug"):
+                    known_exercise_slugs.add(exercise_data["slug"])
                 self._upsert_exercise(module, exercise_data, [], order=index)
+        # Drop stale module exercises no longer in seed (keep skill tests; those seed separately).
+        if known_exercise_slugs:
+            stale = Exercise.objects.filter(module__course=course, is_skill_test=False).exclude(
+                slug__in=known_exercise_slugs
+            )
+            self._retire_exercises(stale, reason=f"{course.slug} eski mashqlar")
 
     def _create_sql_content(self, course: Course):
         customers, _ = Dataset.objects.update_or_create(
@@ -689,16 +712,33 @@ class Command(BaseCommand):
         from apps.core.python_skill_tests import MODULE_SKILL_TESTS, skill_tests_for_module
 
         total = 0
+        fallback_slug = next(iter(MODULE_SKILL_TESTS), "py-noldan")
         for module in course.modules.filter(is_published=True).order_by("order"):
             quizzes = skill_tests_for_module(module.slug)
             if not quizzes:
-                continue
+                quizzes = [dict(q) for q in skill_tests_for_module(fallback_slug)]
+                for q in quizzes:
+                    q["slug"] = f"bt-{module.slug}-{q['slug'].rsplit('-', 1)[-1]}"
             for index, quiz in enumerate(quizzes, start=1):
                 self._upsert_exercise(module, quiz, [], order=900 + index)
                 total += 1
         self.stdout.write(
             self.style.SUCCESS(
                 f"Python bilim testlari: {total} ta savol ({len(MODULE_SKILL_TESTS)} modul)."
+            )
+        )
+
+    def _hide_python_for_release(self, course: Course):
+        """Legacy helper — kept for emergency rollback only (not called in normal bootstrap)."""
+        from apps.contests.models import Contest
+
+        course.is_visible = False
+        course.save(update_fields=["is_visible"])
+        updated = Contest.objects.filter(slug="haftalik-python").update(is_published=False)
+        self.stdout.write(
+            self.style.WARNING(
+                f"Rollback: Python kursi yashirildi (is_visible=False)"
+                f"{', musobaqa yopildi' if updated else ''}."
             )
         )
 
@@ -753,20 +793,6 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 f"Русский для IT bilim testlari: {total} ta savol ({len(MODULE_SKILL_TESTS)} modul)."
-            )
-        )
-
-    def _hide_python_for_release(self, course: Course):
-        """Hozirgi release: faqat SQL ochiq — Python kurs va musobaqasini yashirish."""
-        from apps.contests.models import Contest
-
-        course.is_visible = False
-        course.save(update_fields=["is_visible"])
-        updated = Contest.objects.filter(slug="haftalik-python").update(is_published=False)
-        self.stdout.write(
-            self.style.WARNING(
-                f"Release: Python kursi yashirildi (is_visible=False)"
-                f"{', musobaqa yopildi' if updated else ''}."
             )
         )
 

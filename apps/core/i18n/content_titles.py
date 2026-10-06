@@ -1201,6 +1201,155 @@ TITLE_STRINGS: dict[str, dict[str, str]] = {
     "Fraud.": S("Фирибгарлик.", "Мошенничество.", "Fraud."),
     "Fraud terms.": S("Фирибгарлик терминлари.", "Термины мошенничества.", "Fraud terms."),
     "Compliance.": S("Compliance.", "Комплаенс.", "Compliance."),
+    "Python": S("Python", "Python", "Python"),
+    # --- Python course: modules, lectures, descriptions ---
+    "Python noldan": S("Python нолдан", "Python с нуля", "Python from zero"),
+    "O‘rnatish, birinchi qator kod, xatolarni o‘qish — hech narsa bilmasdan boshlash.": S(
+        "Ўрнатиш, биринчи қатор код, хатоларни ўқиш — ҳеч нарса билмасдан бошлаш.",
+        "Установка, первая строка кода, чтение ошибок — старт с нуля.",
+        "Install, first lines of code, reading errors — start from absolute zero.",
+    ),
+    "Python va birinchi qator": S("Python ва биринчи қатор", "Python и первая строка", "Python and your first line"),
+    "Skript fayl va izoh": S("Скрипт файл ва изоҳ", "Файл скрипта и комментарии", "Script file and comments"),
+    "Xatolarni o‘qish": S("Хатоларни ўқиш", "Чтение ошибок", "Reading errors"),
+    "Python asoslari": S("Python асослари", "Основы Python", "Python basics"),
+    "Nima uchun tahlilchiga Python, o‘zgaruvchilar, turlar va ifodalar.": S(
+        "Нима учун таҳлилчига Python, ўзгарувчилар, турлар ва ифодалар.",
+        "Зачем аналитику Python, переменные, типы и выражения.",
+        "Why analysts need Python: variables, types, and expressions.",
+    ),
+    "Tahlilchi uchun Python": S("Таҳлилчи учун Python", "Python для аналитика", "Python for analysts"),
+    "O‘zgaruvchilar va ma’lumot turlari": S(
+        "Ўзгарувчилар ва маълумот турлари",
+        "Переменные и типы данных",
+        "Variables and data types",
+    ),
+    "Ifodalar va chop etish": S("Ифодалар ва чоп этиш", "Выражения и вывод", "Expressions and printing"),
+    "Shartlar, tsikllar, funksiyalar": S(
+        "Шартлар, цикллар, функциялар",
+        "Условия, циклы, функции",
+        "Conditions, loops, functions",
+    ),
+    "if/elif, for/while, qayta ishlatiladigan funksiyalar.": S(
+        "if/elif, for/while, қайта ишлатиладиган функциялар.",
+        "if/elif, for/while, переиспользуемые функции.",
+        "if/elif, for/while, reusable functions.",
+    ),
+    "Shartlar: if, elif, else": S("Шартлар: if, elif, else", "Условия: if, elif, else", "Conditions: if, elif, else"),
+    "Tsikllar: for va while": S("Цикллар: for ва while", "Циклы: for и while", "Loops: for and while"),
+    "Funksiyalar": S("Функциялар", "Функции", "Functions"),
+    "To‘plamlar, fayl va xatolar": S(
+        "Тўпламлар, файл ва хатолар",
+        "Коллекции, файлы и ошибки",
+        "Collections, files, and errors",
+    ),
+    "list/dict/set/tuple, CSV o‘qish, try/except, modullar.": S(
+        "list/dict/set/tuple, CSV ўқиш, try/except, модуллар.",
+        "list/dict/set/tuple, чтение CSV, try/except, модули.",
+        "list/dict/set/tuple, reading CSV, try/except, modules.",
+    ),
+    "List, tuple, set, dict": S("List, tuple, set, dict", "List, tuple, set, dict", "List, tuple, set, dict"),
+    "Fayl va CSV": S("Файл ва CSV", "Файлы и CSV", "Files and CSV"),
+    "Istisnolar va modullar": S("Истиснолар ва модуллар", "Исключения и модули", "Exceptions and modules"),
+    "NumPy": S("NumPy", "NumPy", "NumPy"),
+    "Massivlar, vektor hisob, nan va statistik qisqa yo‘l.": S(
+        "Массивлар, вектор ҳисоб, nan ва статистик қисқа йўл.",
+        "Массивы, векторные вычисления, nan и краткая статистика.",
+        "Arrays, vector math, NaN, and quick stats.",
+    ),
+    "ndarray nima?": S("ndarray нима?", "Что такое ndarray?", "What is ndarray?"),
+    "Indeks, filtr, broadcasting": S(
+        "Индекс, фильтр, broadcasting",
+        "Индекс, фильтр, broadcasting",
+        "Indexing, filters, broadcasting",
+    ),
+    "NaN va agregatlar": S("NaN ва агрегатлар", "NaN и агрегаты", "NaN and aggregates"),
+    "Pandas: DataFrame": S("Pandas: DataFrame", "Pandas: DataFrame", "Pandas: DataFrame"),
+    "Series/DataFrame, o‘qish, tanlash, filtr.": S(
+        "Series/DataFrame, ўқиш, танлаш, фильтр.",
+        "Series/DataFrame, чтение, выбор, фильтр.",
+        "Series/DataFrame, reading, selecting, filtering.",
+    ),
+    "Series va DataFrame": S("Series ва DataFrame", "Series и DataFrame", "Series and DataFrame"),
+    "Ustun tanlash va filtr": S("Устун танлаш ва фильтр", "Выбор столбцов и фильтр", "Column select and filter"),
+    "Yangi ustun va assign": S("Янги устун ва assign", "Новый столбец и assign", "New columns and assign"),
+    "Tozalash: NaN, dublikat, transform": S(
+        "Тозалаш: NaN, дубликат, transform",
+        "Очистка: NaN, дубликаты, transform",
+        "Cleaning: NaN, duplicates, transform",
+    ),
+    "Missing, duplicates, matn/son konvertatsiya.": S(
+        "Missing, duplicates, матн/сон конвертация.",
+        "Missing, duplicates, текст/число конвертация.",
+        "Missing values, duplicates, text/number conversion.",
+    ),
+    "Yetishmayotgan qiymatlar": S("Етишмаётган қийматлар", "Пропущенные значения", "Missing values"),
+    "Dublikatlar": S("Дубликатлар", "Дубликаты", "Duplicates"),
+    "Matn va tur konvertatsiyasi": S(
+        "Матн ва тур конвертацияси",
+        "Конвертация текста и типов",
+        "Text and type conversion",
+    ),
+    "Guruhlash, merge, sana": S("Гуруҳлаш, merge, сана", "Группировка, merge, даты", "Grouping, merge, dates"),
+    "groupby, agg, merge/join, datetime tahlil.": S(
+        "groupby, agg, merge/join, datetime таҳлил.",
+        "groupby, agg, merge/join, анализ datetime.",
+        "groupby, agg, merge/join, datetime analysis.",
+    ),
+    "groupby va aggregatsiya": S("groupby ва агрегация", "groupby и агрегация", "groupby and aggregation"),
+    "merge / join": S("merge / join", "merge / join", "merge / join"),
+    "Sana/vaqt tahlili": S("Сана/вақт таҳлили", "Анализ даты/времени", "Date/time analysis"),
+    "EDA va vizualizatsiya": S("EDA ва визуализация", "EDA и визуализация", "EDA and visualization"),
+    "Tavsiflovchi tahlil, Matplotlib, Seaborn.": S(
+        "Тавсифловчи таҳлил, Matplotlib, Seaborn.",
+        "Описательный анализ, Matplotlib, Seaborn.",
+        "Descriptive analysis, Matplotlib, Seaborn.",
+    ),
+    "EDA tartibi": S("EDA тартиби", "Порядок EDA", "EDA workflow"),
+    "Matplotlib": S("Matplotlib", "Matplotlib", "Matplotlib"),
+    "Seaborn": S("Seaborn", "Seaborn", "Seaborn"),
+    "Biznes tahlil va yakuniy loyiha": S(
+        "Бизнес таҳлил ва якуний лойиҳа",
+        "Бизнес-анализ и итоговый проект",
+        "Business analysis and capstone",
+    ),
+    "KPI, kohort/recency g‘oya, yakuniy analytics project.": S(
+        "KPI, когорт/recency ғоя, якуний analytics project.",
+        "KPI, идея когорт/recency, итоговый analytics-проект.",
+        "KPIs, cohort/recency idea, final analytics project.",
+    ),
+    "KPI ni kodda hisoblash": S("KPI ни кодда ҳисоблаш", "Расчёт KPI в коде", "Computing KPIs in code"),
+    "Mijoz kesimi: recency g‘oyasi": S(
+        "Мижоз кесими: recency ғояси",
+        "Сегмент клиентов: идея recency",
+        "Customer slice: recency idea",
+    ),
+    "Yakuniy loyiha: retail savdo": S(
+        "Якуний лойиҳа: retail савдо",
+        "Итоговый проект: розничные продажи",
+        "Capstone: retail sales",
+    ),
+    (
+        "Python noldan — tahlilchi va yangi boshlovchi uchun. 10 modul: birinchi qator kod, "
+        "o‘zgaruvchi va turlar, if/tsikl/funksiya, tuzilmalar, NumPy, Pandas, tozalash, EDA va mini-loyiha. "
+        "Har darsda aniq maqsad, kod namuna, mashq va puzzle."
+    ): S(
+        (
+            "Python нолдан — таҳлилчи ва янги бошловчи учун. 10 модул: биринчи қатор код, "
+            "ўзгарувчи ва турлар, if/цикл/функция, тузилмалар, NumPy, Pandas, тозалаш, EDA ва мини-лойиҳа. "
+            "Ҳар дарсда аниқ мақсад, код намуна, машқ ва puzzle."
+        ),
+        (
+            "Python с нуля — для аналитиков и начинающих. 10 модулей: первая строка кода, "
+            "переменные и типы, if/цикл/функции, структуры, NumPy, Pandas, очистка, EDA и мини-проект. "
+            "В каждом уроке цель, пример кода, задания и головоломки."
+        ),
+        (
+            "Python from zero — for analysts and beginners. 10 modules: first lines of code, "
+            "variables and types, if/loops/functions, structures, NumPy, Pandas, cleaning, EDA, and a mini-project. "
+            "Each lesson has a clear goal, code sample, practice, and puzzles."
+        ),
+    ),
     "Bank sohasidagi asosiy so‘z.": S(
         "Банк соҳасидаги асосий сўз.",
         "Ключевое банковское слово.",

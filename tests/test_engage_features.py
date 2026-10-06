@@ -32,15 +32,15 @@ class EngageFeaturesTests(TestCase):
         self.assertContains(response, "Oson")
         self.assertContains(response, "Kurs")
 
-    def test_catalog_sql_only_for_release(self):
+    def test_catalog_open_courses_include_python(self):
         py_course = make_course("python", published=True, visible=True, title="Python")
         py_module = make_module(py_course, slug="py-asoslari", title="Python asoslari")
         make_exercise(py_module, slug="py-puzzle-1", title="Puzzle: AOV", lecture=None)
         self.client.force_login(self.student)
         all_page = self.client.get(reverse("exercises:catalog"))
-        self.assertNotContains(all_page, "Puzzle: AOV")
+        self.assertContains(all_page, "Puzzle: AOV")
         filtered = self.client.get(reverse("exercises:catalog"), {"course": "python"})
-        self.assertNotContains(filtered, "Puzzle: AOV")
+        self.assertContains(filtered, "Puzzle: AOV")
 
     def test_streak_increments_on_correct(self):
         exercise_service.run(self.student, self.exercise, "SELECT name FROM customers")

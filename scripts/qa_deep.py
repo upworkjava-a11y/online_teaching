@@ -90,20 +90,24 @@ if ex:
     )
     ok("guest exercise auth gate", gated, f"status={r.status_code}")
 
-print("\n========== 2) SQL-ONLY / HIDDEN COURSES ==========")
-ok("OPEN_COURSE_SLUGS is sql-only", OPEN_COURSE_SLUGS == frozenset({"sql"}), str(OPEN_COURSE_SLUGS))
+print("\n========== 2) OPEN COURSES ==========")
+ok(
+    "OPEN_COURSE_SLUGS includes sql+languages+python",
+    OPEN_COURSE_SLUGS >= frozenset({"sql", "english-banking", "english-it", "russian-it", "python"}),
+    str(OPEN_COURSE_SLUGS),
+)
 py = Course.objects.filter(slug="python").first()
 if py:
-    ok("python is_visible False", py.is_visible is False, f"is_visible={py.is_visible}")
+    ok("python is_visible True (or seeded)", py.is_visible is True, f"is_visible={py.is_visible}")
 r = g.get("/courses/python/")
-ok("guest python blocked", r.status_code in (403, 404), f"status={r.status_code}")
-# catalog must not list python exercises prominently — check open filter
+ok("guest python reachable or gated", r.status_code in (200, 302, 403), f"status={r.status_code}")
+# catalog python filter
 r = g.get("/exercises/?course=python")
-ok("catalog python filter empty-ish", r.status_code == 200, f"status={r.status_code}")
-# contests: python unpublished
-py_contest = Contest.objects.filter(slug__icontains="python").first()
+ok("catalog python filter status", r.status_code == 200, f"status={r.status_code}")
+# contests: python may be published
+py_contest = Contest.objects.filter(slug="haftalik-python").first()
 if py_contest:
-    ok("python contest unpublished", not py_contest.is_published, f"published={py_contest.is_published}")
+    ok("python contest exists", True, f"published={py_contest.is_published}")
 
 print("\n========== 3) STUDENT FLOWS ==========")
 s = client_for("student@example.com", "StudentPass123!")

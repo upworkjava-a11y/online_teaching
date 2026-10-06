@@ -165,6 +165,21 @@ STRINGS: dict[str, dict[str, str]] = {
         "Сейчас открыт SQL. Остальные курсы — в разработке.",
         "SQL is open for now. Other courses are coming soon.",
     ),
+    "Ochiq kurslar: SQL, English for Banking, DevEnglish, DevRussian va Python. Qolganlari — Hozir jarayonda.": S(
+        "Очиқ курслар: SQL, English for Banking, DevEnglish, DevRussian ва Python. Қолганлари — Ҳозир жараёнда.",
+        "Открытые курсы: SQL, English for Banking, DevEnglish, DevRussian и Python. Остальные — в разработке.",
+        "Open courses: SQL, English for Banking, DevEnglish, DevRussian, and Python. Others coming soon.",
+    ),
+    "Ochiq kurslar bo‘yicha progress. Premium modullar to‘lovdan keyin to‘liq ochiladi.": S(
+        "Очиқ курслар бўйича прогресс. Premium модуллар тўловдан кейин тўлиқ очилади.",
+        "Прогресс по открытым курсам. Premium-модули полностью открываются после оплаты.",
+        "Progress across open courses. Premium modules unlock fully after payment.",
+    ),
+    "Ochiq kurslar uy vazifasi: SQL, English for Banking, DevEnglish, DevRussian va Python.": S(
+        "Очиқ курслар уй вазифаси: SQL, English for Banking, DevEnglish, DevRussian ва Python.",
+        "Домашние задания по открытым курсам: SQL, English for Banking, DevEnglish, DevRussian и Python.",
+        "Homework for open courses: SQL, English for Banking, DevEnglish, DevRussian, and Python.",
+    ),
     "Hozir jarayonda": S("Ҳозир жараёнда", "В разработке", "Coming soon"),
     "🔒 Hozir jarayonda": S("🔒 Ҳозир жараёнда", "🔒 В разработке", "🔒 Coming soon"),
     "Progress:": S("Прогресс:", "Прогресс:", "Progress:"),
@@ -247,6 +262,11 @@ STRINGS: dict[str, dict[str, str]] = {
         "Задачи SQL, English for Banking, DevEnglish и DevRussian — лёгкие, средние и сложные.",
         "SQL, English for Banking, DevEnglish, and DevRussian exercises — easy, medium, and hard.",
     ),
+    "SQL, English for Banking, DevEnglish, DevRussian va Python mashqlari — oson, o‘rta va qiyin.": S(
+        "SQL, English for Banking, DevEnglish, DevRussian ва Python машқлари — осон, ўрта ва қийин.",
+        "Задачи SQL, English for Banking, DevEnglish, DevRussian и Python — лёгкие, средние и сложные.",
+        "SQL, English for Banking, DevEnglish, DevRussian, and Python exercises — easy, medium, and hard.",
+    ),
     "SQL, English for Banking, English for IT va Русский для IT mashqlari — oson, o‘rta va qiyin.": S(
         "SQL, English for Banking, DevEnglish ва DevRussian машқлари — осон, ўрта ва қийин.",
         "Задачи SQL, English for Banking, DevEnglish и DevRussian — лёгкие, средние и сложные.",
@@ -295,6 +315,66 @@ STRINGS: dict[str, dict[str, str]] = {
     ),
     "Testni yechish": S("Тестни ечиш", "Решить тест", "Take the quiz"),
     "Kod yozish": S("Код ёзиш", "Писать код", "Write code"),
+    "Python sandbox": S("Python sandbox", "Python sandbox", "Python sandbox"),
+    "Kod yozing va ishga tushiring": S(
+        "Код ёзинг ва ишга туширинг",
+        "Пишите код и запускайте",
+        "Write code and run it",
+    ),
+    (
+        "SQL darsidagi kabi — bu yerda Python yozib, natijani darhol ko‘rasiz. "
+        "print, hisob, list/dict, va ruxsat etilgan kutubxonalar (math, pandas, numpy…)."
+    ): S(
+        (
+            "SQL дарсидаги каби — бу ерда Python ёзиб, натижани дарҳол кўрасиз. "
+            "print, ҳисоб, list/dict, ва рухсат этилган кутубхоналар (math, pandas, numpy…)."
+        ),
+        (
+            "Как на уроках SQL — здесь пишете Python и сразу видите результат. "
+            "print, вычисления, list/dict и разрешённые библиотеки (math, pandas, numpy…)."
+        ),
+        (
+            "Like in SQL lessons — write Python here and see the result immediately. "
+            "print, calculations, list/dict, and allowed libraries (math, pandas, numpy…)."
+        ),
+    ),
+    "Python ni ishga tushirish": S(
+        "Python ни ишга тушириш",
+        "Запустить Python",
+        "Run Python",
+    ),
+    "Namunaga qaytish": S("Намунага қайтиш", "Вернуть пример", "Reset to example"),
+    "Kod yozish uchun kiring": S(
+        "Код ёзиш учун киринг",
+        "Войдите, чтобы писать код",
+        "Sign in to write code",
+    ),
+    "Ishga tushirilmoqda…": S("Ишга туширилмоқда…", "Запуск…", "Running…"),
+    "Natija": S("Натижа", "Результат", "Result"),
+    "Xato": S("Хато", "Ошибка", "Error"),
+    "(chiqish yo‘q)": S("(чиқиш йўқ)", "(нет вывода)", "(no output)"),
+    "Bu sandbox faqat Python kursi uchun.": S(
+        "Бу sandbox фақат Python курси учун.",
+        "Этот sandbox только для курса Python.",
+        "This sandbox is only for the Python course.",
+    ),
+    "Juda ko‘p so‘rov. Biroz kuting.": S(
+        "Жуда кўп сўров. Бироз кутинг.",
+        "Слишком много запросов. Подождите немного.",
+        "Too many requests. Please wait a moment.",
+    ),
+    "Python kodini ishga tushirish uchun hisob kerak": S(
+        "Python кодини ишга тушириш учун ҳисоб керак",
+        "Нужен аккаунт, чтобы запускать Python",
+        "You need an account to run Python",
+    ),
+    (
+        "Darsdagi Python sandboxdan foydalanish uchun tizimga kiring yoki ro‘yxatdan o‘ting."
+    ): S(
+        "Дарсдаги Python sandboxдан фойдаланиш учун тизимга киринг ёки рўйхатдан ўтинг.",
+        "Войдите или зарегистрируйтесь, чтобы пользоваться Python sandbox в уроке.",
+        "Sign in or register to use the Python sandbox in the lesson.",
+    ),
     "Uy vazifasi yuborish": S("Уй вазифаси юбориш", "Отправить домашку", "Submit homework"),
     "Oldingi dars": S("Олдинги дарс", "Предыдущий урок", "Previous lesson"),
     "Keyingi dars": S("Кейинги дарс", "Следующий урок", "Next lesson"),

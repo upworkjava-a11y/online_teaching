@@ -8,6 +8,38 @@ from apps.core.python_content import _quiz
 
 # Har dars uchun qo‘shimcha (2-chi) mashq — medium
 EXTRA_LECTURE_PRACTICE: dict[str, dict] = {
+    "py-noldan-start": _quiz(
+        "py-p-noldan-repl",
+        "Puzzle: REPL",
+        "Sinov.",
+        "Bitta qatorni tez sinash uchun qulay?",
+        [
+            "A) Faqat Word",
+            "B) Python REPL yoki Notebook katak",
+            "C) Faqat printer",
+            "D) Email",
+        ],
+        "B",
+        difficulty="medium",
+    ),
+    "py-noldan-run": _quiz(
+        "py-p-noldan-ext",
+        "Puzzle: fayl kengaytmasi",
+        "Skript.",
+        "Python skript fayli odatda qaysi kengaytma?",
+        ["A) .docx", "B) .py", "C) .jpg", "D) .sql"],
+        "B",
+        difficulty="easy",
+    ),
+    "py-noldan-errors": _quiz(
+        "py-p-noldan-name",
+        "Puzzle: NameError",
+        "amount deb yozilgan, lekin kodda amout ishlatilgan.",
+        "Bu qanday xato?",
+        ["A) SyntaxError", "B) NameError", "C) FileNotFoundError", "D) ImportError"],
+        "B",
+        difficulty="medium",
+    ),
     "py-nima": _quiz(
         "py-p-raw",
         "Puzzle: raw papka",
@@ -48,7 +80,7 @@ EXTRA_LECTURE_PRACTICE: dict[str, dict] = {
     "py-if": _quiz(
         "py-p-segment",
         "Puzzle: segment",
-        "VIP >= 10mln, Regular >= 2mln, aks holda New. revenue=2_000_000.",
+        "VIP >= 10mln, Regular >= 2mln, aks holda New. revenue=2000000.",
         "Natija?",
         ["A) VIP", "B) Regular", "C) New", "D) Xato"],
         "B",
@@ -309,30 +341,59 @@ EXTRA_LECTURE_PRACTICE: dict[str, dict] = {
 
 # Modul banki — SQL dagi qo‘shimcha mashqlarga o‘xshash “puzzle”lar
 MODULE_EXERCISES: dict[str, list[dict]] = {
-    "py-asoslari": [
+    "py-noldan": [
         _quiz(
-            "py-ex-types",
-            "Puzzle: turlar aralashuvi",
-            "Hisobotda amount ba’zan matn, ba’zan son.",
-            "Birinchi tuzatish?",
+            "py-ex-noldan-path",
+            "Puzzle: ishga tushirish",
+            "Skript ishlamayapti.",
+            "Birinchi tekshiruv?",
             [
-                "A) Darhol o‘rtacha olish",
-                "B) Turini tekshirib songa o‘girish (to_numeric/astype)",
-                "C) Ustunni o‘chirish",
-                "D) Faqat pie",
+                "A) To‘g‘ri papkada python fayl.py",
+                "B) Kompyuterni formatlash",
+                "C) Internet tezligini oshirish",
+                "D) Excelni qayta o‘rnatish",
             ],
-            "B",
+            "A",
             difficulty="easy",
         ),
         _quiz(
-            "py-ex-pct",
-            "Puzzle: foiz",
-            "AOV 50→45.",
-            "Foiz o‘zgarish?",
-            ["A) -10%", "B) +10%", "C) 45%", "D) 50%"],
+            "py-ex-noldan-fix",
+            "Puzzle: tuzatish",
+            "SyntaxError: unterminated string.",
+            "Ehtimol sabab?",
+            [
+                "A) Qo‘shtirnoq yopilmagan",
+                "B) CPU yetishmaydi",
+                "C) Pandas yo‘q",
+                "D) Wi-Fi",
+            ],
             "A",
             difficulty="medium",
-            hints=["(45-50)/50 = -0.1"],
+        ),
+    ],
+    "py-asoslari": [
+        _quiz(
+            "py-ex-repl-vs-file",
+            "Puzzle: REPL vs fayl",
+            "Har dushanba bir xil hisobot skripti kerak.",
+            "Nima saqlab qo‘yish kerak?",
+            [
+                "A) .py skript fayl (versiya nazorati bilan)",
+                "B) Faqat REPL tarixidagi qatorlar",
+                "C) Word hujjat",
+                "D) Skrinshot",
+            ],
+            "A",
+            difficulty="easy",
+        ),
+        _quiz(
+            "py-ex-str-int",
+            "Puzzle: input",
+            "Foydalanuvchi kiritgan '250' matn.",
+            "Son sifatida ishlatish?",
+            ["A) int('250')", "B) '250' + 1", "C) str(250) + str(1)", "D) Hech narsa"],
+            "A",
+            difficulty="medium",
         ),
     ],
     "py-mantiq": [
@@ -353,6 +414,20 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
             "B",
             difficulty="medium",
         ),
+        _quiz(
+            "py-ex-segment-order",
+            "Puzzle: tartib",
+            "Avval Regular (>=2mln), keyin VIP (>=10mln) yozilgan.",
+            "Nima bo‘ladi?",
+            [
+                "A) VIP to‘g‘ri ishlaydi",
+                "B) 10mln+ ham Regular ga tushishi mumkin — avval katta chegara",
+                "C) SyntaxError",
+                "D) Hech narsa",
+            ],
+            "B",
+            difficulty="hard",
+        ),
     ],
     "py-tuzilma": [
         _quiz(
@@ -364,11 +439,11 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
             "A",
         ),
         _quiz(
-            "py-ex-unique",
-            "Puzzle: unique city",
-            "Ro‘yxatda shaharlar takrorlanadi. Unikal son?",
-            "Tez usul?",
-            ["A) len(set(cities))", "B) cities[0]", "C) sum(cities)", "D) type(cities)"],
+            "py-ex-tuple-key",
+            "Puzzle: tuple kalit",
+            "(region, month) juftligini dict kaliti sifatida ishlatmoqchisiz.",
+            "Qaysi tur mos?",
+            ["A) tuple", "B) list", "C) set", "D) dict ichida dict"],
             "A",
             difficulty="medium",
         ),
@@ -394,18 +469,18 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
     ],
     "py-pandas": [
         _quiz(
-            "py-ex-read",
-            "Puzzle: encoding",
-            "O‘zbekcha CSV mojibake.",
-            "Birinchi urinish?",
+            "py-ex-head-tail",
+            "Puzzle: tekshiruv",
+            "Yangi CSV keldi, 50 ming qator.",
+            "Birinchi qadam?",
             [
-                "A) encoding='utf-8' / 'utf-8-sig' / 'cp1251' sinash",
-                "B) Drop file",
-                "C) Only Excel forever",
-                "D) Ignore",
+                "A) df.head() va df.info() bilan ustun/tur ko‘rish",
+                "B) Darhol groupby",
+                "C) Barcha qatorni print",
+                "D) Faylni o‘chirish",
             ],
             "A",
-            difficulty="medium",
+            difficulty="easy",
         ),
         _quiz(
             "py-ex-filter-chain",
@@ -420,20 +495,34 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
             ],
             "A",
         ),
+        _quiz(
+            "py-ex-setting-copy",
+            "Puzzle: SettingWithCopy",
+            "tosh = df[df.city=='Toshkent']; tosh['vat']=1",
+            "Xavfsizroq?",
+            [
+                "A) Shu usul yaxshi",
+                "B) df.loc[mask, 'vat'] = ... yoki assign",
+                "C) del df",
+                "D) while True",
+            ],
+            "B",
+            difficulty="hard",
+        ),
     ],
     "py-clean": [
         _quiz(
-            "py-ex-order",
-            "Puzzle: tozalash tartibi",
-            "Dublikat, matn amount, NaN bor.",
-            "Eng mantiqiy?",
+            "py-ex-audit-trail",
+            "Puzzle: jurnal",
+            "Qaysi qator o‘chirilganini keyin bilmoqchisiz.",
+            "Yaxshi amaliyot?",
             [
-                "A) KPI → tozalash",
-                "B) Tur → missing siyosati → dublikat → KPI",
-                "C) Plot only",
-                "D) Random drop",
+                "A) Tozalash qadamini alohida jurnal faylga yozish",
+                "B) Xom CSV ni ustiga yozish",
+                "C) Hech narsa saqlamaslik",
+                "D) Faqat grafik",
             ],
-            "B",
+            "A",
             difficulty="medium",
         ),
         _quiz(
@@ -444,14 +533,28 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
             ["A) fillna('Noma’lum')", "B) mean()", "C) merge how=cross", "D) iloc"],
             "A",
         ),
+        _quiz(
+            "py-ex-nan-zero",
+            "Puzzle: NaN siyosati",
+            "amount NaN ni 0 qilib AOV hisoblandi — o‘rtacha tushdi.",
+            "Asosiy muammo?",
+            [
+                "A) Pandas bug",
+                "B) Noma’lum va haqiqiy 0 aralashdi — avval flag, keyin qoida",
+                "C) Encoding",
+                "D) GPU",
+            ],
+            "B",
+            difficulty="hard",
+        ),
     ],
     "py-agg": [
         _quiz(
-            "py-ex-aov-region",
-            "Puzzle: region AOV",
-            "Har region: sum(amount)/nunique(order_id).",
-            "Vositalar?",
-            ["A) groupby + agg", "B) only head", "C) dropna reverse", "D) CSS"],
+            "py-ex-pivot-table",
+            "Puzzle: pivot jadval",
+            "Region × oy matritsasi kerak (qator=region, ustun=oy, qiymat=sum).",
+            "Pandas usuli?",
+            ["A) pivot_table", "B) faqat head()", "C) dropna()", "D) str.upper"],
             "A",
             difficulty="medium",
         ),
@@ -463,6 +566,20 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
             ["A) Yo‘q", "B) Qatorlar sun’iy ko‘payishi", "C) Faster", "D) Auto unique"],
             "B",
             difficulty="medium",
+        ),
+        _quiz(
+            "py-ex-aov-join",
+            "Puzzle: AOV join",
+            "Merge dan keyin revenue 2× katta, orders ham ko‘paygan.",
+            "Birinchi tekshiruv?",
+            [
+                "A) Pie chart",
+                "B) Kalit dublikat / fan-out — merge oldidan nunique tekshirish",
+                "C) Drop database",
+                "D) Ignore",
+            ],
+            "B",
+            difficulty="hard",
         ),
     ],
     "py-eda": [
@@ -482,6 +599,20 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
             ["A) Top-10 + 'boshqalar'", "B) Barchasini pie", "C) Delete data", "D) Ignore"],
             "A",
             difficulty="medium",
+        ),
+        _quiz(
+            "py-ex-corr-trap",
+            "Puzzle: korrelyatsiya",
+            "corr = 0.9 ikki ustun.",
+            "To‘g‘ri xulosa?",
+            [
+                "A) Aniq sabab-oqibat",
+                "B) Kuchli bog‘liqlik signal — sababni alohida tekshirish kerak",
+                "C) Drop both columns",
+                "D) Always fraud",
+            ],
+            "B",
+            difficulty="hard",
         ),
     ],
     "py-capstone": [
@@ -513,23 +644,86 @@ MODULE_EXERCISES: dict[str, list[dict]] = {
             "B",
             difficulty="hard",
         ),
+        _quiz(
+            "py-ex-cap-pipeline",
+            "Puzzle: pipeline",
+            "Har oy bir xil CSV keladi.",
+            "Eng to‘g‘ri?",
+            [
+                "A) Har safar qo‘lda Notebook",
+                "B) Parametrli skript/funksiya + tozalash jurnali + qayta ishga tushirish",
+                "C) Faqat screenshot",
+                "D) One-off Excel without save",
+            ],
+            "B",
+            difficulty="hard",
+        ),
     ],
 }
 
 
+def _quiz_blob(quiz: dict) -> str:
+    parts = [
+        quiz.get("slug") or "",
+        quiz.get("title") or "",
+        quiz.get("description") or "",
+        quiz.get("quiz_prompt") or quiz.get("task") or "",
+    ]
+    return " ".join(str(p) for p in parts).lower()
+
+
+def _quiz_topic_fingerprint(quiz: dict) -> frozenset[str]:
+    """Rough topic key — bir darsda ikki marta segment/encoding kabi takror bo‘lmasin."""
+    blob = _quiz_blob(quiz)
+    tags: set[str] = set()
+    rules: tuple[tuple[str, tuple[str, ...]], ...] = (
+        ("segment", ("segment", "vip", "regular", "10mln", "10 mln", "2mln")),
+        ("encoding", ("encoding", "utf-8", "utf-8-sig", "mojibake", "buzilib", "cp1251")),
+        ("bare_except", ("except:", "yalang", "yutib yubor", "yalang‘och")),
+        ("boolean_mask", ("mask", "arr[arr", "x[x", "arr > 0")),
+        ("recency", ("recency", "120 kun", "90 kun", "xarid qilmagan", "oxirgi xarid", "recency_days")),
+        ("line_chart", ("line chart", "trendi", "oylik revenue", "oylik savdo")),
+        ("boxplot", ("boxplot", "outlier")),
+        ("foiz_change", ("foiz", "o‘zgarish", "yangi 45", "50→45", "aov 50")),
+        ("unique_set", ("unique", "set(cities", "set(ids", "unikal")),
+        ("aov_safety", ("orders = 0", "orders=0", "0 ga bo‘lish", "xavfsiz aov")),
+        ("describe_eda", ("describe()", "taqsimot")),
+        ("groupby_sum", ("groupby", "yig‘indisi")),
+        ("merge_left", ("left merge", "how='left'", "how=\"left\"")),
+        ("dup_drop", ("drop_duplicates", "dublikat")),
+        ("coerce_numeric", ("to_numeric", "errors='coerce'", "coerce")),
+        ("nan_mean", ("nanmean", "nan bo‘lsa")),
+        ("shape_df", ("shape", "200 qator", "8 ustun")),
+        ("pandas_and_filter", ("& (df", "df[(df")),
+        ("capstone_order", ("loyiha tartibi", "birinchi ish", "xomni saqlash")),
+        ("kpi_definition", ("kpi ta’rifi", "faol mijoz", "ta’rifni hujjat")),
+    )
+    for tag, needles in rules:
+        if any(n in blob for n in needles):
+            tags.add(tag)
+    return frozenset(tags)
+
+
 def merge_python_practice(module: dict) -> dict:
-    """Mavjud practice (1 ta) + EXTRA (2-chi mashq) → list."""
+    """Asosiy mashq + faqat mavzusi takrorlanmagan qo‘shimcha puzzle."""
     practice = dict(module.get("practice") or {})
     merged = {}
     for lecture in module.get("lectures") or []:
         slug = lecture["slug"]
-        items = []
+        items: list[dict] = []
+        topic_tags: set[str] = set()
         base = practice.get(slug)
         if base:
-            items.append(base)
+            bases = [base] if isinstance(base, dict) else list(base)
+            for q in bases:
+                items.append(q)
+                topic_tags |= set(_quiz_topic_fingerprint(q))
         extra = EXTRA_LECTURE_PRACTICE.get(slug)
         if extra:
-            items.append(extra)
+            extra_tags = set(_quiz_topic_fingerprint(extra))
+            if not (extra_tags & topic_tags):
+                items.append(extra)
+                topic_tags |= extra_tags
         if items:
             merged[slug] = items
     module["practice"] = merged
@@ -539,11 +733,21 @@ def merge_python_practice(module: dict) -> dict:
 def merge_python_exercises(module: dict) -> dict:
     existing = list(module.get("exercises") or [])
     extra = MODULE_EXERCISES.get(module["slug"], [])
-    # slug bo‘yicha dedupe
-    seen = {ex["slug"] for ex in existing}
+    seen_slugs = {ex["slug"] for ex in existing}
+    module_tags: set[str] = set()
+    practice = module.get("practice") or {}
+    for items in practice.values():
+        batch = items if isinstance(items, list) else [items]
+        for q in batch:
+            module_tags |= set(_quiz_topic_fingerprint(q))
     for ex in extra:
-        if ex["slug"] not in seen:
-            existing.append(ex)
-            seen.add(ex["slug"])
+        if ex["slug"] in seen_slugs:
+            continue
+        ex_tags = set(_quiz_topic_fingerprint(ex))
+        if ex_tags & module_tags:
+            continue
+        existing.append(ex)
+        seen_slugs.add(ex["slug"])
+        module_tags |= ex_tags
     module["exercises"] = existing
     return module

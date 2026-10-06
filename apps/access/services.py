@@ -11,10 +11,12 @@ FREE_PREVIEW_MODULES = 5
 FREE_PREVIEW_BY_COURSE: dict[str, int] = {
     "english-it": 1,
     "russian-it": 1,
+    "python": 1,
 }
 PREMIUM_GROUP_NAME = "Premium"
-# Talabalar uchun hozircha ochiq kurs(lar). Qolganlari “Hozir jarayonda”.
-OPEN_COURSE_SLUGS = frozenset({"sql", "english-banking", "english-it", "russian-it"})
+# Talabalar katalogida ko‘rinadigan va bepul ochiq kurslar.
+# Excel / Statistika / Power BI / Amaliy loyihalar — yashirin (is_visible=False).
+OPEN_COURSE_SLUGS = frozenset({"sql", "english-banking", "english-it", "russian-it", "python"})
 COMING_SOON_REASON = "Hozir jarayonda"
 
 

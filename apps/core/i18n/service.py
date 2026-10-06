@@ -182,6 +182,12 @@ def localize(text: str | None, lang: str | None = None) -> str:
     if quiz is not None:
         return quiz
 
+    from .content_quizzes import lookup_content_quiz
+
+    content_quiz = lookup_content_quiz(raw, lang)
+    if content_quiz is not None:
+        return content_quiz
+
     suffix = " uy vazifasi"
     if raw.endswith(suffix) and lang in (LANG_CYRL, LANG_RU, LANG_EN):
         head = raw[: -len(suffix)].strip()
@@ -224,6 +230,14 @@ def localize_html(html: str | None, lang: str | None = None, slug: str | None = 
         from .russian_it_bilingual import enhance_rit_lesson
 
         return enhance_rit_lesson(html, lang, slug)
+    if slug and (
+        str(slug).startswith("py-")
+        or str(slug).startswith("np-")
+        or str(slug).startswith("pd-")
+    ):
+        from .python_bilingual import enhance_python_lesson
+
+        return enhance_python_lesson(html, lang, slug)
 
     if lang == LANG_UZ:
         return html
