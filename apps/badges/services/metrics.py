@@ -31,6 +31,48 @@ def problems_solved(user) -> int:
     return _solved_qs(user).values("exercise_id").distinct().count()
 
 
+def difficulty_solved(user, difficulty: str) -> int:
+    return (
+        _solved_qs(user)
+        .filter(exercise__difficulty=difficulty)
+        .values("exercise_id")
+        .distinct()
+        .count()
+    )
+
+
+def course_solves(user, course_slug: str, *, include_skill_tests: bool = False) -> int:
+    qs = ExerciseAttempt.objects.filter(
+        student=user,
+        is_correct=True,
+        exercise__is_published=True,
+        exercise__module__course__slug=course_slug,
+    )
+    if not include_skill_tests:
+        qs = qs.filter(exercise__is_skill_test=False)
+    return qs.values("exercise_id").distinct().count()
+
+
+def courses_active(user, *, min_solves: int = 5, include_skill_tests: bool = True) -> int:
+    """Count courses where the user has at least min_solves distinct correct answers."""
+    from django.db.models import Count
+
+    qs = ExerciseAttempt.objects.filter(
+        student=user,
+        is_correct=True,
+        exercise__is_published=True,
+        exercise__module__course__is_published=True,
+    )
+    if not include_skill_tests:
+        qs = qs.filter(exercise__is_skill_test=False)
+    rows = (
+        qs.values("exercise__module__course_id")
+        .annotate(n=Count("exercise_id", distinct=True))
+        .filter(n__gte=min_solves)
+    )
+    return rows.count()
+
+
 def solved_exercise_ids(user) -> set[int]:
     return set(_solved_qs(user).values_list("exercise_id", flat=True).distinct())
 

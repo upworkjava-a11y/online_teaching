@@ -102,6 +102,20 @@ def progress_value(user, badge: Badge) -> int:
         return metrics.lessons_completed(user)
     if rt == Badge.RequirementType.COURSE_COMPLETED:
         return metrics.courses_fully_completed(user)
+    if rt == Badge.RequirementType.DIFFICULTY_SOLVED:
+        return metrics.difficulty_solved(user, meta.get("difficulty") or "easy")
+    if rt == Badge.RequirementType.COURSE_SOLVES:
+        return metrics.course_solves(
+            user,
+            meta.get("course_slug") or "",
+            include_skill_tests=bool(meta.get("include_skill_tests")),
+        )
+    if rt == Badge.RequirementType.COURSES_ACTIVE:
+        return metrics.courses_active(
+            user,
+            min_solves=int(meta.get("min_solves") or 5),
+            include_skill_tests=bool(meta.get("include_skill_tests", True)),
+        )
     if rt == Badge.RequirementType.TOP_RANK:
         rank = best_rank(user)
         if rank is None:
@@ -149,6 +163,9 @@ TRIGGER_MAP = {
         Badge.RequirementType.PERFECT_WEEK,
         Badge.RequirementType.TOP_RANK,
         Badge.RequirementType.BADGES_EARNED,
+        Badge.RequirementType.DIFFICULTY_SOLVED,
+        Badge.RequirementType.COURSE_SOLVES,
+        Badge.RequirementType.COURSES_ACTIVE,
     },
     "lesson": {
         Badge.RequirementType.LESSONS_COMPLETED,

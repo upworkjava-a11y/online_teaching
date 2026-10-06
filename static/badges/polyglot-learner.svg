@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img">
+  <path d="M64 10 L108 28 V68 C108 96 88 114 64 120 C40 114 20 96 20 68 V28 Z"
+        fill="#4338ca" stroke="#1e3a8a" stroke-width="6"/>
+  <path d="M64 20 L98 34 V66 C98 88 82 102 64 108 C46 102 30 88 30 66 V34 Z"
+        fill="#e0e7ff" opacity="0.28"/>
+
+  <path d="M34 98 L28 122 L44 112 Z" fill="#1e3a8a"/>
+  <path d="M94 98 L100 122 L84 112 Z" fill="#1e3a8a"/>
+  <path d="M44 100 H84 V110 H44 Z" fill="#a5b4fc"/>
+<text x="64" y="72" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="800" fill="#fff">3+</text></svg>

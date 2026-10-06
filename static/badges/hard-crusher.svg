@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img">
+  <polygon points="64,8 112,34 112,94 64,120 16,94 16,34" fill="#3b82f6" stroke="#1d4ed8" stroke-width="6"/>
+  <polygon points="64,18 102,40 102,88 64,110 26,88 26,40" fill="#dbeafe" opacity="0.35"/>
+
+  <path d="M34 98 L28 122 L44 112 Z" fill="#1d4ed8"/>
+  <path d="M94 98 L100 122 L84 112 Z" fill="#1d4ed8"/>
+  <path d="M44 100 H84 V110 H44 Z" fill="#93c5fd"/>
+<text x="64" y="72" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="800" fill="#fff">HARD</text></svg>

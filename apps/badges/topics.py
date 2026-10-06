@@ -10,6 +10,7 @@ TOPIC_WINDOW = "window"
 TOPIC_SUBQUERY = "subquery"
 TOPIC_CTE = "cte"
 TOPIC_CASE = "case"
+TOPIC_DATETIME = "datetime"
 TOPIC_PYTHON = "python"
 TOPIC_PY_VARS = "python_vars"
 TOPIC_PY_COND = "python_conditions"
@@ -23,6 +24,7 @@ SQL_TOPIC_LABELS = {
     TOPIC_SUBQUERY: "Subqueries",
     TOPIC_CTE: "CTE",
     TOPIC_CASE: "CASE",
+    TOPIC_DATETIME: "Date / Time",
 }
 
 # Module slug → topic (SQL curriculum)
@@ -37,6 +39,7 @@ MODULE_TOPIC_MAP: dict[str, str] = {
     "subqueries": TOPIC_SUBQUERY,
     "ctes": TOPIC_CTE,
     "case": TOPIC_CASE,
+    "date-time": TOPIC_DATETIME,
     "window-functions": TOPIC_WINDOW,
     "window-rank": TOPIC_WINDOW,
     "window-sum": TOPIC_WINDOW,

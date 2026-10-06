@@ -29,6 +29,9 @@ class Badge(TimeStampedModel):
         PERFECT_WEEK = "perfect_week", "Perfect calendar week"
         NIGHT_ACTIVITY = "night_activity", "Night learning activities"
         BADGES_EARNED = "badges_earned", "Other badges earned"
+        DIFFICULTY_SOLVED = "difficulty_solved", "Solved by difficulty"
+        COURSE_SOLVES = "course_solves", "Solves in a course"
+        COURSES_ACTIVE = "courses_active", "Active across N courses"
 
     slug = models.SlugField(max_length=64, unique=True)
     name = models.CharField(max_length=120)

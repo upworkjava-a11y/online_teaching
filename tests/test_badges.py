@@ -10,7 +10,7 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.badges.catalog import ensure_badges
+from apps.badges.catalog import BADGE_DEFINITIONS, ensure_badges
 from apps.badges.models import Badge, UserBadge, UserRankPeak
 from apps.badges.services import service as badge_service
 from apps.badges.topics import TOPIC_JOIN, TOPIC_SELECT, TOPIC_WINDOW
@@ -166,9 +166,63 @@ class LearningBadgeTests(BadgeBase):
         self.assertTrue(UserBadge.objects.filter(user=self.user, badge__slug="course-finisher").exists())
 
 
-class IntegrityTests(BadgeBase):
-    def test_catalog_has_20(self):
-        self.assertEqual(Badge.objects.filter(is_active=True).count(), 20)
+class DataDrivenBadgeTests(BadgeBase):
+    def test_difficulty_and_sql_course_solves(self):
+        # Use real sql course slug for COURSE_SOLVES badges
+        self.course.slug = "sql"
+        self.course.save(update_fields=["slug"])
+        for i in range(25):
+            ex = self._ex(self.mod_select, f"ez-{i}", order=i)
+            ex.difficulty = Exercise.Difficulty.EASY
+            ex.save(update_fields=["difficulty"])
+            self._solve(ex)
+        for i in range(15):
+            ex = self._ex(self.mod_join, f"md-{i}", order=i)
+            ex.difficulty = Exercise.Difficulty.MEDIUM
+            ex.save(update_fields=["difficulty"])
+            self._solve(ex)
+        for i in range(3):
+            ex = self._ex(self.mod_win, f"hd-{i}", order=i)
+            ex.difficulty = Exercise.Difficulty.HARD
+            ex.save(update_fields=["difficulty"])
+            self._solve(ex)
+        badge_service.evaluate(self.user, trigger="solve")
+        slugs = set(UserBadge.objects.filter(user=self.user).values_list("badge__slug", flat=True))
+        self.assertIn("easy-starter", slugs)
+        self.assertIn("medium-solver", slugs)
+        self.assertIn("hard-crusher", slugs)
+        self.assertIn("sql-solver", slugs)
+        # duplicate evaluate is idempotent
+        before = UserBadge.objects.filter(user=self.user).count()
+        badge_service.evaluate(self.user, trigger="solve")
+        self.assertEqual(UserBadge.objects.filter(user=self.user).count(), before)
+
+    def test_cross_course_multi_skilled(self):
+        bank = Course.objects.create(
+            title="Banking", slug="english-banking", is_published=True, is_visible=True
+        )
+        bmod = Module.objects.create(course=bank, title="B", slug="eb-bank-basics", order=1, is_published=True)
+        for i in range(5):
+            self._solve(self._ex(self.mod_select, f"sqlx-{i}", order=i))
+            ex = self._ex(bmod, f"bx-{i}", order=i)
+            ex.kind = Exercise.Kind.QUIZ
+            ex.is_skill_test = True
+            ex.save(update_fields=["kind", "is_skill_test"])
+            self._solve(ex)
+        badge_service.evaluate(self.user, trigger="solve")
+        self.assertTrue(UserBadge.objects.filter(user=self.user, badge__slug="multi-skilled").exists())
+        self.assertTrue(UserBadge.objects.filter(user=self.user, badge__slug="banking-starter").exists() is False)
+        # banking starter needs 10
+        for i in range(5, 10):
+            ex = self._ex(bmod, f"bx-{i}", order=i)
+            ex.kind = Exercise.Kind.QUIZ
+            ex.is_skill_test = True
+            ex.save(update_fields=["kind", "is_skill_test"])
+            self._solve(ex)
+        badge_service.evaluate(self.user, trigger="solve")
+        self.assertTrue(UserBadge.objects.filter(user=self.user, badge__slug="banking-starter").exists())
+    def test_catalog_size(self):
+        self.assertEqual(Badge.objects.filter(is_active=True).count(), len(BADGE_DEFINITIONS))
 
     def test_no_manual_award_endpoint(self):
         client = Client()
