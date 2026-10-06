@@ -1,4 +1,4 @@
-<div class="chat-bubble {% if message.sender_id == user.id %}is-mine{% endif %}">
+<div class="chat-bubble {% if message.sender_id == user.id %}is-mine{% endif %}" data-msg-id="{{ message.id }}">
   <p>{{ message.text }}</p>
   <time class="chat-bubble__time">{{ message.created_at|date:"H:i" }}</time>
 </div>

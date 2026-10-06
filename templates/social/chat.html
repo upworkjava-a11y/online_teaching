@@ -35,17 +35,57 @@
     </div>
   </div>
 
+  {# Poll for new messages — works on PythonAnywhere (no WebSockets required). #}
+  <div
+    id="chat-poll"
+    hx-get="{% url 'social:chat_updates' conversation.pk %}"
+    hx-trigger="every 2s"
+    hx-target="#chat-messages"
+    hx-swap="beforeend"
+    hx-vals="js:{after: window.__chatLastId || {{ latest_id|default:0 }}}"
+    hx-on::after-swap="window.__chatSyncLastId && window.__chatSyncLastId()"
+  ></div>
+
   <form class="social-chat__composer" method="post"
         hx-post="{% url 'social:chat_detail' conversation.pk %}"
         hx-target="#chat-messages"
         hx-swap="beforeend"
-        hx-on::after-request="if(event.detail.successful){ this.reset(); const b=document.getElementById('chat-body'); if(b) b.scrollTop=b.scrollHeight; }">
+        hx-on::after-request="if(event.detail.successful){ this.reset(); window.__chatSyncLastId && window.__chatSyncLastId(); const b=document.getElementById('chat-body'); if(b) b.scrollTop=b.scrollHeight; }">
     {% csrf_token %}
     {{ form.text }}
     <button class="btn btn-primary" type="submit">{{ "Yuborish"|loc }}</button>
   </form>
 </section>
 <script>
-  (function(){ const b=document.getElementById('chat-body'); if(b) b.scrollTop=b.scrollHeight; })();
+  (function () {
+    window.__chatLastId = {{ latest_id|default:0 }};
+    window.__chatSyncLastId = function (opts) {
+      opts = opts || {};
+      var box = document.getElementById("chat-messages");
+      if (!box) return;
+      var nodes = box.querySelectorAll("[data-msg-id]");
+      var max = window.__chatLastId || 0;
+      var seen = {};
+      var removed = false;
+      nodes.forEach(function (el) {
+        var id = el.getAttribute("data-msg-id");
+        if (seen[id]) {
+          el.remove();
+          removed = true;
+          return;
+        }
+        seen[id] = true;
+        var n = parseInt(id, 10);
+        if (n > max) max = n;
+      });
+      var grew = max > (window.__chatLastId || 0);
+      window.__chatLastId = max;
+      if (opts.forceScroll || grew) {
+        var b = document.getElementById("chat-body");
+        if (b) b.scrollTop = b.scrollHeight;
+      }
+    };
+    window.__chatSyncLastId({ forceScroll: true });
+  })();
 </script>
 {% endblock %}

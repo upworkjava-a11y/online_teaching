@@ -7,7 +7,7 @@ import datetime as dt
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.http import Http404, HttpResponseBadRequest, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 
@@ -349,6 +349,7 @@ class ConversationDetailView(RoleRequiredMixin, View):
                 "has_more": has_more,
                 "form": MessageForm(),
                 "oldest_id": msgs[0].pk if msgs else None,
+                "latest_id": msgs[-1].pk if msgs else 0,
             },
         )
 
@@ -399,6 +400,33 @@ class ChatHistoryView(RoleRequiredMixin, View):
                 "conversation": conversation,
                 "user": request.user,
             },
+        )
+
+
+class ChatUpdatesView(RoleRequiredMixin, View):
+    """Newer messages for HTMX polling (near real-time on hosts without WebSockets)."""
+
+    allowed_roles = ("student", "teacher", "admin")
+
+    def get(self, request, pk):
+        conversation = get_object_or_404(Conversation, pk=pk)
+        if not chat_svc.user_can_access(conversation, request.user):
+            raise Http404()
+        other = chat_svc.other_participant(conversation, request.user)
+        if other and is_blocked_either(request.user.pk, other.pk):
+            raise Http404()
+        after = request.GET.get("after")
+        after_id = int(after) if after and str(after).isdigit() else 0
+        msgs = chat_svc.messages_after(conversation, after_id=after_id)
+        if msgs:
+            chat_svc.mark_conversation_read(conversation, request.user)
+        # Empty body keeps the poller quiet when nothing new arrived.
+        if not msgs:
+            return HttpResponse("")
+        return render(
+            request,
+            "social/partials/message_updates.html",
+            {"messages": msgs, "user": request.user},
         )
 
 

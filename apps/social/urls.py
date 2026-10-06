@@ -29,6 +29,7 @@ urlpatterns = [
     path("messages/", views.ConversationListView.as_view(), name="inbox"),
     path("messages/<int:pk>/", views.ConversationDetailView.as_view(), name="chat_detail"),
     path("messages/<int:pk>/history/", views.ChatHistoryView.as_view(), name="chat_history"),
+    path("messages/<int:pk>/updates/", views.ChatUpdatesView.as_view(), name="chat_updates"),
     path("presence/heartbeat/", views.HeartbeatView.as_view(), name="heartbeat"),
     # Legacy redirects → canonical /profile/
     path(

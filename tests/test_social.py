@@ -73,6 +73,21 @@ class ChatTests(TestCase):
         msg.refresh_from_db()
         self.assertIsNotNone(msg.read_at)
 
+    @override_settings(SOCIAL_MESSAGE_MIN_INTERVAL_SECONDS=0)
+    def test_chat_updates_polling(self):
+        conv = chat_svc.get_or_create_conversation(self.a, self.b)
+        first = chat_svc.send_message(self.a, conv, "bir")
+        client = Client()
+        client.force_login(self.b)
+        empty = client.get(reverse("social:chat_updates", args=[conv.pk]), {"after": first.pk})
+        self.assertEqual(empty.status_code, 200)
+        self.assertEqual(empty.content, b"")
+        second = chat_svc.send_message(self.a, conv, "ikki")
+        resp = client.get(reverse("social:chat_updates", args=[conv.pk]), {"after": first.pk})
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "ikki")
+        self.assertContains(resp, f'data-msg-id="{second.pk}"')
+
     def test_message_length_validation(self):
         conv = chat_svc.get_or_create_conversation(self.a, self.b)
         with self.assertRaises(chat_svc.ChatError):

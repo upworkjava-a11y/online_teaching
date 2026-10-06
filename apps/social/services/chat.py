@@ -156,6 +156,18 @@ def conversation_messages(conversation: Conversation, *, before_id: int | None =
     return rows, has_more
 
 
+def messages_after(conversation: Conversation, *, after_id: int, limit: int | None = None):
+    """Newer messages for live polling (ascending by id)."""
+    limit = limit or _page_size()
+    if after_id < 0:
+        after_id = 0
+    return list(
+        Message.objects.filter(conversation=conversation, id__gt=after_id)
+        .select_related("sender")
+        .order_by("id")[:limit]
+    )
+
+
 def list_conversations_for(user):
     User = user.__class__
     latest = (
