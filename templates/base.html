@@ -144,6 +144,12 @@
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M9 16h4"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 3h8l4 4v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M16 3v4h4"/></svg>
               <span>{{ "Uy vazifasi"|loc }}</span>
             </a>
+            <a class="nav-link {% if '/messages/' in request.path %}is-active{% endif %}" href="{% url 'social:inbox' %}">
+              <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4z"/><path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6"/></svg>
+              <span>{{ "Xabarlar"|loc }}</span>
+              {% unread_messages_count as nav_unread %}
+              {% if nav_unread %}<span class="social-badge nav-msg-badge" aria-label="{{ nav_unread }}">{{ nav_unread }}</span>{% endif %}
+            </a>
             <a class="nav-link {% if '/profile/' in request.path or '/users/' in request.path or '/me/social/' in request.path or '/accounts/profile/' in request.path %}is-active{% endif %}" href="{% url 'social:own_profile' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5.5 19a6.5 6.5 0 0 1 13 0"/></svg>
               <span>{{ "Profil"|loc }}</span>
