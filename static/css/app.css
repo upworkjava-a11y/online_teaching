@@ -1450,6 +1450,10 @@ a.lesson-item:hover {
   min-width: 1.35rem; height: 1.35rem; padding: 0 0.35rem;
   border-radius: 999px; background: #dc2626; color: #fff; font-size: 0.75rem; font-weight: 700;
 }
+.nav-msg-badge {
+  margin-left: auto;
+  flex-shrink: 0;
+}
 .activity-year {
   display: flex; gap: 3px; overflow-x: auto; padding-bottom: 0.5rem;
 }

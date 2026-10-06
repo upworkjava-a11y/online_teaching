@@ -1,4 +1,4 @@
-{% load static %}
+{% load static social_tags %}
 <!DOCTYPE html>
 <html lang="{{ html_lang|default:'uz' }}">
 <head>
@@ -96,6 +96,8 @@
             <a class="nav-link {% if '/messages/' in request.path %}is-active{% endif %}" href="{% url 'social:inbox' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16v12H4z"/><path stroke-linecap="round" stroke-linejoin="round" d="m4 7 8 6 8-6"/></svg>
               <span>{{ "Xabarlar"|loc }}</span>
+              {% unread_messages_count as nav_unread %}
+              {% if nav_unread %}<span class="social-badge nav-msg-badge" aria-label="{{ nav_unread }}">{{ nav_unread }}</span>{% endif %}
             </a>
             <a class="nav-link {% if '/progress/sertifikat' in request.path %}is-active{% endif %}" href="{% url 'progress:certificates' %}">
               <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path stroke-linecap="round" stroke-linejoin="round" d="m8.5 13.5-1.5 7 5-2.5 5 2.5-1.5-7"/></svg>
