@@ -423,11 +423,14 @@ class ChatUpdatesView(RoleRequiredMixin, View):
         # Empty body keeps the poller quiet when nothing new arrived.
         if not msgs:
             return HttpResponse("")
-        return render(
+        response = render(
             request,
             "social/partials/message_updates.html",
             {"messages": msgs, "user": request.user},
         )
+        # Helps clients advance the poll cursor even if HTML parsing fails.
+        response["X-Chat-Last-Id"] = str(msgs[-1].pk)
+        return response
 
 
 class HeartbeatView(RoleRequiredMixin, View):

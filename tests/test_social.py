@@ -87,6 +87,10 @@ class ChatTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, "ikki")
         self.assertContains(resp, f'data-msg-id="{second.pk}"')
+        self.assertEqual(resp.get("X-Chat-Last-Id"), str(second.pk))
+        # Advancing cursor must not redeliver the same message.
+        again = client.get(reverse("social:chat_updates", args=[conv.pk]), {"after": second.pk})
+        self.assertEqual(again.content, b"")
 
     def test_message_length_validation(self):
         conv = chat_svc.get_or_create_conversation(self.a, self.b)

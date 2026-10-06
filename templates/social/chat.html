@@ -2,7 +2,7 @@
 {% load social_tags %}
 {% block title %}{{ other.get_full_name|default:other.username }} · {{ "Chat"|loc }}{% endblock %}
 {% block content %}
-<section class="social-chat card">
+<section class="social-chat card" id="chat-app" data-latest-id="{{ latest_id|default:0 }}">
   <header class="social-chat__head">
     <a class="muted text-sm" href="{% url 'social:inbox' %}">← {{ "Xabarlar"|loc }}</a>
     <div class="flex items-center gap-3 mt-2">
@@ -35,22 +35,21 @@
     </div>
   </div>
 
-  {# Poll for new messages — works on PythonAnywhere (no WebSockets required). #}
+  {# Poll every 2s. Cursor must advance after each successful poll (see script). #}
   <div
     id="chat-poll"
     hx-get="{% url 'social:chat_updates' conversation.pk %}"
     hx-trigger="every 2s"
     hx-target="#chat-messages"
     hx-swap="beforeend"
-    hx-vals="js:{after: window.__chatLastId || {{ latest_id|default:0 }}}"
-    hx-on::after-swap="window.__chatSyncLastId && window.__chatSyncLastId()"
+    hx-vals="js:{after: (window.__chatLastId == null ? 0 : window.__chatLastId)}"
   ></div>
 
   <form class="social-chat__composer" method="post"
         hx-post="{% url 'social:chat_detail' conversation.pk %}"
         hx-target="#chat-messages"
         hx-swap="beforeend"
-        hx-on::after-request="if(event.detail.successful){ this.reset(); window.__chatSyncLastId && window.__chatSyncLastId(); const b=document.getElementById('chat-body'); if(b) b.scrollTop=b.scrollHeight; }">
+        hx-on::after-request="if(event.detail.successful){ this.reset(); window.__chatSyncLastId && window.__chatSyncLastId({forceScroll:true}); }">
     {% csrf_token %}
     {{ form.text }}
     <button class="btn btn-primary" type="submit">{{ "Yuborish"|loc }}</button>
@@ -58,33 +57,96 @@
 </section>
 <script>
   (function () {
-    window.__chatLastId = {{ latest_id|default:0 }};
+    var root = document.getElementById("chat-app");
+    window.__chatLastId = parseInt((root && root.getAttribute("data-latest-id")) || "0", 10) || 0;
+
+    function maxMsgIdIn(el) {
+      var max = 0;
+      if (!el) return max;
+      el.querySelectorAll("[data-msg-id]").forEach(function (node) {
+        var n = parseInt(node.getAttribute("data-msg-id"), 10);
+        if (n > max) max = n;
+      });
+      return max;
+    }
+
     window.__chatSyncLastId = function (opts) {
       opts = opts || {};
       var box = document.getElementById("chat-messages");
       if (!box) return;
-      var nodes = box.querySelectorAll("[data-msg-id]");
-      var max = window.__chatLastId || 0;
       var seen = {};
-      var removed = false;
-      nodes.forEach(function (el) {
+      box.querySelectorAll("[data-msg-id]").forEach(function (el) {
         var id = el.getAttribute("data-msg-id");
-        if (seen[id]) {
-          el.remove();
-          removed = true;
-          return;
-        }
-        seen[id] = true;
-        var n = parseInt(id, 10);
-        if (n > max) max = n;
+        if (seen[id]) el.remove();
+        else seen[id] = true;
       });
-      var grew = max > (window.__chatLastId || 0);
-      window.__chatLastId = max;
+      var max = maxMsgIdIn(box);
+      var grew = max > window.__chatLastId;
+      if (max > window.__chatLastId) window.__chatLastId = max;
       if (opts.forceScroll || grew) {
         var b = document.getElementById("chat-body");
         if (b) b.scrollTop = b.scrollHeight;
       }
     };
+
+    // HTMX fires afterSwap on the *target* (#chat-messages), not on #chat-poll.
+    document.body.addEventListener("htmx:beforeSwap", function (evt) {
+      var target = evt.detail && evt.detail.target;
+      if (!target || target.id !== "chat-messages") return;
+      var raw = (evt.detail.serverResponse || "").trim();
+      if (!raw) {
+        evt.detail.shouldSwap = false;
+        return;
+      }
+      // Drop bubbles already on screen so a stale after= cursor cannot duplicate.
+      var tmp = document.createElement("div");
+      tmp.innerHTML = evt.detail.serverResponse;
+      var kept = 0;
+      tmp.querySelectorAll("[data-msg-id]").forEach(function (el) {
+        var id = el.getAttribute("data-msg-id");
+        if (document.querySelector('#chat-messages [data-msg-id="' + id + '"]')) {
+          el.remove();
+        } else {
+          kept += 1;
+        }
+      });
+      if (!kept) {
+        evt.detail.shouldSwap = false;
+        // Still advance cursor from ids that were filtered (stale poll).
+        var staleMax = 0;
+        var probe = document.createElement("div");
+        probe.innerHTML = raw;
+        staleMax = maxMsgIdIn(probe);
+        if (staleMax > window.__chatLastId) window.__chatLastId = staleMax;
+        return;
+      }
+      evt.detail.serverResponse = tmp.innerHTML;
+    });
+
+    document.body.addEventListener("htmx:afterSwap", function (evt) {
+      var target = evt.detail && evt.detail.target;
+      if (!target || target.id !== "chat-messages") return;
+      window.__chatSyncLastId({ forceScroll: true });
+    });
+
+    // Backup: after every poll request, advance cursor from response HTML even if swap skipped.
+    document.body.addEventListener("htmx:afterRequest", function (evt) {
+      var elt = evt.detail && evt.detail.elt;
+      if (!elt || elt.id !== "chat-poll") return;
+      if (!evt.detail.successful) return;
+      var xhr = evt.detail.xhr;
+      if (!xhr) return;
+      var headerLast = parseInt(xhr.getResponseHeader("X-Chat-Last-Id") || "0", 10);
+      if (headerLast > window.__chatLastId) window.__chatLastId = headerLast;
+      if (xhr.responseText) {
+        var tmp = document.createElement("div");
+        tmp.innerHTML = xhr.responseText;
+        var max = maxMsgIdIn(tmp);
+        if (max > window.__chatLastId) window.__chatLastId = max;
+      }
+      window.__chatSyncLastId();
+    });
+
     window.__chatSyncLastId({ forceScroll: true });
   })();
 </script>
