@@ -292,6 +292,13 @@ class ConversationListView(RoleRequiredMixin, View):
     allowed_roles = ("student", "teacher", "admin")
 
     def get(self, request):
+        context = self._inbox_context(request)
+        # HTMX poll from the inbox page refreshes only the list fragment.
+        if getattr(request, "htmx", False):
+            return render(request, "social/partials/inbox_poll.html", context)
+        return render(request, "social/inbox.html", context)
+
+    def _inbox_context(self, request):
         rows = []
         for conv in chat_svc.list_conversations_for(request.user):
             other = next((p for p in conv.participants.all() if p.pk != request.user.pk), None)
@@ -311,11 +318,10 @@ class ConversationListView(RoleRequiredMixin, View):
                     "unread": int(conv.unread_count or 0),
                 }
             )
-        return render(
-            request,
-            "social/inbox.html",
-            {"rows": rows, "unread_total": chat_svc.unread_total(request.user)},
-        )
+        return {
+            "rows": rows,
+            "unread_total": chat_svc.unread_total(request.user),
+        }
 
 
 class ConversationDetailView(RoleRequiredMixin, View):

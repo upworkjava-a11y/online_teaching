@@ -1,0 +1,10 @@
+{% load social_tags %}
+{# Main swap target: conversation rows #}
+{% include "social/partials/inbox_rows.html" %}
+{# Keep page header + navbar badges in sync without full refresh #}
+<span id="inbox-unread-total" hx-swap-oob="true">
+  {% if unread_total %}<span class="social-badge">{{ unread_total }}</span>{% endif %}
+</span>
+<span id="nav-unread-badge" hx-swap-oob="true">
+  {% if unread_total %}<span class="social-badge nav-msg-badge" aria-label="{{ unread_total }}">{{ unread_total }}</span>{% endif %}
+</span>

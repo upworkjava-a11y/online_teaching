@@ -111,6 +111,24 @@ class ChatTests(TestCase):
         self.assertContains(home, "nav-unread-poll")
         self.assertContains(home, 'id="nav-unread-badge"')
 
+    @override_settings(SOCIAL_MESSAGE_MIN_INTERVAL_SECONDS=0)
+    def test_inbox_htmx_poll_updates(self):
+        conv = chat_svc.get_or_create_conversation(self.a, self.b)
+        chat_svc.send_message(self.a, conv, "eski")
+        client = Client()
+        client.force_login(self.b)
+        page = client.get(reverse("social:inbox"))
+        self.assertContains(page, 'id="inbox-list"')
+        self.assertContains(page, "eski")
+        chat_svc.send_message(self.a, conv, "yangi-inbox")
+        poll = client.get(reverse("social:inbox"), HTTP_HX_REQUEST="true")
+        self.assertEqual(poll.status_code, 200)
+        self.assertContains(poll, "yangi-inbox")
+        self.assertContains(poll, 'id="inbox-unread-total"')
+        self.assertContains(poll, 'id="nav-unread-badge"')
+        # Fragment only — not full chrome
+        self.assertNotContains(poll, "<aside")
+
     def test_message_length_validation(self):
         conv = chat_svc.get_or_create_conversation(self.a, self.b)
         with self.assertRaises(chat_svc.ChatError):
