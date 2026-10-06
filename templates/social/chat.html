@@ -29,7 +29,7 @@
     ></div>
     {% endif %}
     <div id="chat-messages">
-      {% for message in messages %}
+      {% for message in chat_messages %}
         {% include "social/partials/message_bubble.html" with user=request.user %}
       {% endfor %}
     </div>

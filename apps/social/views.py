@@ -345,7 +345,7 @@ class ConversationDetailView(RoleRequiredMixin, View):
                 "presence": presence_svc.presence_status(viewer=request.user, target=other)
                 if other
                 else "offline",
-                "messages": msgs,
+                "chat_messages": msgs,
                 "has_more": has_more,
                 "form": MessageForm(),
                 "oldest_id": msgs[0].pk if msgs else None,
